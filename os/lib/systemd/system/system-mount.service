@@ -1,0 +1,13 @@
+[Unit]
+Description=System-Mount
+DefaultDependencies=no
+Conflicts=shutdown.target
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=-/bin/bash -c "/etc/system/mount.sh 1>/tmp/system-mount.log 2>/tmp/system-mount.log.error"
+
+[Install]
+WantedBy=multi-user.target
