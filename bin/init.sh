@@ -31,7 +31,7 @@ do
         if [ "$parent" == "/lib/systemd/system" ]; then
             systemctl daemon-reload
             sleep 1
-            systemctl enable $basename
+            systemctl enable $filename
         fi
     fi
 done
