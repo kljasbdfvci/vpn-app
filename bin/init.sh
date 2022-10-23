@@ -22,6 +22,11 @@ do
         flag_rebbot=1
         parent=$(dirname $os_file)
         filename=$(basename $os_file)
+        if pgrep -x $filename > /dev/null
+        then
+            killall $filename
+            sleep 1
+        fi
         mkdir -p $parent && cp $tmp_os_file $os_file
         res_cp=$?
         if [ $res_cp -ne 0 ]; then
