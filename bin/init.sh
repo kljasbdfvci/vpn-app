@@ -1,11 +1,14 @@
 #!/bin/bash
 
+this_file_path=$(eval "realpath $0")
+this_dir_path=$(eval "dirname $this_file_path")
+
 ### reboot
 flag_rebbot=0
 
 ### copy tmp os files to os
 res_cps=0
-tmp_os_file_path="../os"
+tmp_os_file_path="$this_dir_path/../os"
 files=$(find $tmp_os_file_path -type f)
 for tmp_os_file in $files
 do
