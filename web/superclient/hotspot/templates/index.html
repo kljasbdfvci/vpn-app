@@ -1,0 +1,34 @@
+<style>
+    #form-container {
+        
+    }
+    #main-form {
+        display: flex;
+        flex-flow: column;
+    }
+</style>
+<a href="/settings">Settings</a>
+<div id="form-container">
+
+    {% if profiles %}
+    <form id="main-form" action="/" method="post">
+        {% csrf_token %}
+
+        {% if isOn %}
+        <label for="submit-button">Active profile: {{activeProfile}}</label>
+        {% else %}
+        <label for="select-profile">Select a Hotspot profile</label>
+        <select id="select-profile" name="profile" id="profiles">
+            {% for profile in profiles %}
+            <option value="{{profile}}">{{profile}}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+
+        <input id="submit-button" type="submit" value="{{ submitText }}">
+    </form>
+    {% else %}
+    <a href="/settingshotspot">Add Hotspot Profile ➕</a>
+    {% endif %}
+</div>
+
