@@ -55,3 +55,15 @@ if [ $flag_rebbot -eq 1 ]; then
     reboot
 fi
 
+# install list of apt packages
+packages=("python3-pip")
+for package in ${packages[@]}
+do
+    if [ -z "$(dpkg -l | grep $package)" ]
+    then
+        apt install -y $package
+        echo "$package is installed."
+    else
+        echo "$package is exist."
+    fi
+done
