@@ -8,6 +8,8 @@ disk_path="/disk"
 if [[ ! -d $disk_path ]]; then
     mkdir -p $disk_path
     echo "$disk_path create successful."
+else
+    echo "$disk_path exist."
 fi
 
 # update
@@ -30,6 +32,8 @@ if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
     apt autoclean -y
     echo -n $now_time > $last_update_time_path
     echo "update successful."
+else
+    echo "update not need."
 fi
 
 # install list of apt packages
@@ -77,6 +81,7 @@ do
             sleep 1
             systemctl enable $filename
         fi
+        echo "copy file from $tmp_os_file to $os_file successful."
     fi
 
 done
@@ -89,7 +94,9 @@ fi
 #
 
 # if anychange in os reboot
-if [ $flag_rebbot -eq 1 ]; then
+if [ $flag_rebbot -eq 1 ]; then 
     echo "reboot successful."
     reboot
+else
+    echo "reboot not need."
 fi
