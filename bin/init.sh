@@ -3,6 +3,19 @@
 this_file_path=$(eval "realpath $0")
 this_dir_path=$(eval "dirname $this_file_path")
 
+# install list of apt packages
+packages=("python3-pip")
+for package in ${packages[@]}
+do
+    if [ -z "$(dpkg -l | grep $package)" ]
+    then
+        apt install -y $package
+        echo "$package is installed."
+    else
+        echo "$package is exist."
+    fi
+done
+
 ### reboot
 flag_rebbot=0
 
@@ -26,7 +39,7 @@ do
         # if process is running
         if pgrep -x $filename > /dev/null
         then
-            killall $filename
+            pgrep $filename | xargs kill
             sleep 1
         fi
         # do copy
@@ -50,20 +63,10 @@ else
     echo "copy os files failed."
 fi
 
+#
+
 # if anychange in os reboot
 if [ $flag_rebbot -eq 1 ]; then
+    echo "reboot successful."
     reboot
 fi
-
-# install list of apt packages
-packages=("python3-pip")
-for package in ${packages[@]}
-do
-    if [ -z "$(dpkg -l | grep $package)" ]
-    then
-        apt install -y $package
-        echo "$package is installed."
-    else
-        echo "$package is exist."
-    fi
-done
