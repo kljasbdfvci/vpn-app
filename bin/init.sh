@@ -5,7 +5,7 @@ this_dir_path=$(eval "dirname $this_file_path")
 
 # make dir disk path
 disk_path="/disk"
-if [[ ! -e $disk_path ]]; then
+if [[ ! -d $disk_path ]]; then
     mkdir -p $disk_path
     echo "$disk_path create successful."
 fi
@@ -18,11 +18,14 @@ if [ -f "$last_update_time_path" ]; then
 fi
 now_time=$(date +%s)
 if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
-    rm /var/lib/dpkg/lock-frontend
-    rm /var/lib/dpkg/lock
+    if [[ ! -f /var/lib/dpkg/lock-frontend ]]; then
+        rm /var/lib/dpkg/lock-frontend
+    fi
+    if [[ ! -f /var/lib/dpkg/lock ]]; then
+        rm /var/lib/dpkg/lock
+    fi
     apt update --fix-missing
     apt upgrade --fix-broken --fix-missing -y
-    apt autopurge -y
     apt autoremove -y
     apt autoclean -y
     echo -n $now_time > $last_update_time_path
@@ -42,10 +45,10 @@ do
     fi
 done
 
-### reboot
+# reboot
 flag_rebbot=0
 
-### copy tmp os files to os
+# copy tmp os files to os
 res_cps=0
 tmp_os_file_path="$this_dir_path/../os"
 files=$(find $tmp_os_file_path -type f)
@@ -62,14 +65,8 @@ do
         flag_rebbot=1
         parent=$(dirname $os_file)
         filename=$(basename $os_file)
-        # if process is running
-        if pgrep -x $filename > /dev/null
-        then
-            pgrep $filename | xargs kill
-            sleep 1
-        fi
         # do copy
-        mkdir -p $parent && cp $tmp_os_file $os_file
+        mkdir -p $parent && cp -f $tmp_os_file $os_file
         res_cp=$?
         if [ $res_cp -ne 0 ]; then
             res_cps=1
