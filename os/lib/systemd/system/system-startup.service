@@ -1,6 +1,6 @@
 [Unit]
 Description=System-Startup
-After=system-mount
+After=system-mount system-swap
 
 [Service]
 Type=oneshot

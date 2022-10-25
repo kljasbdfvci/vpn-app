@@ -1,0 +1,13 @@
+[Unit]
+Description=System-Mount
+DefaultDependencies=no
+Conflicts=shutdown.target
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=-/bin/bash -c "/etc/system/swap.sh 1>/tmp/system-swap.log 2>/tmp/system-swap.log.error"
+
+[Install]
+WantedBy=multi-user.target

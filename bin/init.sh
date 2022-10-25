@@ -3,6 +3,35 @@
 this_file_path=$(eval "realpath $0")
 this_dir_path=$(eval "dirname $this_file_path")
 
+# make dir disk path
+disk_path="/disk"
+if [[ ! -e $disk_path ]]; then
+    mkdir -p $disk_path
+    echo "$disk_path create successful."
+fi
+
+# update
+last_update_time_path="$disk_path/update.sec"
+last_update_time=0
+if [ -f "$last_update_time_path" ]; then
+    last_update_time=$(cat $last_update_time_path | tr -d '\n')
+fi
+now_time=$(date +%s)
+if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
+    rm /var/lib/dpkg/lock-frontend
+    rm /var/lib/dpkg/lock
+    #apt update --fix-missing
+    #apt upgrade --fix-broken --fix-missing -y
+    #apt autopurge -y
+    #apt autoremove -y
+    #apt autoclean -y
+    echo -n $now_time > $last_update_time_path
+    echo "update successful."
+fi
+
+exit
+
+
 # install list of apt packages
 packages=("python3-pip")
 for package in ${packages[@]}
