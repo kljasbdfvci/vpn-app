@@ -20,17 +20,14 @@ now_time=$(date +%s)
 if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
     rm /var/lib/dpkg/lock-frontend
     rm /var/lib/dpkg/lock
-    #apt update --fix-missing
-    #apt upgrade --fix-broken --fix-missing -y
-    #apt autopurge -y
-    #apt autoremove -y
-    #apt autoclean -y
+    apt update --fix-missing
+    apt upgrade --fix-broken --fix-missing -y
+    apt autopurge -y
+    apt autoremove -y
+    apt autoclean -y
     echo -n $now_time > $last_update_time_path
     echo "update successful."
 fi
-
-exit
-
 
 # install list of apt packages
 packages=("python3-pip")
