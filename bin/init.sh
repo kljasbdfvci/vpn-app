@@ -62,33 +62,66 @@ done
 flag_rebbot=0
 
 # copy tmp os files to os
+hardware=""
+if [ -f /sys/firmware/devicetree/base/model ]; then
+    hardware=$(cat /sys/firmware/devicetree/base/model | tr -d ' ' | tr '[:upper:]' '[:lower:]')
+fi
+os_distro=""
+os_version=""
+if [ -f /etc/os-release ]; then
+    os_distro=$(. /etc/os-release; echo -n $ID)
+    os_version=$(. /etc/os-release; echo -n $VERSION_CODENAME)
+fi
 res_cps=0
 tmp_os_file_path="$this_dir_path/../os"
 files=$(find $tmp_os_file_path -type f)
 for tmp_os_file in $files
 do
 
-    os_file=$(echo $tmp_os_file | sed "s/^${tmp_os_file_path//\//\\\/}//")
+    tmp_os_file_parent=$(dirname $tmp_os_file)
+    tmp_os_file_filename=$(basename $tmp_os_file)
+
+    ### os/usr/sbin/sshd___orangepizero___debian___bullseye
+    reg=".+___.+___.+___.+"
+    if [[ $tmp_os_file_filename =~ $reg ]]; then # sshd___orangepizero___debian___bullseye
+        tmp_os_file_name=$(echo -n $tmp_os_file_filename | sed 's/\(.*\)___.*___.*___.*/\1/')
+        tmp_os_file_hardware=$(echo -n $tmp_os_file_filename | sed 's/.*___\(.*\)___.*___.*/\1/')
+        tmp_os_file_os_distro=$(echo -n $tmp_os_file_filename | sed 's/.*___.*___\(.*\)___.*/\1/')
+        tmp_os_file_os_version=$(echo -n $tmp_os_file_filename | sed 's/.*___.*___.*___\(.*\)/\1/')
+        if [[ "$hardware" == *"$tmp_os_file_hardware"* ]] && [[ "$os_distro" == "$tmp_os_file_os_distro" ]] && [[ "$os_version" == "$tmp_os_file_os_version" ]]; then
+            os_file_parent=$(echo $tmp_os_file_parent | sed "s/^${tmp_os_file_path//\//\\\/}//")
+            os_file_filename=$tmp_os_file_name
+            os_file=$os_file_parent$os_file_filename
+        else
+            continue
+        fi
+    else
+        os_file_parent=$(echo $tmp_os_file_parent | sed "s/^${tmp_os_file_path//\//\\\/}//")
+        os_file_filename=$tmp_os_file_filename
+        os_file=$os_file_parent$os_file_filename
+    fi
+
     tmp_os_file_md5sum=$(md5sum $tmp_os_file | cut -d ' ' -f 1 | tr -d '\n')
+    
     os_file_md5sum=""
+    os_file=$(echo $tmp_os_file | sed "s/^${tmp_os_file_path//\//\\\/}//")
     if [ -f "$os_file" ]; then
         os_file_md5sum=$(md5sum $os_file | cut -d ' ' -f 1 | tr -d '\n')
     fi
+    
     if [ "$tmp_os_file_md5sum" != "$os_file_md5sum" ]; then
         flag_rebbot=1
-        parent=$(dirname $os_file)
-        filename=$(basename $os_file)
         # do copy
-        mkdir -p $parent && cp -f $tmp_os_file $os_file
+        mkdir -p $os_file_parent && cp -f $tmp_os_file $os_file
         res_cp=$?
         if [ $res_cp -ne 0 ]; then
             res_cps=1
         fi
         # if systemd file change
-        if [ "$parent" == "/lib/systemd/system" ]; then
+        if [ "$os_file_parent" == "/lib/systemd/system" ]; then
             systemctl daemon-reload
             sleep 1
-            systemctl enable $filename
+            systemctl enable $os_file_filename
         fi
         echo "copy file from $tmp_os_file to $os_file successful."
     fi
