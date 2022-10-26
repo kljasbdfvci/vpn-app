@@ -3,8 +3,12 @@
 import os
 import sys
 
+### start add by me
+from django.core.management.commands.runserver import Command as runserver
+### end add by me
 
 def main():
+    
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'superclient.settings')
     try:
@@ -15,6 +19,9 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    ### start add by me
+    runserver.default_port = "80"
+    ### end add by me
     execute_from_command_line(sys.argv)
 
 
