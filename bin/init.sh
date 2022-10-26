@@ -45,7 +45,7 @@ else
 fi
 
 # install list of apt packages
-packages=("python3" "python3-dev" "python3-pip" "ifconfig" "hostapd" "dnsmasq")
+packages=("python3" "python3-dev" "python3-pip" "net-tools" "hostapd" "dnsmasq")
 for package in ${packages[@]}
 do
     if [ -z "$(dpkg -l | grep $package)" ]
@@ -62,10 +62,12 @@ done
 flag_rebbot=0
 
 # copy tmp os files to os
+# get hardware info
 hardware=""
 if [ -f /sys/firmware/devicetree/base/model ]; then
     hardware=$(cat /sys/firmware/devicetree/base/model | tr -d ' ' | tr '[:upper:]' '[:lower:]')
 fi
+# get os info
 os_distro=""
 os_version=""
 if [ -f /etc/os-release ]; then
@@ -81,7 +83,7 @@ do
     tmp_os_file_parent=$(dirname $tmp_os_file)
     tmp_os_file_filename=$(basename $tmp_os_file)
 
-    ### os/usr/sbin/sshd___orangepizero___debian___bullseye
+    # check file for os
     reg=".+___.+___.+___.+"
     if [[ $tmp_os_file_filename =~ $reg ]]; then # sshd___orangepizero___debian___bullseye
         tmp_os_file_name=$(echo -n $tmp_os_file_filename | sed 's/\(.*\)___.*___.*___.*/\1/')
@@ -91,20 +93,19 @@ do
         if [[ "$hardware" == *"$tmp_os_file_hardware"* ]] && [[ "$os_distro" == "$tmp_os_file_os_distro" ]] && [[ "$os_version" == "$tmp_os_file_os_version" ]]; then
             os_file_parent=$(echo $tmp_os_file_parent | sed "s/^${tmp_os_file_path//\//\\\/}//")
             os_file_filename=$tmp_os_file_name
-            os_file=$os_file_parent$os_file_filename
+            os_file=$os_file_parent"/"$os_file_filename
         else
             continue
         fi
     else
         os_file_parent=$(echo $tmp_os_file_parent | sed "s/^${tmp_os_file_path//\//\\\/}//")
         os_file_filename=$tmp_os_file_filename
-        os_file=$os_file_parent$os_file_filename
+        os_file=$os_file_parent"/"$os_file_filename
     fi
 
+    # get md5sum
     tmp_os_file_md5sum=$(md5sum $tmp_os_file | cut -d ' ' -f 1 | tr -d '\n')
-    
     os_file_md5sum=""
-    os_file=$(echo $tmp_os_file | sed "s/^${tmp_os_file_path//\//\\\/}//")
     if [ -f "$os_file" ]; then
         os_file_md5sum=$(md5sum $os_file | cut -d ' ' -f 1 | tr -d '\n')
     fi
