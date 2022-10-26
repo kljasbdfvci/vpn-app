@@ -26,10 +26,18 @@ if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
     if [[ ! -f /var/lib/dpkg/lock ]]; then
         rm /var/lib/dpkg/lock
     fi
+    echo "start apt update"
     apt update --fix-missing
+    sleep 1
+    echo "start apt upgrade"
     apt upgrade --fix-broken --fix-missing -y
+    sleep 1
+    echo "start apt autoremove"
     apt autoremove -y
+    sleep 1
+    echo "start apt autoclean"
     apt autoclean -y
+    sleep 1
     echo -n $now_time > $last_update_time_path
     echo "update successful."
 else
@@ -43,6 +51,7 @@ do
     if [ -z "$(dpkg -l | grep $package)" ]
     then
         apt install -y $package
+        sleep 1
         echo "$package is installed."
     else
         echo "$package is exist."
