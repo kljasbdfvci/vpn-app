@@ -136,7 +136,7 @@ fi
 
 # kill pid if get port 80
 port="80"
-if [ -n "$(fuser $port/tcp)" ]
+if [ -n "$(fuser $port/tcp)" ]; then
     fuser -k $port/tcp
     sleep 1
 fi
