@@ -20,6 +20,8 @@ initialApplication() {
    app_file_path=$1
    app_untar_path=$2
    app_init_path=$3
+   app_init_log=$4
+   app_init_log_error=$5
    if [ -f "$app_file_path" ]; then
 
       ### make app dir Application
@@ -38,7 +40,7 @@ initialApplication() {
       my_print "extract Application" $res_tar
 
       ### run init Application
-      $app_init_path 1>$null_output
+      $app_init_path 1>$app_init_log 2>$app_init_log_error
       res_init=$?
       my_print "run init Application" $res_init
 
@@ -95,6 +97,8 @@ fi
 app_file_path=$(find /disk/firmware -type f -name '*-app*' | sort | tail -n 1)
 app_untar_path="/memory/"
 app_init_path="/memory/bin/init.sh"
+app_init_log="/tmp/app-init.log"
+app_init_log_error="/tmp/app-init.log.error"
 
 ### Application
 echo -n "Initial Application"
@@ -103,7 +107,7 @@ if [ -f "$app_file_path" ]; then
    temp_app_file_path="/tmp/app.tgz"
    decryptFile $app_file_path $temp_app_file_path
    if [ $? -eq 0 ]; then
-      initialApplication $temp_app_file_path $app_untar_path $app_init_path
+      initialApplication $temp_app_file_path $app_untar_path $app_init_path $app_init_log $app_init_log_error
       if [ $? -eq 0 ]; then
          echo " OK"
       else
