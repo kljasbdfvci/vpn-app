@@ -39,9 +39,9 @@ if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
     apt autoclean -y
     sleep 1
     echo -n $now_time > $last_update_time_path
-    echo "update successful."
+    echo "system update successful."
 else
-    echo "update not need."
+    echo "system update not need."
 fi
 
 # install list of apt packages
