@@ -2,7 +2,8 @@
 
 # imports
 import time
-from Router import *
+
+from .Router import *
 
 
 # global

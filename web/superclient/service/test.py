@@ -4,8 +4,8 @@ import sys
 import time
 import logging
 
-from . import AccessPoint
-from . import Router
+from .AccessPoint import *
+from .Router import Router *
 
 
 logging.basicConfig(

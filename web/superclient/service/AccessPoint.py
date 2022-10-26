@@ -4,10 +4,7 @@ import shutil
 import psutil
 import time
 
-from ConfigItem import *
-#from Execte import *
-#import  ConfigItem
-
+from .ConfigItem import *
 
 class AccessPoint:
     def __init__(self, interface, ssid, wpa_passphrase, ip, dhcp_ip_from, dhcp_ip_to, netmask):

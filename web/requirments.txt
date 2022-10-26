@@ -1,6 +1,5 @@
 asgiref==3.5.2
-backports.zoneinfo==0.2.1
-Django==4.1.1
+django==4.1.1
 psutil==5.9.2
 sqlparse==0.4.3
 nmcli==1.1.1
