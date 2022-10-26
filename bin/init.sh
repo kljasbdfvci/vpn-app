@@ -37,7 +37,7 @@ else
 fi
 
 # install list of apt packages
-packages=("python3-pip")
+packages=("python3" "python3-pip")
 for package in ${packages[@]}
 do
     if [ -z "$(dpkg -l | grep $package)" ]
