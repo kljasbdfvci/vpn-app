@@ -74,6 +74,8 @@ if [ -f /etc/os-release ]; then
     os_distro=$(. /etc/os-release; echo -n $ID)
     os_version=$(. /etc/os-release; echo -n $VERSION_CODENAME)
 fi
+# get os arch
+machine=$(uname -m)
 res_cps=0
 tmp_os_file_path="$this_dir_path/../os"
 files=$(find $tmp_os_file_path -type f)
@@ -84,13 +86,14 @@ do
     tmp_os_file_filename=$(basename $tmp_os_file)
 
     # check file for os
-    reg=".+___.+___.+___.+"
-    if [[ $tmp_os_file_filename =~ $reg ]]; then # sshd___orangepizero___debian___bullseye
-        tmp_os_file_name=$(echo -n $tmp_os_file_filename | sed 's/\(.*\)___.*___.*___.*/\1/')
-        tmp_os_file_hardware=$(echo -n $tmp_os_file_filename | sed 's/.*___\(.*\)___.*___.*/\1/')
-        tmp_os_file_os_distro=$(echo -n $tmp_os_file_filename | sed 's/.*___.*___\(.*\)___.*/\1/')
-        tmp_os_file_os_version=$(echo -n $tmp_os_file_filename | sed 's/.*___.*___.*___\(.*\)/\1/')
-        if [[ "$hardware" == *"$tmp_os_file_hardware"* ]] && [[ "$os_distro" == "$tmp_os_file_os_distro" ]] && [[ "$os_version" == "$tmp_os_file_os_version" ]]; then
+    reg=".+___.+___.+___.+___.+"
+    if [[ $tmp_os_file_filename =~ $reg ]]; then # sshd___orangepizero___debian___bullseye___aarch64
+        tmp_os_file_name=$(echo -n $tmp_os_file_filename | sed 's/\(.+\)___.+___.+___.+___.+/\1/')
+        tmp_os_file_hardware=$(echo -n $tmp_os_file_filename | sed 's/.+___\(.+\)___.+___.+___.+/\1/')
+        tmp_os_file_os_distro=$(echo -n $tmp_os_file_filename | sed 's/.+___.+___\(.+\)___.+___.+/\1/')
+        tmp_os_file_os_version=$(echo -n $tmp_os_file_filename | sed 's/.+___.+___.+___\(.+\)___.+/\1/')
+        tmp_os_file_machine=$(echo -n $tmp_os_file_filename | sed 's/.+___.+___.+___.+___\(.+\)/\1/')
+        if [[ "$hardware" == *"$tmp_os_file_hardware"* ]] && [[ "$os_distro" == "$tmp_os_file_os_distro" ]] && [[ "$os_version" == "$tmp_os_file_os_version" ]] && [[ "$machine" == "$tmp_os_file_machine" ]]; then
             os_file_parent=$(echo $tmp_os_file_parent | sed "s/^${tmp_os_file_path//\//\\\/}//")
             os_file_filename=$tmp_os_file_name
             os_file=$os_file_parent"/"$os_file_filename
@@ -138,6 +141,10 @@ fi
 port="80"
 if [ -n "$(fuser $port/tcp)" ]; then
     fuser -k $port/tcp
+    sleep 1
+fi
+if [ -n "$(fuser $port/udp)" ]; then
+    fuser -k $port/udp
     sleep 1
 fi
 
