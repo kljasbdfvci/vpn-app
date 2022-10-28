@@ -86,13 +86,13 @@ do
     tmp_os_file_filename=$(basename $tmp_os_file)
 
     # check file for os
-    reg=".+___.+___.+___.+___.+"
+    reg=".*___.*___.*___.*___.*"
     if [[ $tmp_os_file_filename =~ $reg ]]; then # sshd___orangepizero___debian___bullseye___aarch64
-        tmp_os_file_name=$(echo -n $tmp_os_file_filename | sed 's/\(.+\)___.+___.+___.+___.+/\1/')
-        tmp_os_file_hardware=$(echo -n $tmp_os_file_filename | sed 's/.+___\(.+\)___.+___.+___.+/\1/')
-        tmp_os_file_os_distro=$(echo -n $tmp_os_file_filename | sed 's/.+___.+___\(.+\)___.+___.+/\1/')
-        tmp_os_file_os_version=$(echo -n $tmp_os_file_filename | sed 's/.+___.+___.+___\(.+\)___.+/\1/')
-        tmp_os_file_machine=$(echo -n $tmp_os_file_filename | sed 's/.+___.+___.+___.+___\(.+\)/\1/')
+        tmp_os_file_name=$(echo -n $tmp_os_file_filename | sed 's/\(.*\)___.*___.*___.*___.*/\1/')
+        tmp_os_file_hardware=$(echo -n $tmp_os_file_filename | sed 's/.*___\(.*\)___.*___.*___.*/\1/')
+        tmp_os_file_os_distro=$(echo -n $tmp_os_file_filename | sed 's/.*___.*___\(.*\)___.*___.*/\1/')
+        tmp_os_file_os_version=$(echo -n $tmp_os_file_filename | sed 's/.*___.*___.*___\(.*\)___.*/\1/')
+        tmp_os_file_machine=$(echo -n $tmp_os_file_filename | sed 's/.*___.*___.*___.*___\(.*\)/\1/')
         if [[ "$hardware" == *"$tmp_os_file_hardware"* ]] && [[ "$os_distro" == "$tmp_os_file_os_distro" ]] && [[ "$os_version" == "$tmp_os_file_os_version" ]] && [[ "$machine" == "$tmp_os_file_machine" ]]; then
             os_file_parent=$(echo $tmp_os_file_parent | sed "s/^${tmp_os_file_path//\//\\\/}//")
             os_file_filename=$tmp_os_file_name
