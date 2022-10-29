@@ -58,6 +58,7 @@ def update(request):
         c.do()
         if c.returncode == 0:
             c1 = Execte("sleep 5 && reboot &", True)
+            c1.do()
             updating = 1
         else:
             updating = -1
