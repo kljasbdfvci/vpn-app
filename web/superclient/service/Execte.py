@@ -1,20 +1,23 @@
-import shlex
 import subprocess
 import logging
+import os
 
 class Execte:
-    def __init__(self, command):
+    def __init__(self, command, isBackground=False):
         self.command = command
+        self.isBackground=isBackground
         self.stdout = None
         self.stderr = None
         self.returncode = None
 
     def do(self):
-        args = shlex.split(self.command)
-        popen = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-        popen.wait()
-        self.stdout, self.stderr = popen.communicate()
-        self.returncode = popen.returncode
+        if self.isBackground:
+            self.returncode=os.system(self.command)
+        else:
+            popen = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True, close_fds=False)
+            popen.wait()
+            self.stdout, self.stderr = popen.communicate()
+            self.returncode = popen.returncode
         return (self.returncode, self.stdout, self.stderr)
     
     def print(self):

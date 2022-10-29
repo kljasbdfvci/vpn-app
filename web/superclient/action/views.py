@@ -52,16 +52,20 @@ def update(request):
         can_update = True
 
     #
-    updateng = False
+    updating = 0
     if request.method == 'POST':
-        c = Execte("serial -u /disk/username /disk/name /disk/firmware /memory/version /tmp && reboot &")
+        c = Execte("serial -u /disk/username /disk/name /disk/firmware /memory/version /tmp", False)
         c.do()
-        updateng = True
+        if c.returncode == 0:
+            c1 = Execte("sleep 5 && reboot &", True)
+            updating = 1
+        else:
+            updating = -1
 
     context = {
         'current_app_version' : current_app_version,
         'available_app_version' : available_app_version,
         'can_update' : can_update,
-        'updateng' : updateng
+        'updating' : updating
     }
     return render(request, 'update.html', context)

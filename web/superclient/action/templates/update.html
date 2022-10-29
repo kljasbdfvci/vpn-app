@@ -10,7 +10,7 @@
 
 <a href="/settings">Settings</a>
 
-{% if not updateng %}
+{% if updating == 0 %}
 <div id="form-container">
 
     <form id="main-form" action="/update" method="post">
@@ -22,9 +22,8 @@
     </form>
 
 </div>
-{% else %}
-    <h3>System is updating to version {{available_app_version}}, Please wait for 2 minutes.</h3>
+{% elif updating == 1 %}
+<h3>System is updating to version {{available_app_version}}, Please wait for 2 minutes.</h3>
+{% elif updating == -1 %}
+<h3>System is updating failed, Please contact to admin.</h3>
 {% endif %}
-
-
-
