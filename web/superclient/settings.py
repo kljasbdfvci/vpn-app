@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'superclient.vpn',
     'superclient.hotspot',
-    'superclient.user',
+    'superclient.action',
 ]
 
 MIDDLEWARE = [

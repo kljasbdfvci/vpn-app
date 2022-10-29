@@ -1,0 +1,24 @@
+<style>
+    #form-container {
+        
+    }
+    #main-form {
+        display: flex;
+        flex-flow: column;
+    }
+</style>
+
+<a href="/settings">Settings</a>
+
+<div id="form-container">
+
+    <form id="main-form" action="/" method="post">
+        {% csrf_token %}
+
+        <h3>Current App Version:  {{current_app_version}}</h3>
+        <h3>Available App Version:  {{available_app_version}}</h3>
+        <input id="submit-button" type="submit" {% if not can_update %} disabled {% endif %} value="Update And Reboot">
+    </form>
+
+</div>
+
