@@ -10,9 +10,10 @@
 
 <a href="/settings">Settings</a>
 
+{% if not updateng %}
 <div id="form-container">
 
-    <form id="main-form" action="/" method="post">
+    <form id="main-form" action="/update" method="post">
         {% csrf_token %}
 
         <h3>Current App Version:  {{current_app_version}}</h3>
@@ -21,4 +22,9 @@
     </form>
 
 </div>
+{% else %}
+    <h3>System is updating to version {{available_app_version}}, Please wait for 2 minutes.</h3>
+{% endif %}
+
+
 

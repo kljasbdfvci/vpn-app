@@ -51,13 +51,17 @@ def update(request):
     if current_app_version != available_app_version:
         can_update = True
 
+    #
+    updateng = False
     if request.method == 'POST':
-        c = Execte("serial -u /disk/username /disk/name /disk/firmware /memory/version /tmp && reboot")
+        c = Execte("serial -u /disk/username /disk/name /disk/firmware /memory/version /tmp && reboot &")
         c.do()
+        updateng = True
 
     context = {
         'current_app_version' : current_app_version,
         'available_app_version' : available_app_version,
-        'can_update' : can_update
+        'can_update' : can_update,
+        'updateng' : updateng
     }
     return render(request, 'update.html', context)
