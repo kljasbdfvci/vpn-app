@@ -1,26 +1,31 @@
 from django.shortcuts import render
-
-# Create your views here.
 from pathlib import Path
-from superclient.hotspot.models import Profile, Status
+from superclient.hotspot.models import Profile
+from superclient.action.models import ServiceStatus as Status
 from superclient.service.Execte import *
+
 
 
 def index(request):
     status = Status.get()
     active_profile = status.active_profile
-    isOn = False if active_profile is None else active_profile.ap.is_running() 
+
+    isOn = status.on
 
     if request.method == 'POST':
+        print('HERE I AM')
         if isOn:
-            isOn = not active_profile.ap.stop()
-            status.changeActiveProfile(None)
+            print('az ghabl onam mikham off sham')
+            status.active_profile = None
+            status.on = False
             status.save()
         else:
+            print('on nistam mikham besham')
             selected_profile = Profile.objects.filter(name=request.POST.dict()['profile']).first()
             active_profile = selected_profile
-            status.changeActiveProfile(active_profile)
-            isOn = active_profile.ap.start()
+            status.active_profile = active_profile
+            status.on = True
+            status.save()
 
     submitText = 'Off' if isOn else 'On'
     profiles = list(Profile.objects.values_list('name', flat=True))

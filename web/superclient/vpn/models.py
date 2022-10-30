@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 
 # Create your models here.
@@ -5,12 +6,19 @@ from django.db import models
 class Configuration(models.Model):
     name = models.CharField(max_length=256)  
     usable = models.BooleanField(default=True)
-    description = models.CharField(max_length=1028)
+    description = models.CharField(max_length=1028, blank=True)
 
     # Common Configuration Parameters
     host = models.CharField(max_length=128)
     port = models.IntegerField()
     password = models.CharField(max_length=128)  # TODO: save encrypted password
+
+    priority = models.IntegerField(default=0)
+
+    success = models.IntegerField(default=0)
+    failed = models.IntegerField(default=0)
+
+    enable = models.BooleanField(default=True)
 
 
 class L2tpConfig(Configuration):

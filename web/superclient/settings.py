@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'superclient.vpn',
     'superclient.hotspot',
     'superclient.action',
+    'background_task',
 ]
 
 MIDDLEWARE = [

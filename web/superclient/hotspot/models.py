@@ -13,10 +13,10 @@ class Profile(models.Model):
     ssid = models.CharField(max_length=128)
     interface = models.CharField(max_length=128)
     wpa_passphrase = models.CharField(max_length=128)
-    ip = models.CharField(max_length=16)
-    dhcp_ip_from = models.CharField(max_length=16)
-    dhcp_ip_to = models.CharField(max_length=16)
-    netmask = models.CharField(max_length=20)
+    ip = models.CharField(max_length=16, default='192.168.10.1')
+    dhcp_ip_from = models.CharField(max_length=16, default='192.168.10.10')
+    dhcp_ip_to = models.CharField(max_length=16, default='192.168.10.30')
+    netmask = models.CharField(max_length=20, default='255.255.255.0')
 
     @property
     def ap(self):
@@ -28,7 +28,7 @@ class Profile(models.Model):
             ip=self.ip, dhcp_ip_from=self.dhcp_ip_from, dhcp_ip_to=self.dhcp_ip_to, netmask=self.netmask
         )
 
-# TODO: don't delete the profile if it's active profile, show an error instead 
+# Deprecated use action.models.ServiceStatus
 class Status(models.Model):
     active_profile = models.OneToOneField(
         Profile,
