@@ -149,4 +149,5 @@ class AccessPoint:
 
     def restart(self):
         self.stop()
+        time.sleep(2)
         self.start()
