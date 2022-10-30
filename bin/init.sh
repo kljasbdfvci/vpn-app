@@ -140,7 +140,7 @@ fi
 # disable systemctl
 service="dnsmasq.service"
 
-if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" != 0 ]]; then
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
     systemctl stop $service
     systemctl disable $service
     echo "$service is disabled."
@@ -148,7 +148,7 @@ else
     echo "$service is already disable."
 fi
 service="hostapd.service"
-if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" != 0 ]]; then
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
     systemctl stop $service
     systemctl disable $service
     echo "$service is disabled."
