@@ -1,78 +1,125 @@
+<!doctype html>
 
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <meta property="og:title" content="Dashboard">
+  <meta property="og:type" content="website">
+</head>
 
-<style type="text/css">
-    body {
-        background-color: #005bff47;
-        margin: 0;
-        /* font-family: monospace; */
-        color: #181818;
-    }
-    #form-container {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        padding: 15px;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    #settings-link {
-        color: #181818;
-        position: absolute;
-        top: 15px;
-        left: 15px;
-    }
-    #main-form {
-        display: flex;
-        flex-flow: column;
-        /* box-sizing: content-box;
-        font-family: monospace;
-        color: #181818;
-        font-size: 32px;
-        font-size: 5vw;
-        background-color: blueviolet;
-        padding: 16px;
-        font-weight: bolder;
-        text-align: center;
-        border: 5px solid #181818; */
-    }
-    #submit-button {
-        background-color: blueviolet;
-        margin: 30px 0;
-        /* padding: 16px; */
-        font-weight: bolder;
-        text-align: center;
-        border: 2px solid #181818;
-    }
-    a:link { text-decoration: none; }
-    a:visited { text-decoration: none; }
-    a:hover { text-decoration: none; }
-    a:active { text-decoration: none; }
-</style>
-
-<div id="form-container">
+<body>
+    <style type="text/css">
+        body {
+            background-color: #005bff47;
+            margin: 0;
+            /* font-family: monospace; */
+            color: #181818;
+        }
+        #form-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #links {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+        #shortcuts {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-flow: column;
+            align-items: end;
+        }
+        .shortcut {
+            color: #181818;
+            margin-bottom: 15px;
+        }
+        .link {
+            color: #181818;
+            margin-right: 15px;
+        }
+        #main-form {
+            width: 50vw;
+            min-width: 500px;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+            /* box-sizing: content-box;
+            font-family: monospace;
+            color: #181818;
+            font-size: 32px;
+            font-size: 5vw;
+            background-color: blueviolet;
+            padding: 16px;
+            font-weight: bolder;
+            text-align: center;
+            border: 5px solid #181818; */
+        }
+        #main-form-items {
+            width: 40%;
+        }
+        .main-form-item {
+            width: 100%
+        }
+        #submit-button {
+            height: 32px;
+            background-color: blueviolet;
+            margin: 30px 0;
+            /* padding: 16px; */
+            font-weight: bolder;
+            text-align: center;
+            border: 2px solid #181818;
+        }
+        a:link { text-decoration: none; }
+        a:visited { text-decoration: none; }
+        a:hover { text-decoration: none; }
+        a:active { text-decoration: none; }
+    </style>
     
-    <a id="settings-link" href="/settings">⚙️ Settings</a>
-
-    {% if profiles %}
-    <form id="main-form" action="/" method="post">
-        {% csrf_token %}
-
-        {% if isOn %}
-        <label for="submit-button">Hotspot SSID: {{activeProfileSSID}}</label>
+    <div id="form-container">
+        
+        <div id="links">
+            <a class="link" href="/settings">⚙️ Settings</a>
+            <a class="link" href="/update">🔄 Update</a>
+        </div>
+    
+        <div id="shortcuts">
+            <p>Quick Add VPN</p>
+            <a class="shortcut" href="/settingsvpn/ciscoconfig/">Cisco ➕</a>
+            <a class="shortcut" href="/settingsvpn/openvpnconfig/">OpenVpn ➕</a>
+        </div>
+    
+        {% if profiles %}
+        <form id="main-form" action="/" method="post">
+            {% csrf_token %}
+            <div id="main-form-items">
+                {% if isOn %}
+                <label for="submit-button">Hotspot SSID: {{activeProfileSSID}}</label>
+                {% else %}
+                <label for="select-profile">Select a Hotspot profile</label>
+                <select class="main-form-item" id="select-profile" name="profile" id="profiles">
+                    {% for profile in profiles %}
+                    <option value="{{profile}}">{{profile}}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+        
+                <input class="main-form-item" id="submit-button" type="submit" value="{{ submitText }}">
+            </div>
+        </form>
         {% else %}
-        <label for="select-profile">Select a Hotspot profile</label>
-        <select id="select-profile" name="profile" id="profiles">
-            {% for profile in profiles %}
-            <option value="{{profile}}">{{profile}}</option>
-            {% endfor %}
-        </select>
+        <a href="/settingshotspot">Add Hotspot Profile ➕</a>
         {% endif %}
-
-        <input id="submit-button" type="submit" value="{{ submitText }}">
-    </form>
-    {% else %}
-    <a href="/settingshotspot">Add Hotspot Profile ➕</a>
-    {% endif %}
-</div>
+    </div>
+</body>
+</html>
