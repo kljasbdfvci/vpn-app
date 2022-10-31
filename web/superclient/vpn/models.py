@@ -3,32 +3,31 @@ from django.db import models
 
 # Create your models here.
 class Configuration(models.Model):
+
     name = models.CharField(max_length=256, unique=True)  
-    usable = models.BooleanField(default=True)
     description = models.CharField(max_length=1028, blank=True)
+    enable = models.BooleanField(default=True)
+    priority = models.IntegerField(default=0)
+    success = models.IntegerField(default=0, editable=False)
+    failed = models.IntegerField(default=0, editable=False)
 
     # Common Configuration Parameters
     host = models.CharField(max_length=128)
     port = models.IntegerField()
-    password = models.CharField(max_length=128)  # TODO: save encrypted password
-
-    priority = models.IntegerField(default=0)
-
-    success = models.IntegerField(default=0)
-    failed = models.IntegerField(default=0)
-
-    enable = models.BooleanField(default=True)
-
 
 class L2tpConfig(Configuration):
     username = models.CharField(max_length=128)
+    password = models.CharField(max_length=128)  # TODO: save encrypted password
 
 
 class CiscoConfig(Configuration):
     username = models.CharField(max_length=128)
+    password = models.CharField(max_length=128)  # TODO: save encrypted password
 
 
 class ShadowSocksConfig(Configuration):
+
+    password = models.CharField(max_length=128)  # TODO: save encrypted password
 
     class Encryption(models.TextChoices):
         chacha20_ietf_poly = "chacha20poly", "chacha20-ietf-poly1305"
@@ -41,3 +40,5 @@ class ShadowSocksConfig(Configuration):
 
 class OpenVpnConfig(Configuration):
     username = models.CharField(max_length=128)
+    password = models.CharField(max_length=128)  # TODO: save encrypted password
+ 

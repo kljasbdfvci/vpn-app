@@ -4,8 +4,8 @@ from django.db import models
 class Profile(models.Model):
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1028, blank=True)
-    ssid = models.CharField(max_length=128)
     interface = models.CharField(max_length=128)
+    ssid = models.CharField(max_length=128)
     wpa_passphrase = models.CharField(max_length=128)
     ip = models.CharField(max_length=16, default='192.168.10.1')
     dhcp_ip_from = models.CharField(max_length=16, default='192.168.10.10')
