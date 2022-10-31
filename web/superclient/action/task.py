@@ -15,13 +15,10 @@ def service_checker():
     else:
         stop_services(status)
 
-@background(schedule=3600, remove_existing_tasks=True)
+@background(schedule=300, remove_existing_tasks=True)
 def quota():
-    
     dt_now = datetime.now()
     dt = dt_now - timedelta(hours=1, minutes=0, seconds=0)
-    print(dt_now)
-    print(dt)
     CompletedTask.objects.filter(Q(run_at__lt=dt)).delete()
 
 def start_services(status: ServiceStatus):

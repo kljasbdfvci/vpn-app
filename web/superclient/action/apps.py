@@ -12,7 +12,7 @@ class ActionConfig(AppConfig):
             from superclient.action.task import service_checker
             service_checker(repeat=5)
             from superclient.action.task import quota
-            quota(repeat=3600)
+            quota(repeat=300)
 
 
 def db_table_exists(table, cursor=None):
