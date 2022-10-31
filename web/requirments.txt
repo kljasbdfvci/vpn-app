@@ -3,4 +3,4 @@ django==4.1.1
 psutil==5.9.2
 sqlparse==0.4.3
 nmcli==1.1.1
-django4-background-tasks==1.16.0
+django4-background-tasks==1.2.7
