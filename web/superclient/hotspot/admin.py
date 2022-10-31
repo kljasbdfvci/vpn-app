@@ -1,10 +1,7 @@
-from dataclasses import fields
 from django.contrib import admin
 from django import forms
 from .models import Profile
 from .service.hotspot import get_network_interfaces as interfaces
-
-
 
 class ProfileAdminForm(forms.ModelForm):
     interface = forms.ChoiceField(choices=tuple((key, key) for key in interfaces()))

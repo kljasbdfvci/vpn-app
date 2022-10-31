@@ -1,10 +1,9 @@
-from email.policy import default
 from django.db import models
 
-# Create your models here.
 
+# Create your models here.
 class Configuration(models.Model):
-    name = models.CharField(max_length=256)  
+    name = models.CharField(max_length=256, unique=True)  
     usable = models.BooleanField(default=True)
     description = models.CharField(max_length=1028, blank=True)
 

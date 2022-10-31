@@ -1,9 +1,9 @@
-from ast import ImportFrom
 import logging
 import shutil
 import psutil
 import time
 
+### local
 from .ConfigItem import *
 from .Execte import *
 
@@ -23,7 +23,7 @@ class AccessPoint:
         self.wpa_key_mgmt = ConfigItem("wpa_key_mgmt", "WPA-PSK")
         self.wpa_pairwise = ConfigItem("wpa_pairwise", "TKIP")
         self.rsn_pairwise = ConfigItem("rsn_pairwise", "CCMP")
-        self.hostapd_config_path = "hostapd.conf"
+        self.hostapd_config_path = "./hostapd.conf"
         # interface ip
         self.ip = ip
         # dnsmasq

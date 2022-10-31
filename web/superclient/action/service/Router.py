@@ -1,6 +1,7 @@
 import nmcli
 
-from .Execte import Execte
+# local
+from .Execte import *
 
 class Router:
     def __init__(self):

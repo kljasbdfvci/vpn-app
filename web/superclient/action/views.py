@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from pathlib import Path
 from superclient.hotspot.models import Profile
-from superclient.action.models import ServiceStatus as Status
-from superclient.service.Execte import *
+from .models import ServiceStatus as Status
+from .service.Execte import *
 
 
 
