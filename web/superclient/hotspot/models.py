@@ -2,7 +2,7 @@ from django.db import models
 from superclient.action.service import AccessPoint
 
 
-
+# Create your models here.
 class Profile(models.Model):
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1028, blank=True)
@@ -16,9 +16,6 @@ class Profile(models.Model):
 
     @property
     def access_point(self):
-        """
-        return access point
-        """
         return AccessPoint(
             interface=self.interface, ssid=self.ssid, wpa_passphrase=self.wpa_passphrase,
             ip=self.ip, dhcp_ip_from=self.dhcp_ip_from, dhcp_ip_to=self.dhcp_ip_to, netmask=self.netmask
