@@ -1,5 +1,5 @@
 from django.db import models
-from superclient.action.service import AccessPoint
+from superclient.action.service.AccessPoint import AccessPoint
 
 
 # Create your models here.
