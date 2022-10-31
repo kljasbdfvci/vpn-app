@@ -11,6 +11,8 @@ class ActionConfig(AppConfig):
             print("Init Tasks...")
             from superclient.action.task import service_checker
             service_checker(repeat=5)
+            from superclient.action.task import quata
+            quata(repeat=3600)
 
 
 def db_table_exists(table, cursor=None):
