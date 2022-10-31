@@ -60,7 +60,7 @@
         {% csrf_token %}
 
         {% if isOn %}
-        <label for="submit-button">Active profile: {{activeProfile}}</label>
+        <label for="submit-button">Hotspot SSID: {{activeProfileSSID}}</label>
         {% else %}
         <label for="select-profile">Select a Hotspot profile</label>
         <select id="select-profile" name="profile" id="profiles">

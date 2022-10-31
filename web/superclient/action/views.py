@@ -8,36 +8,27 @@ from .service.Execte import *
 
 def index(request):
     status = Status.get()
-    active_profile = status.active_profile
-
-    isOn = status.on
 
     if request.method == 'POST':
-        print('HERE I AM')
-        if isOn:
-            print('az ghabl onam mikham off sham')
-            status.active_profile = None
-            status.on = False
-            status.save()
-        else:
-            print('on nistam mikham besham')
+        if not status.on:
             selected_profile = Profile.objects.filter(name=request.POST.dict()['profile']).first()
-            active_profile = selected_profile
-            status.active_profile = active_profile
-            status.on = True
-            status.save()
+            status.change_active_profile(selected_profile)
+        
+        status.toggle_on()
 
-    submitText = 'Off' if isOn else 'On'
+    submitText = 'Off' if status.on else 'On'
     profiles = list(Profile.objects.values_list('name', flat=True))
   
     context = {
-        'isOn': isOn, 
+        'isOn': status.on, 
         'profiles': profiles, 
         'submitText': submitText, 
-        'activeProfile': '' if active_profile is None else active_profile.name
+        'activeProfile': '' if status.active_profile is None else status.active_profile.name,
+        'activeProfileSSID': '' if status.active_profile is None else status.active_profile.ssid,
     }
     
     return render(request, 'index.html', context)
+
 
 def update(request):
     

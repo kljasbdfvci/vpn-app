@@ -28,10 +28,13 @@ class ServiceStatus(models.Model):
 
         return ServiceStatus.objects.first()
 
-    def changeActiveProfile(self, profile):
+    def change_active_profile(self, profile):
         self.active_profile = profile
         self.save()
 
+    def toggle_on(self):
+        self.on = not self.on
+        self.save()
 
 
 #     @property
