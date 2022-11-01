@@ -2,6 +2,7 @@ import logging
 import shutil
 import psutil
 import time
+from pathlib import Path
 
 ### local
 from .ConfigItem import *
@@ -23,7 +24,7 @@ class AccessPoint:
         self.wpa_key_mgmt = ConfigItem("wpa_key_mgmt", "WPA-PSK")
         self.wpa_pairwise = ConfigItem("wpa_pairwise", "TKIP")
         self.rsn_pairwise = ConfigItem("rsn_pairwise", "CCMP")
-        self.hostapd_config_path = "./hostapd.conf"
+        self.hostapd_config_path = Path(__file__).resolve().parent / "hostapd.conf"
         # interface ip
         self.ip = ip
         # dnsmasq
@@ -74,17 +75,17 @@ class AccessPoint:
 
         try:
             logging.debug('stoping wpa_supplicant.')
-            c1 = Execte('killall wpa_supplicant')
+            c1 = Execte('killall wpa_supplicant', False)
             c1.do()
             c1.print()
 
             logging.debug('turning off radio wifi.')
-            c2 = Execte('nmcli radio wifi off')
+            c2 = Execte('nmcli radio wifi off', False)
             c2.do()
             c2.print()
 
             logging.debug('unblocking wlan.')
-            c3 = Execte('rfkill unblock wlan')
+            c3 = Execte('rfkill unblock wlan', False)
             c3.do()
             c3.print()
 
@@ -95,7 +96,7 @@ class AccessPoint:
             pass
 
         logging.debug('interface: {} on IP: {} is up.'.format(self.interface.value, self.ip))
-        c4 = Execte('ifconfig {} up {} netmask {}'.format(self.interface.value, self.ip, self.netmask))
+        c4 = Execte('ifconfig {} up {} netmask {}'.format(self.interface.value, self.ip, self.netmask), False)
         c4.do()
         c4.print()
 
@@ -104,7 +105,7 @@ class AccessPoint:
 
         logging.debug('running dnsmasq.')
         c5 = Execte('dnsmasq --dhcp-authoritative --interface={} --dhcp-range={},{},{},{}'\
-            .format(self.interface.value, self.dhcp_ip_from, self.dhcp_ip_to, self.netmask, self.lease_time))
+            .format(self.interface.value, self.dhcp_ip_from, self.dhcp_ip_to, self.netmask, self.lease_time), False)
         c5.do()
         c5.print()
 
@@ -112,7 +113,7 @@ class AccessPoint:
         time.sleep(2)
 
         logging.debug('running hostapd.')
-        c6 = Execte('hostapd -B {}'.format(self.hostapd_config_path))
+        c6 = Execte('hostapd -B {}'.format(self.hostapd_config_path), False)
         c6.do()
         c6.print()
 
@@ -128,19 +129,19 @@ class AccessPoint:
 
         # bring down the interface
         logging.debug('interface {} is down.'.format(self.interface.value))
-        c1 = Execte('ifconfig {} down'.format(self.interface.value))
+        c1 = Execte('ifconfig {} down'.format(self.interface.value), False)
         c1.do()
         c1.print()
 
         # stop hostapd
         logging.debug('stopping hostapd.')
-        c2 = Execte('pkill hostapd')
+        c2 = Execte('pkill hostapd', False)
         c2.do()
         c2.print()
 
         # stop dnsmasq
         logging.debug('stopping dnsmasq.')
-        c3 = Execte('killall dnsmasq')
+        c3 = Execte('killall dnsmasq', False)
         c3.do()
         c3.print()
 
