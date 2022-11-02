@@ -7,12 +7,24 @@ class ActionConfig(AppConfig):
     name = 'superclient.action'
 
     def ready(self):
+        unregister_admin()
+
         if db_table_exists('background_task'):
             print("Init Tasks...")
             from superclient.action.task import service_checker
             service_checker(repeat=5)
             from superclient.action.task import quota
             quota(repeat=300)
+
+
+def unregister_admin():
+    from django.contrib import admin
+    from django.contrib.auth.models import Group
+    from background_task.models import CompletedTask, Task
+    
+    admin.site.unregister(Group)
+    admin.site.unregister(CompletedTask)
+    admin.site.unregister(Task)
 
 
 def db_table_exists(table, cursor=None):
