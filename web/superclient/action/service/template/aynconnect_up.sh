@@ -26,11 +26,6 @@ else
     no_deflate=""
 fi
 
-echo $no_dtls
-echo $passtos
-echo $no_deflate
-
-
 exit_code=""
 
 tmpfile1=$(mktemp)
