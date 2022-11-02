@@ -14,3 +14,4 @@ class ProfileAdminForm(forms.ModelForm):
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     form = ProfileAdminForm
+    list_display = ('name', 'interface', 'ssid')
