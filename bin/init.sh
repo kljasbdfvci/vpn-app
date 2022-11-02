@@ -45,7 +45,7 @@ else
 fi
 
 # install list of apt packages
-packages=("python3" "python3-dev" "python3-pip" "net-tools" "hostapd" "dnsmasq" "jq" "network-manager-openconnect" "openconnect")
+packages=("python3" "python3-dev" "python3-pip" "net-tools" "hostapd" "dnsmasq" "jq" "network-manager-openconnect" "openconnect" "expect")
 for package in ${packages[@]}
 do
     if [ -z "$(dpkg -l | grep -w $package)" ]

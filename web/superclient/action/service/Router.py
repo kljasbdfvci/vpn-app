@@ -1,9 +1,99 @@
+from pathlib import Path
+import string
+from sys import stdout
 import nmcli
+from ...vpn.models import *
+import os.path
 
 # local
 from .Execte import *
 
 class Router:
+    def __init__(self,vpn : Configuration):
+        self.VpnList = {
+            "anyconnect": {
+                "up_file" : Path(__file__).resolve().parent / "template/up_aynconnect.sh",
+                "pid_file" : Path(__file__).resolve().parent / "anyconnect.pid",
+                "interface" : "tun0"
+            },
+        }
+        self.vpn = vpn
+
+    def ConnectVPN(self, timeout):
+        res = -1
+        output = ""
+        if isinstance(self.vpn, CiscoConfig):
+            up_file = self.VpnList["anyconnect"]["up_file"]
+            gateway = self.vpn.host + ":" + str(self.vpn.port)
+            username = self.vpn.username
+            password = self.vpn.password
+            pid_file = self.VpnList["anyconnect"]["pid_file"]
+            interface = self.VpnList["anyconnect"]["interface"]
+            c1 = Execte("{} {} {} {} {} {} {}".format(up_file, gateway, username, password, timeout, pid_file, interface))
+            c1.do()
+            res = c1.returncode
+            output = c1.stdout + c1.stderr
+        else:
+            res = -1
+            output = "Not Implimnet Yet"
+
+        if res == 0:
+            self._ip_table()
+
+        return res, output
+
+    def DisconnectVPN(self):
+        res = -1
+        output = ""
+        if isinstance(self.vpn, CiscoConfig):
+            pid_file = self.VpnList["anyconnect"]["pid_file"]
+            if os.path.isfile(pid_file):
+                c1 = Execte("(kill -SIGINT `cat {}` && rm {}) || (kill -SIGKILL `cat {}` && rm {})".format(pid_file, pid_file, pid_file, pid_file))
+                c1.do()
+                res = c1.returncode
+                output = c1.stdout + c1.stderr
+            else:
+                res = 0
+                output = "vpn is already disable."
+
+        else:
+            res = -1
+            output = "Not Implimnet Yet"
+
+        return res, output
+
+    def _ip_table(self):
+        # sysctl -w net.ipv4.ip_forward=1
+        # iptables -t nat -A  POSTROUTING -o tun0 -j MASQUERADE
+        if isinstance(self.vpn, CiscoConfig):
+            interface = self.VpnList["anyconnect"]["interface"]
+            c1 = Execte("sysctl -w net.ipv4.ip_forward=1")
+            c1.do()
+            c1 = Execte("iptables -t nat -A  POSTROUTING -o {} -j MASQUERADE".format(interface))
+            c1.do()
+        else:
+            res = -1
+            output = "Not Implimnet Yet"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Router1:
     def __init__(self):
         self.VpnProtocolList = {
             "anyconnect": {
