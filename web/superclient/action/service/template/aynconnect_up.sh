@@ -13,8 +13,9 @@ tmpfile1=$(mktemp)
 tmpfile2=$(mktemp)
 trap 'rm -f $tmpfile1 $tmpfile2' EXIT
 
-$(openssl s_client -connect $gateway </dev/null 2>/dev/null | openssl x509 -text > $tmpfile1)
-res1=$?
+#$(openssl s_client -connect $gateway </dev/null 2>/dev/null | openssl x509 -text > $tmpfile1)
+#res1=$?
+res1=0
 $(openssl s_client -showcerts -connect $gateway </dev/null 2>/dev/null | openssl x509 -outform PEM > $tmpfile2)
 res2=$?
 if [ $res1 == 0 ] && [ $res2 == 0 ]; then

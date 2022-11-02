@@ -9,14 +9,14 @@ from .ConfigItem import *
 from .Execte import *
 
 class AccessPoint:
-    def __init__(self, interface, ssid, wpa_passphrase, ip, dhcp_ip_from, dhcp_ip_to, netmask):
+    def __init__(self, interface, channel, ssid, wpa_passphrase, ip, dhcp_ip_from, dhcp_ip_to, netmask):
         # hostapd configs
         self.interface = ConfigItem("interface", interface)
+        self.channel = ConfigItem("channel", channel)
         self.ssid = ConfigItem("ssid", ssid)
         self.wpa_passphrase = ConfigItem("wpa_passphrase", wpa_passphrase)
         self.driver = ConfigItem("driver", "nl80211")
         self.hw_mode = ConfigItem("hw_mode", "g")
-        self.channel = ConfigItem("channel", "6")
         self.macaddr_acl = ConfigItem("macaddr_acl", "0")
         self.auth_algs = ConfigItem("auth_algs", "1")
         self.ignore_broadcast_ssid = ConfigItem("ignore_broadcast_ssid", "0")
