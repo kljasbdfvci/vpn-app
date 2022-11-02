@@ -69,16 +69,21 @@
             width: 40%;
         }
         .main-form-item {
-            width: 100%
+            height: 32px;
+            width: 100%;
+            margin: 6px 0;
         }
         #submit-button {
-            height: 32px;
             background-color: blueviolet;
             margin: 30px 0;
             /* padding: 16px; */
             font-weight: bolder;
             text-align: center;
             border: 2px solid #181818;
+        }
+        .main-form-item-spliter {
+            display: block;
+            margin: 15px;
         }
         a:link { text-decoration: none; }
         a:visited { text-decoration: none; }
@@ -92,24 +97,32 @@
             <a class="link" href="/settings">⚙️ Settings</a>
             <a class="link" href="/update">🔄 Update</a>
         </div>
-    
+
         <div id="shortcuts">
             <p>Quick Add VPN</p>
-            <a class="shortcut" href="/settingsvpn/ciscoconfig/">Cisco ➕</a>
-            <a class="shortcut" href="/settingsvpn/openvpnconfig/">OpenVpn ➕</a>
+            <a class="shortcut" href="/settingsvpn/ciscoconfig/add/">Cisco ➕</a>
+            <a class="shortcut" href="/settingsvpn/openvpnconfig/add/">OpenVpn ➕</a>
         </div>
-    
+
         {% if profiles %}
         <form id="main-form" action="/" method="post">
             {% csrf_token %}
             <div id="main-form-items">
                 {% if isOn %}
-                <label for="submit-button">Hotspot SSID: {{activeProfileSSID}}</label>
+                <p for="submit-button">Hotspot SSID: {{activeProfileSSID}}</p>
+                <p for="submit-button">VPN Connection: {{activeVpn}}</p>
                 {% else %}
-                <label for="select-profile">Select a Hotspot profile</label>
+                <label for="select-profile">Select Hotspot profile</label>
                 <select class="main-form-item" id="select-profile" name="profile" id="profiles">
                     {% for profile in profiles %}
                     <option value="{{profile}}">{{profile}}</option>
+                    {% endfor %}
+                </select>
+                <span class="main-form-item-spliter"></span>
+                <label for="select-vpn">Select Vpn Connection</label>
+                <select class="main-form-item" id="select-vpn" name="vpn" id="vpns">
+                    {% for vpn in vpns %}
+                    <option value="{{vpn.id}}">{{vpn.title}}</option>
                     {% endfor %}
                 </select>
                 {% endif %}
@@ -118,7 +131,7 @@
             </div>
         </form>
         {% else %}
-        <a href="/settingshotspot">Add Hotspot Profile ➕</a>
+        <a href="/settingshotspot/profile/add/">Add Hotspot Profile ➕</a>
         {% endif %}
     </div>
 </body>

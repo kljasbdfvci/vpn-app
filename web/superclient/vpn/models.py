@@ -15,6 +15,26 @@ class Configuration(models.Model):
     host = models.CharField(max_length=128)
     port = models.IntegerField()
 
+    @property
+    def subclass(self):
+        if(hasattr(self, 'ciscoconfig')):
+            return self.ciscoconfig
+        if(hasattr(self, 'l2tpconfig')):
+            return self.l2tpconfig
+        if(hasattr(self, 'openvpnconfig')):
+            return self.openvpnconfig
+        if(hasattr(self, 'shadowsocksconfig')):
+            return self.shadowsocksconfig
+
+    @property
+    def type(self):
+        return type(self.subclass).__name__.lower().replace('config', '')
+
+    @property
+    def title(self):
+        return f'{self.name} ({self.type})'
+
+
 class L2tpConfig(Configuration):
     username = models.CharField(max_length=128)
     password = models.CharField(max_length=128)  # TODO: save encrypted password

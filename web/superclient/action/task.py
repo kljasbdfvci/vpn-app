@@ -6,7 +6,15 @@ from django.db.models import Q
 from datetime import datetime, timedelta
 
 
-@background(schedule=5, remove_existing_tasks=True)
+
+@background(schedule=300, remove_existing_tasks=True)
+def quota():
+    dt_now = datetime.now()
+    dt = dt_now - timedelta(hours=1, minutes=0, seconds=0)
+    CompletedTask.objects.filter(Q(run_at__lt=dt)).delete()
+
+
+@background(schedule=0, remove_existing_tasks=True)
 def service_checker():
     status = ServiceStatus.get()    
 
@@ -15,11 +23,6 @@ def service_checker():
     else:
         stop_services(status)
 
-@background(schedule=300, remove_existing_tasks=True)
-def quota():
-    dt_now = datetime.now()
-    dt = dt_now - timedelta(hours=1, minutes=0, seconds=0)
-    CompletedTask.objects.filter(Q(run_at__lt=dt)).delete()
 
 def start_services(status: ServiceStatus):
     print('starting services...')

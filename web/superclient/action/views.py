@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from pathlib import Path
 from superclient.hotspot.models import Profile
+from superclient.vpn.models import Configuration
 from .models import ServiceStatus as Status
 from .service.Execte import *
+from superclient.action.task import service_checker
 
 
 
@@ -13,18 +15,34 @@ def index(request):
         if not status.on:
             selected_profile = Profile.objects.filter(name=request.POST.dict()['profile']).first()
             status.change_active_profile(selected_profile)
+
+            selected_vpn = Configuration.objects.filter(id=request.POST.dict()['vpn']).first()
+            status.change_active_vpn(selected_vpn)
         
         status.toggle_on()
+        service_checker(repeat=5)
 
     submitText = 'Off' if status.on else 'On'
     profiles = list(Profile.objects.values_list('name', flat=True))
-  
+    vpn_configs = Configuration.objects.filter(enable=True).order_by('priority').all()
+    vpns = [
+        {
+            'title': vpn.title,
+            'id': vpn.id
+        }
+        for vpn in vpn_configs
+    ]
+    vpns.insert(0, {'title': 'auto (smart)', 'id': -1})
+
+
     context = {
         'isOn': status.on, 
         'profiles': profiles, 
+        'vpns': vpns,
         'submitText': submitText, 
         'activeProfile': '' if status.active_profile is None else status.active_profile.name,
         'activeProfileSSID': '' if status.active_profile is None else status.active_profile.ssid,
+        'activeVpn': 'auto (smart)' if status.active_vpn is None else status.active_vpn.title,
     }
     
     return render(request, 'index.html', context)
