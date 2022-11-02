@@ -43,6 +43,9 @@ class L2tpConfig(Configuration):
 class CiscoConfig(Configuration):
     username = models.CharField(max_length=128)
     password = models.CharField(max_length=128)  # TODO: save encrypted password
+    no_dtls = models.BooleanField(default=False)
+    passtos = models.BooleanField(default=False)
+    no_deflate = models.BooleanField(default=False)
 
 
 class ShadowSocksConfig(Configuration):
@@ -61,4 +64,3 @@ class ShadowSocksConfig(Configuration):
 class OpenVpnConfig(Configuration):
     username = models.CharField(max_length=128)
     password = models.CharField(max_length=128)  # TODO: save encrypted password
- 

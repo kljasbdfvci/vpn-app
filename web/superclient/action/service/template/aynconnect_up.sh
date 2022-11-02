@@ -7,6 +7,29 @@ timeout=$4
 pid_file=$5
 interface=$6
 try=$7
+no_dtls=$8
+if [ "$no_dtls" == "True" ]; then
+    no_dtls="--no-dtls"
+else
+    no_dtls=""
+fi
+passtos=$9
+if [ "$passtos" == "True" ]; then
+    passtos="--passtos"
+else
+    passtos=""
+fi
+no_deflate=$10
+if [ "$no_deflate" == "True" ]; then
+    no_deflate="--no-deflate"
+else
+    no_deflate=""
+fi
+
+echo $no_dtls
+echo $passtos
+echo $no_deflate
+
 
 exit_code=""
 
@@ -25,13 +48,14 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
     n=0
     until [ "$n" -ge $try ]
     do
-        timeout $timeout echo $password | openconnect --protocol=anyconnect --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert 
+        echo -e "\n\nTry($n)\n\n"
+        timeout $timeout echo $password | openconnect $no_dtls $passtos $no_deflate --protocol=anyconnect --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert 
         exit_code=$?
         if [ $exit_code == 0 ]; then
             break
         fi
         n=$((n+1)) 
-        sleep 3
+        sleep 1
     done
 else
     exit_code=10
