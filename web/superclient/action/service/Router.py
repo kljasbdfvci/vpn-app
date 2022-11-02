@@ -18,7 +18,7 @@ class Router:
         self.vpn = vpn
         self.hotspot = hotspot
 
-    def ConnectVPN(self, timeout):
+    def ConnectVPN(self, timeout, try_count):
         res = -1
         output = ""
         if isinstance(self.vpn, CiscoConfig):
@@ -28,7 +28,7 @@ class Router:
             password = self.vpn.password
             pid_file = self.VpnList["anyconnect"]["pid_file"]
             interface = self.VpnList["anyconnect"]["interface"]
-            c1 = Execte("{} {} {} {} {} {} {}".format(up_file, gateway, username, password, timeout, pid_file, interface))
+            c1 = Execte("{} {} {} {} {} {} {} {}".format(up_file, gateway, username, password, timeout, pid_file, interface, try_count))
             c1.do()
             res = c1.returncode
             output = c1.stdout + c1.stderr

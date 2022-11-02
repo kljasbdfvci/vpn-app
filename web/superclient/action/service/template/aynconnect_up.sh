@@ -6,6 +6,7 @@ password=$3
 timeout=$4
 pid_file=$5
 interface=$6
+try=$7
 
 exit_code=""
 
@@ -21,8 +22,17 @@ res2=$?
 if [ $res1 == 0 ] && [ $res2 == 0 ]; then
     servercert=$(openssl x509 -in $tmpfile2 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)
     servercert="pin-sha256:"$servercert
-    timeout $timeout echo $password | openconnect --protocol=anyconnect --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert
-    exit_code=$?
+    n=0
+    until [ "$n" -ge $try ]
+    do
+        timeout $timeout echo $password | openconnect --protocol=anyconnect --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert 
+        exit_code=$?
+        if [ $exit_code == 0 ]; then
+            break
+        fi
+        n=$((n+1)) 
+        sleep 3
+    done
 else
     exit_code=10
 fi
