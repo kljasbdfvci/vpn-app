@@ -1,15 +1,13 @@
 from pathlib import Path
-import string
-from sys import stdout
-import nmcli
-from ...vpn.models import *
-import os.path
+import os
 
 # local
 from .Execte import *
+from ...vpn.models import *
+from ...hotspot.models import *
 
 class Router:
-    def __init__(self,vpn : Configuration):
+    def __init__(self,vpn : Configuration, hotspot : Profile):
         self.VpnList = {
             "anyconnect": {
                 "up_file" : Path(__file__).resolve().parent / "template/up_aynconnect.sh",
@@ -18,6 +16,7 @@ class Router:
             },
         }
         self.vpn = vpn
+        self.hotspot = hotspot
 
     def ConnectVPN(self, timeout):
         res = -1
@@ -38,7 +37,8 @@ class Router:
             output = "Not Implimnet Yet"
 
         if res == 0:
-            self._ip_table()
+            self.reset_ip_table()
+            self.set_ip_table()
 
         return res, output
 
@@ -46,170 +46,122 @@ class Router:
         res = -1
         output = ""
         if isinstance(self.vpn, CiscoConfig):
-            pid_file = self.VpnList["anyconnect"]["pid_file"]
-            if os.path.isfile(pid_file):
-                c1 = Execte("(kill -SIGINT `cat {}` && rm {}) || (kill -SIGKILL `cat {}` && rm {})".format(pid_file, pid_file, pid_file, pid_file))
-                c1.do()
-                res = c1.returncode
-                output = c1.stdout + c1.stderr
+            pid = self.read_pid_file()
+            if pid != 0:
+                if self.is_running():
+                    c2 = Execte("kill -SIGINT {} || kill -SIGKILL {})".format(pid, pid))
+                    c2.do()
+                    res = c2.returncode
+                    output = c2.stdout + c2.stderr
+                else:
+                    res = 0
+                    output = "vpn is already disable."
+                self.delete_pid_file()
             else:
                 res = 0
                 output = "vpn is already disable."
-
         else:
             res = -1
             output = "Not Implimnet Yet"
+
+        self.reset_ip_table()
 
         return res, output
 
-    def _ip_table(self):
-        # sysctl -w net.ipv4.ip_forward=1
-        # iptables -t nat -A  POSTROUTING -o tun0 -j MASQUERADE
+    def is_running(self):
+        res = False
         if isinstance(self.vpn, CiscoConfig):
-            interface = self.VpnList["anyconnect"]["interface"]
-            c1 = Execte("sysctl -w net.ipv4.ip_forward=1")
-            c1.do()
-            c1 = Execte("iptables -t nat -A  POSTROUTING -o {} -j MASQUERADE".format(interface))
-            c1.do()
-        else:
-            res = -1
-            output = "Not Implimnet Yet"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class Router1:
-    def __init__(self):
-        self.VpnProtocolList = {
-            "anyconnect": {
-                "run_script" : "./template/up_aynconnect.sh",
-            },
-        }
-        self.VPNList = []
-
-    def AddVPN(self, id, protocol, cfg):
-        
-        if protocol == "anyconnect":
-            gateway = cfg["gateway"]
-            username = cfg["username"]
-            password = cfg["password"]
-            priority = cfg["priority"]
-            full_cfg = {
-                "vpn.service-type" : "openconnect",
-                "vpn.data" : '''
-authtype=password, 
-autoconnect-flags=2, 
-certsigs-flags=2, 
-cookie-flags=2, 
-enable_csd_trojan=no, 
-gateway={}, 
-gateway-flags=2, 
-gwcert-flags=2, 
-lasthost-flags=2, 
-pem_passphrase_fsid=yes, 
-prevent_invalid_cert=no, 
-protocol=anyconnect, 
-resolve-flags=2, 
-stoken_source=disabled, 
-xmlconfig-flags=2, 
-service-type=openconnect,
-username={}, 
-password={}, 
-priority={}, 
-success=0, 
-failed=0
-'''.format(gateway, username, password, priority),
-"vpn.secrets" : '''
-'''.format(),
-"ipv4.method" : "auto",
-"ipv6.method" : "auto"
-            }
-            nmcli.connection.add("vpn", full_cfg, "*", id, False)
+            pid = self.read_pid_file()
+            if pid != 0:
+                c1 = Execte("kill -0 {})".format(pid))
+                c1.do()
+                if c1.isSuccess:
+                    res = True
         else:
             pass
 
-    def DeleteVPN(self, id):
-        nmcli.connection.delete(id)
+        return res
 
-    def GetVPNData(self, id, cfg):
-        if "vpn.data." in cfg:
-            list = nmcli.connection.show(id)["vpn.data"].split(",")
-            vpndataitem = cfg[9:]
-            for x in list:
-                key = x.split("=")[0].strip()
-                value = x.split("=")[1].strip()
-                if key == vpndataitem:
-                    return value
+    def read_pid_file(self):
+        pid = 0
+        if isinstance(self.vpn, CiscoConfig):
+            pid_file = self.VpnList["anyconnect"]["pid_file"]
+            if os.path.isfile(pid_file):
+                file = open(pid_file, "r")
+                pid = file.read().strip()
         else:
-            return nmcli.connection.show(id)[cfg]
+            pass
 
-    def SetVPNData(self, id, cfg, data):
-        if "vpn.data." in cfg:
-            list = nmcli.connection.show(id)["vpn.data"].split(",")
-            vpndataitem = cfg[9:]
-            for x in list:
-                key = x.split("=")[0].strip()
-                if key == vpndataitem:
-                    list.remove(x)
-                    list.append("{}={}".format(vpndataitem, data))
-                    break
-            nmcli.connection.modify(id, {"vpn.data" : ", ".join(list)})
-        else:
-            nmcli.connection.modify(id, {cfg : data})
-    
-    def _updateFailedSuccess(self, id, res):
-        if res != 0:
-            failed = int(self.GetVPNData(id, "vpn.data.failed")) + 1
-            self.SetVPNData(id, "vpn.data.failed", failed)
-        else:
-            success = int(self.GetVPNData(id, "vpn.data.success")) + 1
-            self.SetVPNData(id, "vpn.data.failed", success)
+        return pid
 
-    def ConnectVPN(self, id):
-        protocol = self.GetVPNData(id, "vpn.data.protocol")
-        res = -1
-        output = ""
-        if protocol == "anyconnect":
-            run_script = self.VpnProtocolList["anyconnect"]["run_script"]
-            username = self.GetVPNData(id, "vpn.data.username")
-            password = self.GetVPNData(id, "vpn.data.password")
-            c1 = Execte("{} {} {} {}".format(run_script, id, username, password))
-            c1.do()
-            
-            list = c1.stdout.split('\n')
-            if len(list) > 20:
-                list = list[-20:]
-            output = "\n".join(list)
-            
-            if "Error: Connection activation failed:" in output:
-                res = -1
-            else:
-                res = 0
-            
+    def delete_pid_file(self):
+        if isinstance(self.vpn, CiscoConfig):
+            pid_file = self.VpnList["anyconnect"]["pid_file"]
+            if os.path.isfile(pid_file):
+                os.remove(pid_file)
+        else:
+            pass
+
+    def set_ip_table(self):
+
+        if isinstance(self.vpn, CiscoConfig):
+            hotspot_interface = self.hotspot.interface
+            vpn_interface = self.VpnList["anyconnect"]["interface"]
+            # sysctl -w net.ipv4.ip_forward=1
+            c = Execte("sysctl -w net.ipv4.ip_forward=1")
+            c.do()
+            # iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
+            c = Execte("iptables -t nat -A POSTROUTING -o {} -j MASQUERADE".format(vpn_interface))
+            c.do()
+            # iptables -A FORWARD -i tun0 -o wlan0 -j ACCEPT -m state --state RELATED,ESTABLISHED
+            c = Execte("iptables -A FORWARD -i {} -o {} -j ACCEPT -m state --state RELATED,ESTABLISHED".format(vpn_interface, hotspot_interface))
+            c.do()
+            # iptables -A FORWARD -i wlan0 -o tun0 -j ACCEPT
+            c = Execte("iptables -A FORWARD -i {} -o {} -j ACCEPT".format(hotspot_interface, vpn_interface))
+            c.do()
+            # iptables -A OUTPUT --out-interface wlan0 -j ACCEPT
+            c = Execte("iptables -A OUTPUT --out-interface {} -j ACCEPT".format(hotspot_interface))
+            c.do()
+            # iptables -A INPUT --in-interface wlan0 -j ACCEPT
+            c = Execte("iptables -A INPUT --in-interface {} -j ACCEPT".format(hotspot_interface))
+            c.do()
+            res = 0
         else:
             res = -1
-            output = "Not Implimnet Yet"
 
-        self._updateFailedSuccess(id, res)
-        return res, output
+        return res
 
-    def LoadVPN(self):
-        list = nmcli.connection()
-        for x in list:
-            if (x.conn_type == "vpn" or x.conn_type == "tun") and x.name not in self.VPNList:
-                self.VPNList.append(x.name)
+    def reset_ip_table(self):
+
+        # sysctl -w net.ipv4.ip_forward=0
+        c = Execte("sysctl -w net.ipv4.ip_forward=0")
+        c.do()
+        # iptables -P INPUT ACCEPT
+        c = Execte("iptables -P INPUT ACCEPT")
+        c.do()
+        # iptables -P FORWARD ACCEPT
+        c = Execte("iptables -P FORWARD ACCEPT")
+        c.do()
+        # iptables -P OUTPUT ACCEPT
+        c = Execte("iptables -P OUTPUT ACCEPT")
+        c.do()
+        # iptables -F
+        c = Execte("iptables -F")
+        c.do()
+        # iptables -X
+        c = Execte("iptables -X")
+        c.do()
+        # iptables -t nat -F
+        c = Execte("iptables -t nat -F")
+        c.do()
+        # iptables -t nat -X
+        c = Execte("iptables -t nat -X")
+        c.do()
+        # iptables -t mangle -F
+        c = Execte("iptables -t mangle -F")
+        c.do()
+        # iptables -t mangle -X
+        c = Execte("iptables -t mangle -X")
+        c.do()
+        
+        return 0
