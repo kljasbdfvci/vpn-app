@@ -77,7 +77,7 @@ fi
 # get os arch
 machine=$(uname -m)
 res_cps=0
-tmp_os_file_path="$this_dir_path/../os"
+tmp_os_file_path="/tmp/os"
 files=$(find $tmp_os_file_path -xtype f)
 for tmp_os_file in $files
 do
@@ -131,6 +131,9 @@ do
     fi
 
 done
+# delete os dir
+rm -r $tmp_os_file_path
+echo "delete os dir successful."
 if [ $res_cps -eq 0 ]; then
     echo "copy os files successful."
 else
