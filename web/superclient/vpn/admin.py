@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import OpenVpnConfig, CiscoConfig, L2tpConfig, ShadowSocksConfig
+from .models import OpenVpnConfig, OpenconnectConfig, L2tpConfig, ShadowSocksConfig
 
 
 
@@ -7,8 +7,8 @@ from .models import OpenVpnConfig, CiscoConfig, L2tpConfig, ShadowSocksConfig
 class OpenVpnConfigAdmin(admin.ModelAdmin):
     list_display = ('name', 'enable', 'priority', 'success', 'failed')
 
-@admin.register(CiscoConfig)
-class CiscoConfigAdmin(admin.ModelAdmin):
+@admin.register(OpenconnectConfig)
+class OpenconnectConfigAdmin(admin.ModelAdmin):
     list_display = ('name', 'enable', 'priority', 'success', 'failed')
 
 @admin.register(L2tpConfig)

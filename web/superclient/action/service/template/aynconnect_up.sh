@@ -1,37 +1,38 @@
 #! /bin/bash
 
-gateway=$1
-username=$2
-password=$3
-timeout=$4
-pid_file=$5
-interface=$6
-try=$7
-no_dtls=$8
+protocol=$1
+gateway=$2
+username=$3
+password=$4
+timeout=$5
+pid_file=$6
+interface=$7
+try=$8
+no_dtls=$9
 if [ "$no_dtls" == "True" ]; then
     no_dtls="--no-dtls"
 else
     no_dtls=""
 fi
-passtos=$9
+passtos=${10}
 if [ "$passtos" == "True" ]; then
     passtos="--passtos"
 else
     passtos=""
 fi
-no_deflate=${10}
+no_deflate=${11}
 if [ "$no_deflate" == "True" ]; then
     no_deflate="--no-deflate"
 else
     no_deflate=""
 fi
-deflate=${11}
+deflate=${12}
 if [ "$deflate" == "True" ]; then
     deflate="--deflate"
 else
     deflate=""
 fi
-no_http_keepalive=${12}
+no_http_keepalive=${13}
 if [ "$no_http_keepalive" == "True" ]; then
     no_http_keepalive="--no-http-keepalive"
 else
@@ -58,7 +59,7 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
         echo -e "\n\nTry($n)\n\n"
         timeout $timeout echo $password | \
         openconnect $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
-        --protocol=anyconnect --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert 
+        --protocol=$protocol --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert 
         exit_code=$?
         if [ $exit_code == 0 ]; then
             break

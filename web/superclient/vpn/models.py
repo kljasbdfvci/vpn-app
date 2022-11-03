@@ -17,8 +17,8 @@ class Configuration(models.Model):
 
     @property
     def subclass(self):
-        if(hasattr(self, 'ciscoconfig')):
-            return self.ciscoconfig
+        if(hasattr(self, 'openconnectconfig')):
+            return self.openconnectconfig
         if(hasattr(self, 'l2tpconfig')):
             return self.l2tpconfig
         if(hasattr(self, 'openvpnconfig')):
@@ -40,7 +40,17 @@ class L2tpConfig(Configuration):
     password = models.CharField(max_length=128)  # TODO: save encrypted password
 
 
-class CiscoConfig(Configuration):
+class OpenconnectConfig(Configuration):
+
+    class Protocol(models.TextChoices):
+        anyconnect = "anyconnect", "Cisco (AnyConnect)"
+        nc = "nc", "Juniper Network Connect"
+        gp = "gp", "Palo Alto Networks (PAN) GlobalProtect VPN"
+        pulse = "pulse", "Junos Pulse VPN"
+        f5 = "f5", "F5 Big-IP VPN"
+        fortinet = "fortinet", "Fortinet Fortigate VPN"
+        array = "array", "Array Networks SSL VPN"
+    protocol = models.CharField(max_length=128, choices=Protocol.choices, default=Protocol.anyconnect)
     username = models.CharField(max_length=128)
     password = models.CharField(max_length=128)  # TODO: save encrypted password
     no_dtls = models.BooleanField(default=False, help_text="Disable DTLS and ESP")
