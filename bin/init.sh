@@ -78,7 +78,7 @@ fi
 machine=$(uname -m)
 res_cps=0
 tmp_os_file_path="$this_dir_path/../os"
-files=$(find $tmp_os_file_path -type f)
+files=$(find $tmp_os_file_path -xtype f)
 for tmp_os_file in $files
 do
 
