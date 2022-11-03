@@ -1,14 +1,14 @@
 #! /bin/bash
 
-protocol=$1
-gateway=$2
-username=$3
-password=$4
-timeout=$5
-pid_file=$6
-interface=$7
-try=$8
-no_dtls=$9
+protocol=${1}
+gateway=${2}
+username=${3}
+password=${4}
+timeout=${5}
+pid_file=${6}
+interface=${7}
+try=${8}
+no_dtls=${9}
 if [ "$no_dtls" == "True" ]; then
     no_dtls="--no-dtls"
 else
@@ -59,7 +59,7 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
         echo -e "\n\nTry($n)\n\n"
         timeout $timeout echo $password | \
         openconnect $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
-        --protocol=$protocol --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert 
+        --protocol=$protocol --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert --reconnect-timeout=30
         exit_code=$?
         if [ $exit_code == 0 ]; then
             break
