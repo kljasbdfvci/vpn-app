@@ -31,7 +31,11 @@ class Router:
             no_dtls = self.vpn.no_dtls
             passtos = self.vpn.passtos
             no_deflate = self.vpn.no_deflate
-            c1 = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(up_file, gateway, username, password, timeout, pid_file, interface, try_count, no_dtls, passtos, no_deflate))
+            deflate = self.vpn.deflate
+            no_http_keepalive = self.vpn.no_http_keepalive
+            c1 = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                up_file, gateway, username, password, timeout, pid_file, interface, try_count, no_dtls, passtos, no_deflate, deflate, no_http_keepalive)
+            )
             c1.do()
             res = c1.returncode
             output = c1.stdout + c1.stderr

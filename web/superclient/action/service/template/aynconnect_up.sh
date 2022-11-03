@@ -19,11 +19,23 @@ if [ "$passtos" == "True" ]; then
 else
     passtos=""
 fi
-no_deflate=$10
+no_deflate=${10}
 if [ "$no_deflate" == "True" ]; then
     no_deflate="--no-deflate"
 else
     no_deflate=""
+fi
+deflate=${11}
+if [ "$deflate" == "True" ]; then
+    deflate="--deflate"
+else
+    deflate=""
+fi
+no_http_keepalive=${12}
+if [ "$no_http_keepalive" == "True" ]; then
+    no_http_keepalive="--no-http-keepalive"
+else
+    no_http_keepalive=""
 fi
 
 exit_code=""
@@ -44,7 +56,9 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
     until [ "$n" -ge $try ]
     do
         echo -e "\n\nTry($n)\n\n"
-        timeout $timeout echo $password | openconnect $no_dtls $passtos $no_deflate --protocol=anyconnect --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert 
+        timeout $timeout echo $password | \
+        openconnect $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
+        --protocol=anyconnect --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert 
         exit_code=$?
         if [ $exit_code == 0 ]; then
             break
