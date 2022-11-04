@@ -7,7 +7,7 @@ from ...vpn.models import *
 from ...hotspot.models import *
 
 class Router:
-    def __init__(self,vpn : Configuration, hotspot : Profile):
+    def __init__(self, vpn : Configuration, hotspot : Profile):
         self.VpnList = {
             "anyconnect": {
                 "up_file" : Path(__file__).resolve().parent / "template/up_aynconnect.sh",

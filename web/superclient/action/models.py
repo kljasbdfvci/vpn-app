@@ -8,16 +8,32 @@ class ServiceStatus(models.Model):
 
     on = models.BooleanField(default=0)
 
+    selected_profile = models.OneToOneField(
+        Profile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='selected_prof',
+    )
+
     active_profile = models.OneToOneField(
         Profile,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        related_name='active_prof',
+    )
+
+    selected_vpn = models.OneToOneField(
+        Configuration,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='selected_vpn',
     )
 
     active_vpn = models.OneToOneField(
         Configuration,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        related_name='active_vpn',
     )
 
     @staticmethod
