@@ -79,7 +79,7 @@ machine=$(uname -m)
 res_cps=0
 tmp_os_file_path="$this_dir_path/../os"
 if [[ ! -d $tmp_os_file_path ]]; then
-    tmp_os_file_path="/tmp/os"
+    tmp_os_file_path="$disk_path/os"
 fi
 files=$(find $tmp_os_file_path -xtype f)
 for tmp_os_file in $files

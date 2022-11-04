@@ -100,9 +100,10 @@ else
 fi
 
 ### System
-app_file_path=$(find /disk/firmware -type f -name '*-app*' | sort | tail -n 1)
-app_untar_path="/memory/"
-os_untar_path="/tmp/"
+disk_path="/disk"
+app_file_path=$(find $disk_path/firmware -type f -name '*-app*' | sort | tail -n 1)
+app_untar_path="/memory"
+os_untar_path="$disk_path"
 app_init_path="/memory/bin/init.sh"
 app_init_log="/tmp/app-init.log"
 app_init_log_error="/tmp/app-init.log.error"
