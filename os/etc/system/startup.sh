@@ -46,8 +46,11 @@ initialApplication() {
       my_print "extract Os" $res_tar_os
 
       ### run init Application
-      $app_init_path 1>$app_init_log 2>$app_init_log_error
-      res_init=$?
+      res_init=1
+      if [ $res_tar_app = 0 ] && [ $res_tar_os = 0 ]; then
+         $app_init_path 1>$app_init_log 2>$app_init_log_error
+         res_init=$?
+      fi
       my_print "run init Application" $res_init
 
       ### return
@@ -78,7 +81,7 @@ printf "\n"
 
 ### Wait For Mount /memory
 echo -n "Initial Storage"
-for i in {1..20}
+for i in {1..300}
 do
    ### check memory storage Mount
    mountpoint -q "/memory"
@@ -103,7 +106,7 @@ fi
 disk_path="/disk"
 app_file_path=$(find $disk_path/firmware -type f -name '*-app*' | sort | tail -n 1)
 app_untar_path="/memory"
-os_untar_path="$disk_path"
+os_untar_path="/tmp"
 app_init_path="/memory/bin/init.sh"
 app_init_log="/tmp/app-init.log"
 app_init_log_error="/tmp/app-init.log.error"
