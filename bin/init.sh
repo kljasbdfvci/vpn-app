@@ -50,9 +50,20 @@ for package in ${packages[@]}
 do
     if [ -z "$(dpkg -l | grep -w $package)" ]
     then
-        apt install -y $package
-        sleep 1
-        echo "$package is installed."
+        n=0
+        until [ "$n" -ge 3 ]
+        do
+            apt install -y $package
+            res_apt=$?
+            if [ $res_apt == 0 ]; then
+                echo "try($n) $package is installed."
+                break
+            else
+                echo "try($n) $package is install failed."
+            fi
+            n=$((n+1)) 
+            sleep 1
+        done
     else
         echo "$package is exist."
     fi
