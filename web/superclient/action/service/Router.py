@@ -21,19 +21,20 @@ class Router:
     def ConnectVPN(self, timeout, try_count):
         res = -1
         output = ""
-        if isinstance(self.vpn, OpenconnectConfig):
+        if isinstance(self.vpn.subclass, OpenconnectConfig):
+            openconnect = self.vpn.subclass
             up_file = self.VpnList["anyconnect"]["up_file"]
-            protocol = self.vpn.protocol
-            gateway = self.vpn.host + ":" + str(self.vpn.port)
-            username = self.vpn.username
-            password = self.vpn.password
+            protocol = openconnect.protocol
+            gateway = openconnect.host + ":" + str(openconnect.port)
+            username = openconnect.username
+            password = openconnect.password
             pid_file = self.VpnList["anyconnect"]["pid_file"]
             interface = self.VpnList["anyconnect"]["interface"]
-            no_dtls = self.vpn.no_dtls
-            passtos = self.vpn.passtos
-            no_deflate = self.vpn.no_deflate
-            deflate = self.vpn.deflate
-            no_http_keepalive = self.vpn.no_http_keepalive
+            no_dtls = openconnect.no_dtls
+            passtos = openconnect.passtos
+            no_deflate = openconnect.no_deflate
+            deflate = openconnect.deflate
+            no_http_keepalive = openconnect.no_http_keepalive
             c1 = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, protocol, gateway, username, password, timeout, pid_file, interface, try_count, no_dtls, passtos, no_deflate, deflate, no_http_keepalive)
             )
@@ -53,7 +54,8 @@ class Router:
     def DisconnectVPN(self):
         res = -1
         output = ""
-        if isinstance(self.vpn, OpenconnectConfig):
+        if isinstance(self.vpn.subclass, OpenconnectConfig):
+            openconnect = self.vpn.subclass
             pid = self.read_pid_file()
             if pid != 0:
                 if self.is_running():
@@ -78,7 +80,8 @@ class Router:
 
     def is_running(self):
         res = False
-        if isinstance(self.vpn, OpenconnectConfig):
+        if isinstance(self.vpn.subclass, OpenconnectConfig):
+            openconnect = self.vpn.subclass
             pid = self.read_pid_file()
             if pid != 0:
                 c1 = Execte("kill -0 {})".format(pid))
@@ -92,7 +95,8 @@ class Router:
 
     def read_pid_file(self):
         pid = 0
-        if isinstance(self.vpn, OpenconnectConfig):
+        if isinstance(self.vpn.subclass, OpenconnectConfig):
+            openconnect = self.vpn.subclass
             pid_file = self.VpnList["anyconnect"]["pid_file"]
             if os.path.isfile(pid_file):
                 file = open(pid_file, "r")
@@ -103,7 +107,8 @@ class Router:
         return pid
 
     def delete_pid_file(self):
-        if isinstance(self.vpn, OpenconnectConfig):
+        if isinstance(self.vpn.subclass, OpenconnectConfig):
+            openconnect = self.vpn.subclass
             pid_file = self.VpnList["anyconnect"]["pid_file"]
             if os.path.isfile(pid_file):
                 os.remove(pid_file)
@@ -112,7 +117,8 @@ class Router:
 
     def set_ip_table(self):
 
-        if isinstance(self.vpn, OpenconnectConfig):
+        if isinstance(self.vpn.subclass, OpenconnectConfig):
+            openconnect = self.vpn.subclass
             hotspot_interface = self.hotspot.interface
             vpn_interface = self.VpnList["anyconnect"]["interface"]
             # sysctl -w net.ipv4.ip_forward=1

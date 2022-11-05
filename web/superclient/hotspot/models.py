@@ -29,7 +29,7 @@ class Profile(models.Model):
     dhcp_ip_from = models.CharField(max_length=16, default='192.168.10.10')
     dhcp_ip_to = models.CharField(max_length=16, default='192.168.10.30')
     netmask = models.CharField(max_length=20, default='255.255.255.0')
-    dns = models.CharField(max_length=128, default='1.1.1.1,8.8.8.8,208.67.222.222')
+    dns = models.CharField(max_length=128, default='1.1.1.1,8.8.8.8,208.67.222.222', blank=True)
 
     @property
     def access_point(self):

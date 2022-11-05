@@ -104,13 +104,15 @@ class AccessPoint:
         logging.debug('waiting 2 sec.')
         time.sleep(2)
         
-        dns_list = self.dns.split(",")
-        for i in range(len(dns_list)):
-            dns_list[i] = "/#/" + dns_list[i]
-        dns = ",".join(dns_list)
+        dns = ""
+        if self.dns != "":
+            dns_list = self.dns.split(",")
+            for i in range(len(dns_list)):
+                dns_list[i] = "/#/" + dns_list[i]
+            dns = "--address=" + ",".join(dns_list)
 
         logging.debug('running dnsmasq.')
-        c5 = Execte('dnsmasq --dhcp-authoritative --interface={} --listen-address={} --dhcp-range={},{},{},{} --address={}'\
+        c5 = Execte('dnsmasq --dhcp-authoritative --interface={} --listen-address={} --dhcp-range={},{},{},{} {}'\
             .format(self.interface.value, self.ip, self.dhcp_ip_from, self.dhcp_ip_to, self.netmask, self.lease_time, dns), False)
         c5.do()
         c5.print()
