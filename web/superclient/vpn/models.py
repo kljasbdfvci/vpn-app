@@ -16,10 +16,6 @@ class Configuration(models.Model):
     success = models.IntegerField(default=0, editable=False)
     failed = models.IntegerField(default=0, editable=False)
 
-    # Common Configuration Parameters
-    host = models.CharField(max_length=128)
-    port = models.IntegerField()
-
     @property
     def subclass(self):
         if(hasattr(self, 'openconnectconfig')):
@@ -57,6 +53,9 @@ class OpenconnectConfig(Configuration):
         f5 = "f5", "F5 Big-IP VPN"
         fortinet = "fortinet", "Fortinet Fortigate VPN"
         array = "array", "Array Networks SSL VPN"
+    
+    host = models.CharField(max_length=128)
+    port = models.IntegerField()
     protocol = models.CharField(max_length=128, choices=Protocol.choices, default=Protocol.anyconnect)
     username = models.CharField(max_length=128)
     password = models.CharField(max_length=128)  # TODO: save encrypted password
@@ -69,6 +68,8 @@ class OpenconnectConfig(Configuration):
 
 class ShadowSocksConfig(Configuration):
 
+    host = models.CharField(max_length=128)
+    port = models.IntegerField()
     password = models.CharField(max_length=128)  # TODO: save encrypted password
 
     class Encryption(models.TextChoices):
@@ -99,6 +100,8 @@ class V2rayConfig(Configuration):
         tls = "tls", "TLS"
         off = "off", "OFF"
 
+    host = models.CharField(max_length=128, blank=True)
+    port = models.IntegerField(null=True)
     v = models.CharField(max_length=8, default='2')
     protocol = models.CharField(max_length=8, choices=Protocol.choices)
     uid = models.CharField(max_length=64, blank=True)
@@ -111,12 +114,10 @@ class V2rayConfig(Configuration):
     config_url = models.CharField(max_length=2048, blank=True)
     config_json = models.CharField(max_length=4098, blank=True)
 
-    # @property
-    # def config_json(self):
-    #     return generate(self.config_url)
+    config_type = 'property'
 
     def save(self, *args, **kwargs):
-        if self.config_url:
+        if self.config_type == 'url':
             # az config url por konim
             conf = self.config_url.split('://')
             config = json.loads(base64.decodestring(conf[1].encode("utf-8")))
@@ -132,63 +133,31 @@ class V2rayConfig(Configuration):
             self.ws_host = config.get('host')
             self.tls = config.get('tls')
         
-        else:
-            config_json = {
+        elif self.config_type == 'property':
+            configjson = {
                 "v": self.v,
                 "ps": self.name,
                 "add": self.host,
-                "port": self.port,
+                "port": str(self.port),
                 "id": self.uid,
                 "aid": self.alter_id,
                 "net": self.network,
-                "type": "none",
+                "type": 'none',
                 "host": self.ws_host,
                 "path": self.ws_path,
-                "tls": self.tls
+                "tls": self.tls,
             }
 
-            self.config_url = f'{self.protocol}://{base64.encodestring(json.dumps(config_json))}'
+            encoded_config = base64.b64encode(json.dumps(configjson, sort_keys=True).encode('utf-8')).decode()
+            self.config_url = f'{self.protocol}://{encoded_config}'
 
         self.config_json = generate(self.config_url)   
 
         super(V2rayConfig, self).save(*args, **kwargs)
 
 
-# @receiver(post_save, sender=V2rayConfig, dispatch_uid="post_save_v2ray_config")
-# def post_save_v2ray_config(sender, instance, **kwargs):
-#     if instance.config_url:
-#         # az config url por konim
-#         conf = instance.config_url.split('://')
-#         config = json.loads(base64.decodestring(conf[1].encode("utf-8")))
-#         instance.v = config.get('v')
-#         instance.name = config.get('ps')
-#         instance.host = config.get('add')
-#         instance.port = config.get('port')
-#         instance.protocol = conf[0]
-#         instance.uid = config.get('id')
-#         instance.alter_id = config.get('aid')
-#         instance.network = config.get('net')
-#         instance.ws_path = config.get('path')
-#         instance.ws_host = config.get('host')
-#         instance.tls = config.get('tls')
-    
-#     else:
-#         config_json = {
-#             "v": instance.v,
-#             "ps": instance.name,
-#             "add": instance.host,
-#             "port": instance.port,
-#             "id": instance.uid,
-#             "aid": instance.alter_id,
-#             "net": instance.network,
-#             "type": "none",
-#             "host": instance.ws_host,
-#             "path": instance.ws_path,
-#             "tls": instance.tls
-#         }
+class V2rayUrlConfig(V2rayConfig):
+    class Meta:
+        proxy = True
 
-#         instance.config_url = f'{instance.protocol}://{base64.encodestring(json.dumps(config_json))}'
-
-#     instance.config_json = generate(instance.config_url)
-
-#     instance.save()
+    config_type = 'url'
