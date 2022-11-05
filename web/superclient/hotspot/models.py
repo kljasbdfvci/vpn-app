@@ -29,10 +29,11 @@ class Profile(models.Model):
     dhcp_ip_from = models.CharField(max_length=16, default='192.168.10.10')
     dhcp_ip_to = models.CharField(max_length=16, default='192.168.10.30')
     netmask = models.CharField(max_length=20, default='255.255.255.0')
+    dns = models.CharField(max_length=128, default='1.1.1.1,8.8.8.8,208.67.222.222')
 
     @property
     def access_point(self):
         return AccessPoint(
             interface=self.interface, channel=self.channel, ssid=self.ssid, wpa_passphrase=self.wpa_passphrase,
-            ip=self.ip, dhcp_ip_from=self.dhcp_ip_from, dhcp_ip_to=self.dhcp_ip_to, netmask=self.netmask
+            ip=self.ip, dhcp_ip_from=self.dhcp_ip_from, dhcp_ip_to=self.dhcp_ip_to, netmask=self.netmask, dns=self.dns
         )

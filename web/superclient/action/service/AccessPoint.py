@@ -9,7 +9,7 @@ from .ConfigItem import *
 from .Execte import *
 
 class AccessPoint:
-    def __init__(self, interface, channel, ssid, wpa_passphrase, ip, dhcp_ip_from, dhcp_ip_to, netmask):
+    def __init__(self, interface, channel, ssid, wpa_passphrase, ip, dhcp_ip_from, dhcp_ip_to, netmask, dns):
         # hostapd configs
         self.interface = ConfigItem("interface", interface)
         self.channel = ConfigItem("channel", channel)
@@ -31,6 +31,7 @@ class AccessPoint:
         self.dhcp_ip_from = dhcp_ip_from
         self.dhcp_ip_to = dhcp_ip_to
         self.netmask = netmask
+        self.dns = dns
         self.lease_time = "24h"
 
     def _check_dependencies(self):
@@ -103,9 +104,14 @@ class AccessPoint:
         logging.debug('waiting 2 sec.')
         time.sleep(2)
 
+        dns_list = self.dns.split(",")
+        for i in range(len(dns_list)):
+            dns_list[i] = "/#/" + dns_list[i]
+        dns = ",".join(dns_list)
+
         logging.debug('running dnsmasq.')
-        c5 = Execte('dnsmasq --dhcp-authoritative --interface={} --dhcp-range={},{},{},{}'\
-            .format(self.interface.value, self.dhcp_ip_from, self.dhcp_ip_to, self.netmask, self.lease_time), False)
+        c5 = Execte('dnsmasq --dhcp-authoritative --interface={} --listen-address={} --dhcp-range={},{},{},{} ----address={}'\
+            .format(self.interface.value, self.ip, self.dhcp_ip_from, self.dhcp_ip_to, self.netmask, self.lease_time, dns), False)
         c5.do()
         c5.print()
 
