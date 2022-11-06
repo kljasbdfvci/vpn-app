@@ -93,7 +93,7 @@ class Router:
             pid = self.read_pid_file()
             if pid != 0:
                 if self.is_running():
-                    c = Execte("kill -SIGINT {} || kill -SIGKILL {})".format(pid, pid))
+                    c = Execte("kill -SIGINT {} || kill -SIGKILL {}".format(pid, pid))
                     c.do()
                     c.print()
                     res = c.returncode
@@ -111,7 +111,7 @@ class Router:
             pid = self.read_pid_file()
             if pid != 0:
                 if self.is_running():
-                    c = Execte("kill -SIGINT {} || kill -SIGKILL {})".format(pid, pid))
+                    c = Execte("kill -SIGINT {} || kill -SIGKILL {}".format(pid, pid))
                     c.do()
                     c.print()
                     res = c.returncode
@@ -137,7 +137,7 @@ class Router:
             openconnect = self.vpn.subclass
             pid = self.read_pid_file()
             if pid != 0:
-                c = Execte("kill -0 {})".format(pid))
+                c = Execte("kill -0 {}".format(pid))
                 c.do()
                 c.print()
                 if c.isSuccess:
@@ -147,7 +147,7 @@ class Router:
             v2ray = self.vpn.subclass
             pid = self.read_pid_file()
             if pid != 0:
-                c = Execte("kill -0 {})".format(pid))
+                c = Execte("kill -0 {}".format(pid))
                 c.do()
                 c.print()
                 if c.isSuccess:
