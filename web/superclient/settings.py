@@ -111,6 +111,7 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'simple'
         },
     },
     'formatters': {
@@ -119,7 +120,7 @@ LOGGING = {
             'style': '{',
         },
         'simple': {
-            'format': '{levelname} {message}',
+            'format': '[{levelname}] [{asctime}] [{message}]',
             'style': '{',
         },
     },
