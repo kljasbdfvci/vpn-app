@@ -1,29 +1,32 @@
 from superclient.action.models import ServiceStatus
 from superclient.vpn.models import Configuration
 from superclient.action.service.Router import Router
-from multiprocessing import Process
 import time
-
+from threading import Thread
 
 
 def start():
     print('start tasks...')
-    process = Process(target=run_task)
-    process.start()
+    TaskThread().start()
 
 
-def run_task(start_delay=5, repeat_delay=5):
-    time.sleep(start_delay)
+class TaskThread(Thread):
 
-    while True:
-        try:
+    start_delay = 5
+    repeat_delay = 5
 
-            service_checker()
+    def run(self):
+        time.sleep(self.start_delay)
 
-        except Exception as e:
-            print(e)
+        while True:
+            try:
 
-        time.sleep(repeat_delay)
+                service_checker()
+
+            except Exception as e:
+                print(e)
+
+            time.sleep(self.repeat_delay)
 
 
 def service_checker():
