@@ -4,7 +4,6 @@ from superclient.hotspot.models import Profile
 from superclient.vpn.models import Configuration
 from .models import ServiceStatus as Status
 from .service.Execte import *
-from superclient.action.task import service_checker
 
 
 
@@ -20,7 +19,6 @@ def index(request):
             status.change_active_vpn(selected_vpn)
         
         status.toggle_on()
-        service_checker(repeat=5)
 
     submitText = 'Off' if status.on else 'On'
     profiles = list(Profile.objects.values_list('name', flat=True))
