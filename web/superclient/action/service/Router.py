@@ -58,7 +58,7 @@ class Router:
             config_json = v2ray.config_json
             up_file = self.VpnList["v2ray"]["up_file"]
             config_file = self.VpnList["v2ray"]["config_file"]
-            pid_file = self.VpnList["anyconnect"]["pid_file"]
+            pid_file = self.VpnList["v2ray"]["pid_file"]
             
             f = open(config_file, "w")
             f.write(config_json)
@@ -176,6 +176,13 @@ class Router:
             pid_file = self.VpnList["anyconnect"]["pid_file"]
             if os.path.isfile(pid_file):
                 os.remove(pid_file)
+
+        if isinstance(self.vpn.subclass, V2rayConfig):
+            v2ray = self.vpn.subclass
+            pid_file = self.VpnList["v2ray"]["pid_file"]
+            if os.path.isfile(pid_file):
+                os.remove(pid_file)
+
         else:
             pass
 
