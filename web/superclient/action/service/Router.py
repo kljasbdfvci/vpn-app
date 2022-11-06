@@ -143,7 +143,7 @@ class Router:
                 if c.isSuccess:
                     res = True
 
-        elif isinstance(self.vpn.subclass,  V2rayConfig):
+        elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
             pid = self.read_pid_file()
             if pid != 0:
@@ -166,7 +166,7 @@ class Router:
                 file = open(pid_file, "r")
                 pid = file.read().strip()
         
-        if isinstance(self.vpn.subclass, V2rayConfig):
+        elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
             pid_file = self.VpnList["v2ray"]["pid_file"]
             if os.path.isfile(pid_file):
@@ -185,7 +185,7 @@ class Router:
             if os.path.isfile(pid_file):
                 os.remove(pid_file)
 
-        if isinstance(self.vpn.subclass, V2rayConfig):
+        elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
             pid_file = self.VpnList["v2ray"]["pid_file"]
             if os.path.isfile(pid_file):
