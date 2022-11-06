@@ -7,7 +7,6 @@ exit_code=""
 
 v2ray -config $config &>/dev/null &
 pid=$!
-wait $!
 exit_code=$?
 if [ "$exit_code" == 0 ]; then
     echo -n $pid > $pid_file
