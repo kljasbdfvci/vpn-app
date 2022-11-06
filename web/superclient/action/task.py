@@ -91,6 +91,7 @@ def start_vpn_service(status: ServiceStatus):
             print(f'vpn connected.')
             break
         else:
+            get_active_router().DisconnectVPN()
             status.change_active_vpn(None)
             status.active_vpn.increase_failed()
             print(f'vpn not connect.')
