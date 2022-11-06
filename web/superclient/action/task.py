@@ -17,7 +17,7 @@ def run_task(start_delay=5, repeat_delay=5):
 
     while True:
         try:
-            
+
             service_checker()
 
         except Exception as e:
@@ -63,7 +63,7 @@ def start_services(status: ServiceStatus):
 
 
 def start_vpn_service(status: ServiceStatus):
-    vpns = Configuration.objects.filer(enable=True).count()
+    vpns = Configuration.objects.filter(enable=True).count()
 
     if status.selected_vpn:
         status.change_active_vpn(status.selected_vpn)
