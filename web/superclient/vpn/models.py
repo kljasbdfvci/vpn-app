@@ -118,7 +118,6 @@ class V2rayConfig(Configuration):
 
     def save(self, *args, **kwargs):
         if self.config_type == 'url':
-            # az config url por konim
             conf = self.config_url.split('://')
             config = json.loads(base64.decodestring(conf[1].encode("utf-8")))
             self.v = config.get('v')

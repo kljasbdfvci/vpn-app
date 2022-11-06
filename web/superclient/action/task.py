@@ -1,21 +1,41 @@
-from background_task import background
+# from background_task import background
 from superclient.action.models import ServiceStatus
 from superclient.vpn.models import Configuration
-from background_task.models import CompletedTask
-from django.db.models import Q
-from datetime import datetime, timedelta
+# from background_task.models import CompletedTask
 from superclient.action.service.Router import Router
+from multiprocessing import Process
+import time
 
 
 
-@background(schedule=300, remove_existing_tasks=True)
-def quota():
-    dt_now = datetime.now()
-    dt = dt_now - timedelta(hours=1, minutes=0, seconds=0)
-    CompletedTask.objects.filter(Q(run_at__lt=dt)).delete()
+def start():
+    print('start tasks...')
+    process = Process(target=run_task)
+    process.start()
 
 
-@background(schedule=0, remove_existing_tasks=True)
+def run_task(start_delay=5, repeat_delay=5):
+    time.sleep(start_delay)
+
+    while True:
+        try:
+            
+            service_checker()
+
+        except Exception as e:
+            print(e)
+
+        time.sleep(repeat_delay)
+
+
+# @background(schedule=300, remove_existing_tasks=True)
+# def quota():
+#     dt_now = datetime.now()
+#     dt = dt_now - timedelta(hours=1, minutes=0, seconds=0)
+#     CompletedTask.objects.filter(Q(run_at__lt=dt)).delete()
+
+
+# @background(schedule=0, )
 def service_checker():
     status = ServiceStatus.get()    
 
