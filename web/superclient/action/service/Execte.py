@@ -21,7 +21,7 @@ class Execte:
         return (self.returncode, self.stdout, self.stderr)
     
     def print(self):
-        out = "\nexec '{}'.\n exit: {}.".format(self.command, self.returncode)
+        out = "\nexec '{}'.\nexit: {}.".format(self.command, self.returncode)
         s = self.getSTD()
         if s != "":
             out = "\n" + s
