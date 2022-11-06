@@ -20,7 +20,7 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     ### start add by me
-    runserver.default_port = "8000"
+    runserver.default_port = "80"
     ### end add by me
     execute_from_command_line(sys.argv)
 
