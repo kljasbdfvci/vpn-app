@@ -24,7 +24,7 @@ class Execte:
         out = "\nexec '{}'.\nexit: {}.".format(self.command, self.returncode)
         s = self.getSTD()
         if s != "":
-            out = "\n" + s
+            out = out + "\n" + s
         if self.returncode != 0:
             logging.error(out)
         else:
