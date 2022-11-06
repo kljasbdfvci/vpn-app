@@ -15,6 +15,7 @@ class Configuration(models.Model):
     priority = models.IntegerField(default=0)
     success = models.IntegerField(default=0, editable=False)
     failed = models.IntegerField(default=0, editable=False)
+    last_log = models.CharField(max_length=4098, blank=True)
 
     @property
     def subclass(self):
