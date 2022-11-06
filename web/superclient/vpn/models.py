@@ -128,7 +128,7 @@ class V2rayConfig(Configuration):
     def save(self, *args, **kwargs):
         if self.config_type == 'url':
             conf = self.config_url.split('://')
-            config = json.loads(base64.decodestring(conf[1].encode("utf-8")))
+            config = json.loads(base64.b64decode(conf[1].encode("utf-8")))
             self.v = config.get('v')
             self.name = config.get('ps')
             self.host = config.get('add')
