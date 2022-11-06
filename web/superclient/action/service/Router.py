@@ -9,10 +9,20 @@ from ...hotspot.models import *
 class Router:
     def __init__(self, vpn : Configuration, hotspot : Profile):
         self.VpnList = {
+            "reset_iptables_file" : Path(__file__).resolve().parent / "reset_iptables.sh",
             "anyconnect": {
-                "up_file" : Path(__file__).resolve().parent / "template/up_aynconnect.sh",
+                "up_file" : Path(__file__).resolve().parent / "template/aynconnect_up.sh",
                 "pid_file" : Path(__file__).resolve().parent / "anyconnect.pid",
+                "set_iptables_file" : Path(__file__).resolve().parent / "template/aynconnect_set_iptables.sh",
+                "reset_iptables_file" : Path(__file__).resolve().parent / "template/aynconnect_reset_iptables.sh",
                 "interface" : "tun0"
+            },
+            "v2ray": {
+                "up_file" : Path(__file__).resolve().parent / "template/v2ray_up.sh",
+                "config_file" : Path(__file__).resolve().parent / "v2ray.config",
+                "pid_file" : Path(__file__).resolve().parent / "v2ray.pid",
+                "set_iptables_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables.sh",
+                "reset_iptables_file" : Path(__file__).resolve().parent / "template/v2ray_reset_iptables.sh",
             },
         }
         self.vpn = vpn
@@ -35,12 +45,32 @@ class Router:
             no_deflate = openconnect.no_deflate
             deflate = openconnect.deflate
             no_http_keepalive = openconnect.no_http_keepalive
-            c1 = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+            
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, protocol, gateway, username, password, timeout, pid_file, interface, try_count, no_dtls, passtos, no_deflate, deflate, no_http_keepalive)
             )
-            c1.do()
-            res = c1.returncode
-            output = c1.stdout + c1.stderr
+            c.do()
+            res = c.returncode
+            output = c.stdout + c.stderr
+
+        elif isinstance(self.vpn.subclass, V2rayConfig):
+            v2ray = self.vpn.subclass
+            config_json = v2ray.config_json
+            up_file = self.VpnList["v2ray"]["up_file"]
+            config_file = self.VpnList["v2ray"]["config_file"]
+            pid_file = self.VpnList["anyconnect"]["pid_file"]
+            
+            f = open(config_file, "w")
+            f.write(config_json)
+            f.close()
+
+            c = Execte("{} {} {}".format(\
+                up_file, config_file, pid_file)
+            )
+            c.do()
+            res = c.returncode
+            output = c.stdout + c.stderr
+
         else:
             res = -1
             output = "Not Implimnet Yet"
@@ -59,10 +89,27 @@ class Router:
             pid = self.read_pid_file()
             if pid != 0:
                 if self.is_running():
-                    c2 = Execte("kill -SIGINT {} || kill -SIGKILL {})".format(pid, pid))
-                    c2.do()
-                    res = c2.returncode
-                    output = c2.stdout + c2.stderr
+                    c = Execte("kill -SIGINT {} || kill -SIGKILL {})".format(pid, pid))
+                    c.do()
+                    res = c.returncode
+                    output = c.stdout + c.stderr
+                else:
+                    res = 0
+                    output = "vpn is already disable."
+                self.delete_pid_file()
+            else:
+                res = 0
+                output = "vpn is already disable."
+            
+        elif isinstance(self.vpn.subclass, V2rayConfig):
+            v2ray = self.vpn.subclass
+            pid = self.read_pid_file()
+            if pid != 0:
+                if self.is_running():
+                    c = Execte("kill -SIGINT {} || kill -SIGKILL {})".format(pid, pid))
+                    c.do()
+                    res = c.returncode
+                    output = c.stdout + c.stderr
                 else:
                     res = 0
                     output = "vpn is already disable."
@@ -84,10 +131,19 @@ class Router:
             openconnect = self.vpn.subclass
             pid = self.read_pid_file()
             if pid != 0:
-                c1 = Execte("kill -0 {})".format(pid))
-                c1.do()
-                if c1.isSuccess:
+                c = Execte("kill -0 {})".format(pid))
+                c.do()
+                if c.isSuccess:
                     res = True
+
+        elif isinstance(self.vpn.subclass,  V2rayConfig):
+            v2ray = self.vpn.subclass
+            pid = self.read_pid_file()
+            if pid != 0:
+                c = Execte("kill -0 {})".format(pid))
+                c.do()
+                if c.isSuccess:
+                    res = True        
         else:
             pass
 
@@ -101,6 +157,14 @@ class Router:
             if os.path.isfile(pid_file):
                 file = open(pid_file, "r")
                 pid = file.read().strip()
+        
+        if isinstance(self.vpn.subclass, V2rayConfig):
+            v2ray = self.vpn.subclass
+            pid_file = self.VpnList["v2ray"]["pid_file"]
+            if os.path.isfile(pid_file):
+                file = open(pid_file, "r")
+                pid = file.read().strip()
+
         else:
             pass
 
@@ -121,25 +185,23 @@ class Router:
             openconnect = self.vpn.subclass
             hotspot_interface = self.hotspot.interface
             vpn_interface = self.VpnList["anyconnect"]["interface"]
-            # sysctl -w net.ipv4.ip_forward=1
-            c = Execte("sysctl -w net.ipv4.ip_forward=1")
+            set_iptables_file = self.VpnList["anyconnect"]["set_iptables_file"]
+            c = Execte("{} {} {}".format(set_iptables_file, hotspot_interface, vpn_interface))
             c.do()
-            # iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
-            c = Execte("iptables -t nat -A POSTROUTING -o {} -j MASQUERADE".format(vpn_interface))
+            res = c.returncode
+
+        elif isinstance(self.vpn.subclass, V2rayConfig):
+            v2ray = self.vpn.subclass
+            set_iptables_file = self.VpnList["v2ray"]["set_iptables_file"]
+            v2ray_port = v2ray.port
+            hotspot_interface = self.hotspot.interface
+            hotspot_ip = self.hotspot.ip
+            hotspot_netmask = self.hotspot.netmask
+
+            c = Execte("{} {} {} {} {}".format(set_iptables_file, v2ray_port, hotspot_interface, hotspot_ip, hotspot_netmask, "eth0"))
             c.do()
-            # iptables -A FORWARD -i tun0 -o wlan0 -j ACCEPT -m state --state RELATED,ESTABLISHED
-            c = Execte("iptables -A FORWARD -i {} -o {} -j ACCEPT -m state --state RELATED,ESTABLISHED".format(vpn_interface, hotspot_interface))
-            c.do()
-            # iptables -A FORWARD -i wlan0 -o tun0 -j ACCEPT
-            c = Execte("iptables -A FORWARD -i {} -o {} -j ACCEPT".format(hotspot_interface, vpn_interface))
-            c.do()
-            # iptables -A OUTPUT --out-interface wlan0 -j ACCEPT
-            c = Execte("iptables -A OUTPUT --out-interface {} -j ACCEPT".format(hotspot_interface))
-            c.do()
-            # iptables -A INPUT --in-interface wlan0 -j ACCEPT
-            c = Execte("iptables -A INPUT --in-interface {} -j ACCEPT".format(hotspot_interface))
-            c.do()
-            res = 0
+            res = c.returncode
+
         else:
             res = -1
 
@@ -147,35 +209,16 @@ class Router:
 
     def reset_ip_table(self):
 
-        # sysctl -w net.ipv4.ip_forward=0
-        c = Execte("sysctl -w net.ipv4.ip_forward=0")
-        c.do()
-        # iptables -P INPUT ACCEPT
-        c = Execte("iptables -P INPUT ACCEPT")
-        c.do()
-        # iptables -P FORWARD ACCEPT
-        c = Execte("iptables -P FORWARD ACCEPT")
-        c.do()
-        # iptables -P OUTPUT ACCEPT
-        c = Execte("iptables -P OUTPUT ACCEPT")
-        c.do()
-        # iptables -F
-        c = Execte("iptables -F")
-        c.do()
-        # iptables -X
-        c = Execte("iptables -X")
-        c.do()
-        # iptables -t nat -F
-        c = Execte("iptables -t nat -F")
-        c.do()
-        # iptables -t nat -X
-        c = Execte("iptables -t nat -X")
-        c.do()
-        # iptables -t mangle -F
-        c = Execte("iptables -t mangle -F")
-        c.do()
-        # iptables -t mangle -X
-        c = Execte("iptables -t mangle -X")
-        c.do()
+        if isinstance(self.vpn.subclass, OpenconnectConfig):
+            openconnect = self.vpn.subclass
+            reset_iptables_file = self.VpnList["anyconnect"]["reset_iptables_file"]
+            c = Execte("{}".format(reset_iptables_file))
+            c.do()
+            res = c.returncode
+        else:
+            reset_iptables_file = self.VpnList["reset_iptables_file"]
+            c = Execte("{}".format(reset_iptables_file))
+            c.do()
+            res = c.returncode
         
-        return 0
+        return res

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 protocol=${1}
 gateway=${2}
