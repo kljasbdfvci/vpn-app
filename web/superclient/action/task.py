@@ -56,7 +56,7 @@ def start_services(status: ServiceStatus):
     if get_active_router() and not get_active_router().is_running():
         print('starting vpn...')
         start_vpn_service(status)
-    if status.active_vpn != status.selected_vpn:
+    elif status.active_vpn != status.selected_vpn:
         print('changing active vpn...')
         status.change_active_vpn(status.selected_vpn)
         router = get_active_router()
