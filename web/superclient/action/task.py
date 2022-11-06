@@ -42,30 +42,59 @@ def start_services(status: ServiceStatus):
     if hoptspot_profile and not hoptspot_profile.access_point.is_running():
         print('starting hotspot...')
         hoptspot_profile.access_point.start()
+    elif status.active_profile != status.selected_profile:
+        print('changing active hotspot profile...')
+        status.change_active_profile(status.selected_profile)
+        hoptspot_profile.access_point.stop()
+        # will start on next iteration
     else:
         print('[NO-CHANGE] hotspot service already started...')
-
 
     if not get_active_router().is_running():
         print('starting vpn...')
         start_vpn_service(status)
+    elif status.active_vpn != status.selected_vpn:
+        print('changing active vpn...')
+        router = get_active_router()
+        status.change_active_vpn(status.selected_vpn)
+        router.DisconnectVPN()
+        # will start on next iteration
     else: print('[NO-CHANGE] vpn service already started...')
 
 
 def start_vpn_service(status: ServiceStatus):
+    vpns = Configuration.objects.filer(enable=True).count()
 
-    if not status.active_vpn:
-        print('selecting best vpn configuration...')
-        selected_vpn = Configuration.objects.filer(enable=True).order_by('failed', '-priority', '-success').first()
-        if selected_vpn:
-            status.change_active_vpn(selected_vpn)
-            print(f'selected vpn configuration {selected_vpn.name}-{type(selected_vpn).__name__}')
-        else:
-            print(f'no qualify vpn configuration found.')
+    if status.selected_vpn:
+        status.change_active_vpn(status.selected_vpn)
+        vpns = 1
     else:
-        print(f'[NO-CHANGE] use active vpn: {status.active_vpn.name}-{type(status.active_vpn).__name__}')
+        print('will use auto select vpn strategy...')
 
-    get_active_router().ConnectVPN(timeout=30, try_count=6)
+    for itr in range(vpns):
+        if not status.active_vpn:
+            print('selecting best vpn configuration...')
+            auto_selected_vpn = Configuration.objects.filer(enable=True).order_by('failed', '-priority', '-success').first()
+            if auto_selected_vpn:
+                status.change_active_vpn(auto_selected_vpn)
+                print(f'selected vpn configuration {auto_selected_vpn.title}')
+            else:
+                print(f'no qualify vpn configuration found.')
+                break
+        else:
+            print(f'[NO-CHANGE] use active vpn: {status.active_vpn.title}')
+
+        res = get_active_router().ConnectVPN(timeout=30, try_count=6)
+
+        if res == 0:
+            status.active_vpn.increase_success()
+            print(f'vpn connected.')
+            break
+        else:
+            status.change_active_vpn(None)
+            status.active_vpn.increase_failed()
+            print(f'vpn not connect.')
+
 
 
 def stop_services(status: ServiceStatus):

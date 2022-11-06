@@ -37,6 +37,14 @@ class Configuration(models.Model):
     def title(self):
         return f'{self.name} ({self.type})'
 
+    def increase_failed(self):
+        self.failed = self.failed + 1
+        self.save()
+
+    def increase_success(self):
+        self.success = self.success + 1
+        self.save()
+
 
 class L2tpConfig(Configuration):
     username = models.CharField(max_length=128)
