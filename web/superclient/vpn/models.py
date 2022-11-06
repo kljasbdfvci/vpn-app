@@ -45,6 +45,10 @@ class Configuration(models.Model):
     def increase_success(self):
         self.success = self.success + 1
         self.save()
+    
+    def add_log(self, log):
+        self.last_log = log
+        self.save()
 
 
 class L2tpConfig(Configuration):
