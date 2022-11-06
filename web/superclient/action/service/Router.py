@@ -12,11 +12,11 @@ class Router:
     def __init__(self, vpn : Configuration, hotspot : Profile):
         self.VpnList = {
             "reset_iptables_file" : Path(__file__).resolve().parent / "reset_iptables.sh",
-            "anyconnect": {
-                "up_file" : Path(__file__).resolve().parent / "template/aynconnect_up.sh",
-                "pid_file" : Path(__file__).resolve().parent / "anyconnect.pid",
-                "set_iptables_file" : Path(__file__).resolve().parent / "template/aynconnect_set_iptables.sh",
-                "reset_iptables_file" : Path(__file__).resolve().parent / "template/aynconnect_reset_iptables.sh",
+            "openconnect": {
+                "up_file" : Path(__file__).resolve().parent / "template/openconnect_up.sh",
+                "pid_file" : Path(__file__).resolve().parent / "openconnect.pid",
+                "set_iptables_file" : Path(__file__).resolve().parent / "template/openconnect_set_iptables.sh",
+                "reset_iptables_file" : Path(__file__).resolve().parent / "template/openconnect_reset_iptables.sh",
                 "interface" : "tun0"
             },
             "v2ray": {
@@ -35,13 +35,13 @@ class Router:
         output = ""
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
-            up_file = self.VpnList["anyconnect"]["up_file"]
+            up_file = self.VpnList["openconnect"]["up_file"]
             protocol = openconnect.protocol
             gateway = openconnect.host + ":" + str(openconnect.port)
             username = openconnect.username
             password = openconnect.password
-            pid_file = self.VpnList["anyconnect"]["pid_file"]
-            interface = self.VpnList["anyconnect"]["interface"]
+            pid_file = self.VpnList["openconnect"]["pid_file"]
+            interface = self.VpnList["openconnect"]["interface"]
             no_dtls = openconnect.no_dtls
             passtos = openconnect.passtos
             no_deflate = openconnect.no_deflate
@@ -161,7 +161,7 @@ class Router:
         pid = 0
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
-            pid_file = self.VpnList["anyconnect"]["pid_file"]
+            pid_file = self.VpnList["openconnect"]["pid_file"]
             if os.path.isfile(pid_file):
                 file = open(pid_file, "r")
                 pid = file.read().strip()
@@ -181,7 +181,7 @@ class Router:
     def delete_pid_file(self):
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
-            pid_file = self.VpnList["anyconnect"]["pid_file"]
+            pid_file = self.VpnList["openconnect"]["pid_file"]
             if os.path.isfile(pid_file):
                 os.remove(pid_file)
 
@@ -199,8 +199,8 @@ class Router:
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
             hotspot_interface = self.hotspot.interface
-            vpn_interface = self.VpnList["anyconnect"]["interface"]
-            set_iptables_file = self.VpnList["anyconnect"]["set_iptables_file"]
+            vpn_interface = self.VpnList["openconnect"]["interface"]
+            set_iptables_file = self.VpnList["openconnect"]["set_iptables_file"]
             c = Execte("{} {} {}".format(set_iptables_file, hotspot_interface, vpn_interface))
             c.do()
             c.print()
@@ -230,7 +230,7 @@ class Router:
 
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
-            reset_iptables_file = self.VpnList["anyconnect"]["reset_iptables_file"]
+            reset_iptables_file = self.VpnList["openconnect"]["reset_iptables_file"]
             c = Execte("{}".format(reset_iptables_file))
             c.do()
             c.print()
