@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import json
 
 # local
 from .Execte import *
@@ -200,7 +201,9 @@ class Router:
         elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
             set_iptables_file = self.VpnList["v2ray"]["set_iptables_file"]
-            v2ray_port = v2ray.port
+            config_json = v2ray.config_json
+            js = json.loads(config_json)
+            v2ray_port = js["inbounds"][0]["port"]
             hotspot_interface = self.hotspot.interface
             hotspot_ip = self.hotspot.ip
             hotspot_netmask = self.hotspot.netmask
