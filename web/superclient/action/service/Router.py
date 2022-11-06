@@ -208,7 +208,7 @@ class Router:
             hotspot_ip = self.hotspot.ip
             hotspot_netmask = self.hotspot.netmask
 
-            c = Execte("{} {} {} {} {}".format(set_iptables_file, v2ray_port, hotspot_interface, hotspot_ip, hotspot_netmask, "eth0"))
+            c = Execte("{} {} {} {} {} {}".format(set_iptables_file, v2ray_port, hotspot_interface, hotspot_ip, hotspot_netmask, "eth0"))
             c.do()
             res = c.returncode
 
