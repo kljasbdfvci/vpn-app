@@ -10,7 +10,7 @@ class ActionConfig(AppConfig):
     def ready(self):
         unregister_admin()
 
-        if not ('makemigrations' in sys.argv or 'migrate' in sys.argv or 'ensure_adminuser' in sys.argv):
+        if 'runserver' in sys.argv:
             from superclient.action.task import start
             start()
 
