@@ -52,8 +52,9 @@ class Router:
                 up_file, protocol, gateway, username, password, timeout, pid_file, interface, try_count, no_dtls, passtos, no_deflate, deflate, no_http_keepalive)
             )
             c.do()
+            c.print()
             res = c.returncode
-            output = c.stdout + c.stderr
+            output = c.getSTD()
 
         elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
@@ -70,8 +71,9 @@ class Router:
                 up_file, config_file, pid_file)
             )
             c.do()
+            c.print()
             res = c.returncode
-            output = c.stdout + c.stderr
+            output = c.getSTD()
 
         else:
             res = -1
@@ -93,8 +95,9 @@ class Router:
                 if self.is_running():
                     c = Execte("kill -SIGINT {} || kill -SIGKILL {})".format(pid, pid))
                     c.do()
+                    c.print()
                     res = c.returncode
-                    output = c.stdout + c.stderr
+                    output = c.getSTD()
                 else:
                     res = 0
                     output = "vpn is already disable."
@@ -110,8 +113,9 @@ class Router:
                 if self.is_running():
                     c = Execte("kill -SIGINT {} || kill -SIGKILL {})".format(pid, pid))
                     c.do()
+                    c.print()
                     res = c.returncode
-                    output = c.stdout + c.stderr
+                    output = c.getSTD()
                 else:
                     res = 0
                     output = "vpn is already disable."
@@ -135,6 +139,7 @@ class Router:
             if pid != 0:
                 c = Execte("kill -0 {})".format(pid))
                 c.do()
+                c.print()
                 if c.isSuccess:
                     res = True
 
@@ -144,6 +149,7 @@ class Router:
             if pid != 0:
                 c = Execte("kill -0 {})".format(pid))
                 c.do()
+                c.print()
                 if c.isSuccess:
                     res = True        
         else:
@@ -197,6 +203,7 @@ class Router:
             set_iptables_file = self.VpnList["anyconnect"]["set_iptables_file"]
             c = Execte("{} {} {}".format(set_iptables_file, hotspot_interface, vpn_interface))
             c.do()
+            c.print()
             res = c.returncode
 
         elif isinstance(self.vpn.subclass, V2rayConfig):
@@ -211,6 +218,7 @@ class Router:
 
             c = Execte("{} {} {} {} {} {}".format(set_iptables_file, v2ray_port, hotspot_interface, hotspot_ip, hotspot_netmask, "eth0"))
             c.do()
+            c.print()
             res = c.returncode
 
         else:
@@ -225,11 +233,13 @@ class Router:
             reset_iptables_file = self.VpnList["anyconnect"]["reset_iptables_file"]
             c = Execte("{}".format(reset_iptables_file))
             c.do()
+            c.print()
             res = c.returncode
         else:
             reset_iptables_file = self.VpnList["reset_iptables_file"]
             c = Execte("{}".format(reset_iptables_file))
             c.do()
+            c.print()
             res = c.returncode
         
         return res

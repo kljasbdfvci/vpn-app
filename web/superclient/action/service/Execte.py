@@ -21,10 +21,24 @@ class Execte:
         return (self.returncode, self.stdout, self.stderr)
     
     def print(self):
+        out = "running '{}'.\n exit: {}.".format(self.command, self.returncode)
+        s = self.getSTD()
+        if s != "":
+            out = "\n" + s
         if self.returncode != 0:
-            logging.error(self.stderr)
+            logging.error(out)
         else:
-            logging.info(self.stdout)
+            logging.debug(out)
+
+    def getSTD(self):
+        s = ""
+        if self.stdout != "":
+            s = s + self.stdout
+        if self.stderr != "":
+            if s != "":
+                s = s + "\n"
+            s = s + self.stderr
+        return s
 
     def isSuccess(self):
         if self.returncode != 0:
