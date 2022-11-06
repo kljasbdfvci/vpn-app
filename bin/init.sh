@@ -189,7 +189,6 @@ python3 -m pip install -r "$this_dir_path/../web/requirments.txt"
 python3 "$this_dir_path/../web/manage.py" migrate
 python3 "$this_dir_path/../web/manage.py" ensure_adminuser --username=admin --password=admin
 python3 "$this_dir_path/../web/manage.py" runserver 0.0.0.0:80 1>/tmp/app-web.log 2>/tmp/app-web.log.error &
-python3 "$this_dir_path/../web/manage.py" process_tasks>/tmp/app-task.log 2>/tmp/app-task.log.error &
 
 # if anychange in os reboot
 if [ $flag_rebbot -eq 1 ]; then 
