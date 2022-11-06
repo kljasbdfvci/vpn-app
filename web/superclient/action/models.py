@@ -52,6 +52,14 @@ class ServiceStatus(models.Model):
         self.active_vpn = vpn
         self.save()
 
+    def change_selected_profile(self, profile):
+        self.selected_profile = profile
+        self.save()
+
+    def change_selected_vpn(self, vpn):
+        self.selected_vpn = vpn
+        self.save()
+
     def toggle_on(self):
         self.on = not self.on
         self.save()

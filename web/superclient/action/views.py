@@ -13,10 +13,10 @@ def index(request):
     if request.method == 'POST':
         if not status.on:
             selected_profile = Profile.objects.filter(name=request.POST.dict()['profile']).first()
-            status.change_active_profile(selected_profile)
+            status.change_selected_profile(selected_profile)
 
             selected_vpn = Configuration.objects.filter(id=request.POST.dict()['vpn']).first()
-            status.change_active_vpn(selected_vpn)
+            status.change_selected_vpn(selected_vpn)
         
         status.toggle_on()
 
