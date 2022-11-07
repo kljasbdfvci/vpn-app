@@ -11,7 +11,7 @@ from ...hotspot.models import *
 class Router:
     def __init__(self, vpn : Configuration, hotspot : Profile):
         self.VpnList = {
-            "reset_iptables_file" : Path(__file__).resolve().parent / "reset_iptables.sh",
+            "reset_iptables_file" : Path(__file__).resolve().parent / "template/reset_iptables.sh",
             "openconnect": {
                 "up_file" : Path(__file__).resolve().parent / "template/openconnect_up.sh",
                 "set_iptables_file" : Path(__file__).resolve().parent / "template/openconnect_set_iptables.sh",
