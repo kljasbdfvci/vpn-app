@@ -30,7 +30,7 @@ class Execte:
         else:
             logging.debug(out)
 
-    def getSTD(self, max_line):
+    def getSTD(self, max_line = None):
         out = ""
         if self.stdout != "":
             if max_line != None and len(self.stdout.splitlines()) > max_line:
