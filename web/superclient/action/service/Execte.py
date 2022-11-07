@@ -33,17 +33,19 @@ class Execte:
     def getSTD(self, max_line = None):
         out = ""
         if self.stdout != "":
-            if max_line != None and len(self.stdout.splitlines()) > max_line:
-                out = out + "stdout: '{}'.".format('\n'.join(self.stdout.splitlines()[-max_line:]).strip())
+            stdout = self.stdout
+            if max_line != None and len(stdout.splitlines()) > max_line:
+                out = out + "stdout: '{}'.".format('\n'.join(stdout.splitlines()[-max_line:]).strip())
             else:
-                out = out + "stdout: '{}'.".format(self.stdout.strip())
+                out = out + "stdout: '{}'.".format(stdout.strip())
         if self.stderr != "":
             if out != "":
                 out = out + "\n"
-            if max_line != None and len(self.stderr.splitlines()) > max_line:
-                out = out + "stderr: '{}'.".format('\n'.join(self.stderr.splitlines()[-max_line:]).strip())
+            stderr = self.stderr
+            if max_line != None and len(stderr.splitlines()) > max_line:
+                out = out + "stderr: '{}'.".format('\n'.join(stderr.splitlines()[-max_line:]).strip())
             else:
-                out = out + "stderr: '{}'.".format(self.stderr.strip())
+                out = out + "stderr: '{}'.".format(stderr.strip())
         return out
 
     def isSuccess(self):
