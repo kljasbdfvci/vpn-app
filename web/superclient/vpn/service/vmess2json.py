@@ -71,7 +71,6 @@ TPL["CLIENT"] = """
   ],
   "dns": {
     "servers": [
-      "1.0.0.1",
       "localhost"
     ]
   },
