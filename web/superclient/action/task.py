@@ -3,10 +3,12 @@ from superclient.vpn.models import Configuration
 from superclient.action.service.Router import Router
 import time
 from threading import Thread
+import logging
+
 
 
 def start():
-    print('start tasks...')
+    logging.info('start tasks...')
     TaskThread().start()
 
 
@@ -24,7 +26,7 @@ class TaskThread(Thread):
                 service_checker()
 
             except Exception as e:
-                print(e)
+                logging.error(e)
 
             time.sleep(self.repeat_delay)
 
@@ -39,30 +41,30 @@ def service_checker():
 
 
 def start_services(status: ServiceStatus):
-    print('starting services...')
+    logging.info('starting services...')
 
     hoptspot_profile = status.active_profile
     if hoptspot_profile and not hoptspot_profile.access_point.is_running():
-        print('starting hotspot...')
+        logging.info('starting hotspot...')
         hoptspot_profile.access_point.start()
     elif status.active_profile != status.selected_profile:
-        print('changing active hotspot profile...')
+        logging.info('changing active hotspot profile...')
         status.change_active_profile(status.selected_profile)
         hoptspot_profile.access_point.stop()
         # will start on next iteration
     else:
-        print('[NO-CHANGE] hotspot service already started...')
+        logging.info('[NO-CHANGE] hotspot service already started...')
 
     if get_active_router() and not get_active_router().is_running():
-        print('starting vpn...')
+        logging.info('starting vpn...')
         start_vpn_service(status)
-    elif status.active_vpn != status.selected_vpn:
-        print('changing active vpn...')
-        status.change_active_vpn(status.selected_vpn)
-        router = get_active_router()
-        router.DisconnectVPN()
-        # will start on next iteration
-    else: print('[NO-CHANGE] vpn service already started...')
+    # elif status.active_vpn != status.selected_vpn:
+    #     logging.info('changing active vpn...')
+    #     status.change_active_vpn(status.selected_vpn)
+    #     router = get_active_router()
+    #     router.DisconnectVPN()
+    #     # will start on next iteration
+    else: logging.info('[NO-CHANGE] vpn service already started...')
 
 
 def start_vpn_service(status: ServiceStatus):
@@ -72,51 +74,51 @@ def start_vpn_service(status: ServiceStatus):
         status.change_active_vpn(status.selected_vpn)
         vpns = 1
     else:
-        print('will use auto select vpn strategy...')
+        logging.info('will use auto select vpn strategy...')
 
     for itr in range(vpns):
         if not status.active_vpn:
-            print('selecting best vpn configuration...')
+            logging.info('selecting best vpn configuration...')
             auto_selected_vpn = Configuration.objects.filer(enable=True).order_by('failed', '-priority', '-success').first()
             if auto_selected_vpn:
                 status.change_active_vpn(auto_selected_vpn)
-                print(f'selected vpn configuration {auto_selected_vpn.title}')
+                logging.info(f'selected vpn configuration {auto_selected_vpn.title}')
             else:
-                print(f'no qualify vpn configuration found.')
+                logging.info(f'no qualify vpn configuration found.')
                 break
         else:
-            print(f'[NO-CHANGE] use active vpn: {status.active_vpn.title}')
+            logging.info(f'[NO-CHANGE] use active vpn: {status.active_vpn.title}')
 
         res, output = get_active_router().ConnectVPN(timeout=30, try_count=6)
         status.active_vpn.add_log(output)
         if res == 0:
             status.active_vpn.increase_success()
-            print(f'vpn connected.')
+            logging.info(f'vpn connected.')
             break
         else:
             get_active_router().DisconnectVPN()
             status.change_active_vpn(None)
             status.active_vpn.increase_failed()
-            print(f'vpn not connect.')
-
+            logging.info(f'vpn not connect.')
+            continue
 
 
 def stop_services(status: ServiceStatus):
-    print('stoping services...')
+    logging.info('stoping services...')
 
     hoptspot_profile = status.active_profile
     if hoptspot_profile and hoptspot_profile.access_point.is_running():
-        print('stoping hotspot...')
+        logging.info('stoping hotspot...')
         hoptspot_profile.access_point.stop()
     else:
-        print('[NO-CHANGE] hotspot service already stopped...')
+        logging.info('[NO-CHANGE] hotspot service already stopped...')
 
     router = get_active_router()
     if router and router.is_running():
-        print('stoping vpn...')
+        logging.info('stoping vpn...')
         router.DisconnectVPN()
     else:
-        print('[NO-CHANGE] vpn service already stopped...')
+        logging.info('[NO-CHANGE] vpn service already stopped...')
 
 
 def get_active_router():
