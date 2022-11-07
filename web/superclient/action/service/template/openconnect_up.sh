@@ -1,38 +1,40 @@
 #!/bin/bash
 
-protocol=${1}
-gateway=${2}
-username=${3}
-password=${4}
-timeout=${5}
-pid_file=${6}
-interface=${7}
-try=${8}
-no_dtls=${9}
+pid_file=${1}
+log_file=${2}
+timeout=${3}
+try=${4}
+
+protocol=${5}
+gateway=${6}
+username=${7}
+password=${8}
+interface=${9}
+no_dtls=${10}
 if [ "$no_dtls" == "True" ]; then
     no_dtls="--no-dtls"
 else
     no_dtls=""
 fi
-passtos=${10}
+passtos=${11}
 if [ "$passtos" == "True" ]; then
     passtos="--passtos"
 else
     passtos=""
 fi
-no_deflate=${11}
+no_deflate=${12}
 if [ "$no_deflate" == "True" ]; then
     no_deflate="--no-deflate"
 else
     no_deflate=""
 fi
-deflate=${12}
+deflate=${13}
 if [ "$deflate" == "True" ]; then
     deflate="--deflate"
 else
     deflate=""
 fi
-no_http_keepalive=${13}
+no_http_keepalive=${14}
 if [ "$no_http_keepalive" == "True" ]; then
     no_http_keepalive="--no-http-keepalive"
 else
@@ -58,8 +60,9 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
     do
         echo -e "\n\nTry($n)\n\n"
         timeout $timeout echo $password | \
-        openconnect $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
-        --protocol=$protocol --interface=$interface --pid-file=$pid_file --background $gateway --user=$username --passwd-on-stdin --servercert $servercert --reconnect-timeout=30
+        openconnect --reconnect-timeout=30 --background --passwd-on-stdin \
+        $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
+        --protocol=$protocol --interface=$interface --pid-file=$pid_file  $gateway --user=$username  --servercert $servercert &>$log_file
         exit_code=$?
         if [ $exit_code == 0 ]; then
             break

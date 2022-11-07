@@ -21,11 +21,11 @@ class Execte:
         return (self.returncode, self.stdout, self.stderr)
     
     def print(self):
-        out = "\nexec '{}'.\nexit: {}.".format(self.command, self.returncode)
+        out = "\nexec: '{}'.\nexit: '{}'.".format(self.command, self.returncode)
         s = self.getSTD()
         if s != "":
-            if len(s) > 100:
-                out = out + "\n" + s[-100:]
+            if len(s.splitlines()) > 5:
+                out = out + "\n" + '\n'.join(s.splitlines()[-5:])
             else:
                 out = out + "\n" + s
         if self.returncode != 0:
@@ -36,11 +36,11 @@ class Execte:
     def getSTD(self):
         s = ""
         if self.stdout != "":
-            s = s + self.stdout
+            s = s + "stdout: '{}'.".format(self.stdout)
         if self.stderr != "":
             if s != "":
                 s = s + "\n"
-            s = s + self.stderr
+            s = s + "stderr: '{}'.".format(self.stderr)
         return s
 
     def isSuccess(self):

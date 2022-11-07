@@ -14,17 +14,19 @@ class Router:
             "reset_iptables_file" : Path(__file__).resolve().parent / "reset_iptables.sh",
             "openconnect": {
                 "up_file" : Path(__file__).resolve().parent / "template/openconnect_up.sh",
-                "pid_file" : Path(__file__).resolve().parent / "openconnect.pid",
                 "set_iptables_file" : Path(__file__).resolve().parent / "template/openconnect_set_iptables.sh",
                 "reset_iptables_file" : Path(__file__).resolve().parent / "template/openconnect_reset_iptables.sh",
+                "pid_file" : Path(__file__).resolve().parent / "openconnect.pid",
+                "log_file" : Path(__file__).resolve().parent / "openconnect.log",
                 "interface" : "tun0"
             },
             "v2ray": {
                 "up_file" : Path(__file__).resolve().parent / "template/v2ray_up.sh",
-                "config_file" : Path(__file__).resolve().parent / "v2ray.config",
-                "pid_file" : Path(__file__).resolve().parent / "v2ray.pid",
                 "set_iptables_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables.sh",
                 "reset_iptables_file" : Path(__file__).resolve().parent / "template/v2ray_reset_iptables.sh",
+                "pid_file" : Path(__file__).resolve().parent / "v2ray.pid",
+                "log_file" : Path(__file__).resolve().parent / "v2ray.log",
+                "config_file" : Path(__file__).resolve().parent / "v2ray.config",
             },
         }
         self.vpn = vpn
@@ -35,12 +37,15 @@ class Router:
         output = ""
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
+
             up_file = self.VpnList["openconnect"]["up_file"]
+            pid_file = self.VpnList["openconnect"]["pid_file"]
+            log_file = self.VpnList["openconnect"]["log_file"]
+
             protocol = openconnect.protocol
             gateway = openconnect.host + ":" + str(openconnect.port)
             username = openconnect.username
             password = openconnect.password
-            pid_file = self.VpnList["openconnect"]["pid_file"]
             interface = self.VpnList["openconnect"]["interface"]
             no_dtls = openconnect.no_dtls
             passtos = openconnect.passtos
@@ -48,8 +53,9 @@ class Router:
             deflate = openconnect.deflate
             no_http_keepalive = openconnect.no_http_keepalive
             
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
-                up_file, protocol, gateway, username, password, timeout, pid_file, interface, try_count, no_dtls, passtos, no_deflate, deflate, no_http_keepalive)
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                up_file, pid_file, log_file, timeout, try_count, \
+                protocol, gateway, username, password, interface, no_dtls, passtos, no_deflate, deflate, no_http_keepalive)
             )
             c.do()
             c.print()
@@ -58,17 +64,21 @@ class Router:
 
         elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
-            config_json = v2ray.config_json
+            
             up_file = self.VpnList["v2ray"]["up_file"]
-            config_file = self.VpnList["v2ray"]["config_file"]
             pid_file = self.VpnList["v2ray"]["pid_file"]
+            log_file = self.VpnList["v2ray"]["log_file"]
+
+            config_file = self.VpnList["v2ray"]["config_file"]
+            config_json = v2ray.config_json
             
             f = open(config_file, "w")
             f.write(config_json)
             f.close()
 
-            c = Execte("{} {} {}".format(\
-                up_file, config_file, pid_file)
+            c = Execte("{} {} {} {} {} {}".format(\
+                up_file, pid_file, log_file, timeout, try_count, \
+                config_file)
             )
             c.do()
             c.print()
