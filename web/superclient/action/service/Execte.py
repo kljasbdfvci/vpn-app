@@ -34,16 +34,16 @@ class Execte:
         out = ""
         if self.stdout != "":
             if max_line != None and len(self.stdout.splitlines()) > max_line:
-                out = out + "stdout: '{}'.".format('\n'.join(self.stdout.splitlines()[-max_line:]))
+                out = out + "stdout: '{}'.".format('\n'.join(self.stdout.splitlines()[-max_line:]).strip())
             else:
-                out = out + "stdout: '{}'.".format(self.stdout)
+                out = out + "stdout: '{}'.".format(self.stdout.strip())
         if self.stderr != "":
             if out != "":
                 out = out + "\n"
             if max_line != None and len(self.stderr.splitlines()) > max_line:
-                out = out + "stderr: '{}'.".format('\n'.join(self.stderr.splitlines()[-max_line:]))
+                out = out + "stderr: '{}'.".format('\n'.join(self.stderr.splitlines()[-max_line:]).strip())
             else:
-                out = out + "stderr: '{}'.".format(self.stderr)
+                out = out + "stderr: '{}'.".format(self.stderr.strip())
         return out
 
     def isSuccess(self):
