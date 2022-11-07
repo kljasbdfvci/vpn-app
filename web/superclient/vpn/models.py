@@ -106,7 +106,7 @@ class V2rayConfig(Configuration):
         vless = "vless", "VLESS"  # we dont have alter_id in vless
 
     class Network(models.TextChoices):
-        vmess = "tpc", "TCP"
+        vmess = "tcp", "TCP"
         vless = "ws", "WebSocket"
 
     class Tls(models.TextChoices):
