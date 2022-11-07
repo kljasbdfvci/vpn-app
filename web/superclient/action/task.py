@@ -55,15 +55,9 @@ def start_services(status: ServiceStatus):
     else:
         logging.info('[NO-CHANGE] hotspot service already started...')
 
-    if get_active_router() and not get_active_router().is_running():
+    if not get_active_router() or not get_active_router().is_running():
         logging.info('starting vpn...')
         start_vpn_service(status)
-    # elif status.active_vpn != status.selected_vpn:
-    #     logging.info('changing active vpn...')
-    #     status.change_active_vpn(status.selected_vpn)
-    #     router = get_active_router()
-    #     router.DisconnectVPN()
-    #     # will start on next iteration
     else: logging.info('[NO-CHANGE] vpn service already started...')
 
 
