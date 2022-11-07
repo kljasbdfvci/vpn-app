@@ -103,7 +103,7 @@ class Router:
             pid = self.read_pid_file()
             if pid != 0:
                 if self.is_running():
-                    c = Execte("kill -SIGINT {} || kill -SIGKILL {}".format(pid, pid))
+                    c = Execte("kill -2 {} || kill -9 {}".format(pid, pid))
                     c.do()
                     c.print()
                     res = c.returncode
@@ -121,7 +121,7 @@ class Router:
             pid = self.read_pid_file()
             if pid != 0:
                 if self.is_running():
-                    c = Execte("kill -SIGINT {} || kill -SIGKILL {}".format(pid, pid))
+                    c = Execte("kill -2 {} || kill -9 {}".format(pid, pid))
                     c.do()
                     c.print()
                     res = c.returncode
