@@ -22,26 +22,29 @@ class Execte:
     
     def print(self):
         out = "\nexec: '{}'.\nexit: '{}'.".format(self.command, self.returncode)
-        s = self.getSTD()
+        s = self.getSTD(5)
         if s != "":
-            if len(s.splitlines()) > 5:
-                out = out + "\n" + '\n'.join(s.splitlines()[-5:])
-            else:
-                out = out + "\n" + s
+            out = out + "\n" + s
         if self.returncode != 0:
             logging.error(out)
         else:
             logging.debug(out)
 
-    def getSTD(self):
-        s = ""
+    def getSTD(self, max_line):
+        out = ""
         if self.stdout != "":
-            s = s + "stdout: '{}'.".format(self.stdout)
+            if max_line != None and len(self.stdout.splitlines()) > max_line:
+                out = out + "stdout: '{}'.".format('\n'.join(self.stdout.splitlines()[-max_line:]))
+            else:
+                out = out + "stdout: '{}'.".format(self.stdout)
         if self.stderr != "":
-            if s != "":
-                s = s + "\n"
-            s = s + "stderr: '{}'.".format(self.stderr)
-        return s
+            if out != "":
+                out = out + "\n"
+            if max_line != None and len(self.stderr.splitlines()) > max_line:
+                out = out + "stderr: '{}'.".format('\n'.join(self.stderr.splitlines()[-max_line:]))
+            else:
+                out = out + "stderr: '{}'.".format(self.stderr)
+        return out
 
     def isSuccess(self):
         if self.returncode != 0:
