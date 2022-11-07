@@ -245,6 +245,15 @@ class Router:
             c.do()
             c.print()
             res = c.returncode
+
+        elif isinstance(self.vpn.subclass, V2rayConfig):
+            v2ray = self.vpn.subclass
+            reset_iptables_file = self.VpnList["v2ray"]["reset_iptables_file"]
+            c = Execte("{}".format(reset_iptables_file))
+            c.do()
+            c.print()
+            res = c.returncode
+
         else:
             reset_iptables_file = self.VpnList["reset_iptables_file"]
             c = Execte("{}".format(reset_iptables_file))
