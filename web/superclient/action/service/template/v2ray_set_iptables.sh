@@ -92,7 +92,7 @@ if pgrep redsocks; then
     killall redsocks
 fi
 
-nohup redsocks -c $REDSOCKS_CONF -p /dev/null &
+redsocks -c $REDSOCKS_CONF &>/dev/null &
 
 ########################################################################
 # proxy iptables setup
