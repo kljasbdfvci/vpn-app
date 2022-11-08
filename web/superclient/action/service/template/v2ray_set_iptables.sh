@@ -92,7 +92,7 @@ if pgrep redsocks; then
     killall redsocks
 fi
 
-redsocks -c $REDSOCKS_CONF -p /dev/null
+nohup redsocks -c $REDSOCKS_CONF -p /dev/null &
 
 ########################################################################
 # proxy iptables setup
@@ -133,7 +133,7 @@ if pgrep DNS2SOCKS; then
     killall DNS2SOCKS
 fi
 
-DNS2SOCKS 127.0.0.1:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /d /q &
+nohup DNS2SOCKS 127.0.0.1:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /d /q &
 
 # dns2socks iptables
 iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
