@@ -133,7 +133,7 @@ if pgrep DNS2SOCKS; then
     killall DNS2SOCKS
 fi
 
-nohup DNS2SOCKS 127.0.0.1:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /d /q &
+DNS2SOCKS 127.0.0.1:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /d /q &>/dev/null &
 
 # dns2socks iptables
 iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
