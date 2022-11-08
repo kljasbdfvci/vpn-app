@@ -41,6 +41,7 @@ SUBNET_INTERFACE=${2}
 SUBNET_PORT_ADDRESS=${3}
 SUBNET_PORT_NETMASK=${4}
 INTERNET_INTERFACE=${5}
+DNSServer="8.8.8.8"
 
 ########################################################################
 #standard router setup - sets up subnet SUBNET_PORT_ADDRESS/24 on wlan0
@@ -125,5 +126,17 @@ iptables -t nat -A PREROUTING -i $SUBNET_INTERFACE -p tcp -j REDSOCKS
 
 # don't forget to accept the tcp packets from wlan0
 iptables -A INPUT -i $SUBNET_INTERFACE -p tcp --dport $REDSOCKS_TCP_PORT -j ACCEPT
+
+
+# dns2socks
+if pgrep DNS2SOCKS; then
+    killall DNS2SOCKS
+fi
+
+DNS2SOCKS 127.0.0.1:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /d /q &
+
+# dns2socks iptables
+iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
+iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-port 5300
 
 exit 0

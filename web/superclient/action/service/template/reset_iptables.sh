@@ -16,4 +16,8 @@ if pgrep redsocks; then
     killall redsocks
 fi
 
+if pgrep DNS2SOCKS; then
+    killall DNS2SOCKS
+fi
+
 exit 0
