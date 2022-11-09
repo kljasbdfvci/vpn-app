@@ -6,7 +6,7 @@ from superclient.vpn.models import Configuration
 
 class ServiceStatus(models.Model):
 
-    on = models.BooleanField(default=0)
+    on = models.BooleanField(default=False)
 
     selected_profile = models.OneToOneField(
         Profile,

@@ -43,14 +43,13 @@ def service_checker():
 def start_services(status: ServiceStatus):
     logging.info('starting services...')
 
-    hoptspot_profile = status.active_profile
-    if hoptspot_profile and not hoptspot_profile.access_point.is_running():
+    if status.active_profile and not status.active_profile.access_point.is_running():
         logging.info('starting hotspot...')
-        hoptspot_profile.access_point.start()
+        status.active_profile.access_point.start()
     elif status.active_profile != status.selected_profile:
         logging.info('changing active hotspot profile...')
         status.change_active_profile(status.selected_profile)
-        hoptspot_profile.access_point.stop()
+        status.active_profile.access_point.stop()
         # will start on next iteration
     else:
         logging.info('[NO-CHANGE] hotspot service already started...')
