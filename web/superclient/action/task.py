@@ -72,7 +72,7 @@ def start_vpn_service(status: ServiceStatus):
     for itr in range(vpns):
         if not status.active_vpn:
             logging.info('selecting best vpn configuration...')
-            auto_selected_vpn = Configuration.objects.filer(enable=True).order_by('failed', '-priority', '-success').first()
+            auto_selected_vpn = Configuration.objects.filter(enable=True).order_by('failed', '-priority', '-success').first()
             if auto_selected_vpn:
                 status.change_active_vpn(auto_selected_vpn)
                 logging.info(f'selected vpn configuration {auto_selected_vpn.title}')
