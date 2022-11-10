@@ -90,6 +90,7 @@ EOF
 
 if pgrep redsocks; then
     killall redsocks
+    sleep 1
 fi
 
 redsocks -c $REDSOCKS_CONF &>/dev/null &
@@ -131,9 +132,10 @@ iptables -A INPUT -i $SUBNET_INTERFACE -p tcp --dport $REDSOCKS_TCP_PORT -j ACCE
 # dns2socks
 if pgrep DNS2SOCKS; then
     killall DNS2SOCKS
+    sleep 1
 fi
 
-DNS2SOCKS 127.0.0.1:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /d /q &>/dev/null &
+DNS2SOCKS 127.0.0.1:$SOCKS_PORT $DNSServer 127.0.0.1:5300 &>/dev/null &
 
 # dns2socks iptables
 iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
