@@ -115,9 +115,11 @@ iptables -t nat -A REDSOCKS -d 240.0.0.0/4 -j RETURN
 # redirect statement sends everything else to the redsocks
 # proxy input port
 iptables -t nat -A REDSOCKS -p tcp -j REDIRECT --to-ports $REDSOCKS_TCP_PORT
+iptables -t nat -A REDSOCKS -p udp -j REDIRECT --to-ports $REDSOCKS_TCP_PORT
 
 # if it came in on wlan0, and it is tcp, send it to REDSOCKS
 iptables -t nat -A PREROUTING -i $SUBNET_INTERFACE -p tcp -j REDSOCKS
+iptables -t nat -A PREROUTING -i $SUBNET_INTERFACE -p udp -j REDSOCKS
 
 # Use this one instead of the above if you want to proxy the local
 # networking in addition to the subnet stuff. Redsocks listens on
@@ -127,6 +129,7 @@ iptables -t nat -A PREROUTING -i $SUBNET_INTERFACE -p tcp -j REDSOCKS
 
 # don't forget to accept the tcp packets from wlan0
 iptables -A INPUT -i $SUBNET_INTERFACE -p tcp --dport $REDSOCKS_TCP_PORT -j ACCEPT
+iptables -A INPUT -i $SUBNET_INTERFACE -p udp --dport $REDSOCKS_TCP_PORT -j ACCEPT
 
 
 # dns2socks
