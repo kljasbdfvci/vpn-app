@@ -1,9 +1,8 @@
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 import base64
 import json
-from superclient.vpn.service.vmess2json import generate
+from superclient.vpn.service import vmess2json
+from urllib.parse import urlparse, parse_qs, quote_plus
 
 
 
@@ -118,12 +117,13 @@ class V2rayConfig(Configuration):
     v = models.CharField(max_length=8, default='2')
     protocol = models.CharField(max_length=8, choices=Protocol.choices)
     uid = models.CharField(max_length=64, blank=True)
-    alter_id = models.CharField(max_length=64, blank=True)
+    alter_id = models.CharField(max_length=64, null=True, blank=True) #no need for vless
+    security = models.CharField(max_length=64, null=True, blank=True) #use vless
     tls = models.CharField(max_length=8, choices=Tls.choices, blank=True)
     tls_allow_insecure = models.BooleanField(default=False)
     network = models.CharField(max_length=8, choices=Network.choices, blank=True)
-    ws_path = models.CharField(max_length=512, blank=True)
-    ws_host = models.CharField(max_length=256, blank=True)
+    ws_path = models.CharField(max_length=512, null=True, blank=True)
+    ws_host = models.CharField(max_length=256, null=True, blank=True)
     config_url = models.CharField(max_length=2048, blank=True)
     config_json = models.CharField(max_length=4098, blank=True)
 
@@ -131,40 +131,72 @@ class V2rayConfig(Configuration):
 
     def save(self, *args, **kwargs):
         if self.config_type == 'url':
-            conf = self.config_url.split('://')
-            config = json.loads(base64.b64decode(conf[1].encode("utf-8")))
-            self.v = config.get('v')
-            self.name = config.get('ps')
-            self.host = config.get('add')
-            self.port = config.get('port')
-            self.protocol = conf[0]
-            self.uid = config.get('id')
-            self.alter_id = config.get('aid')
-            self.network = config.get('net')
-            self.ws_path = config.get('path')
-            self.ws_host = config.get('host')
-            self.tls = config.get('tls')
-        
+            url = self.config_url.split('://')
+            protocol = url[0]
+            raw_config = url[1]
+
+            if protocol == 'vmess':
+                config = json.loads(base64.b64decode(raw_config.encode("utf-8")))
+                self.v = config.get('v')
+                self.name = config.get('ps')
+                self.host = config.get('add')
+                self.port = config.get('port')
+                self.protocol = protocol
+                self.uid = config.get('id')
+                self.alter_id = config.get('aid')
+                self.network = config.get('net')
+                self.ws_path = config.get('path')
+                self.ws_host = config.get('host')
+                self.tls = config.get('tls')
+
+            elif protocol == 'vless':
+                parsed_url = urlparse(self.config_url)
+                netquery = parse_qs(parsed_url.query)
+                netloc = parsed_url.netloc.split('@')
+                addr = netloc[1].split(':')
+
+                name = parsed_url.fragment
+                host = addr[0]
+                port = addr[1]
+                uid = netloc[0]
+                network = netquery['type'][0]
+                security = netquery['security'][0]
+                path = netquery['path'][0]
+
+                self.name = name
+                self.host = host
+                self.port = port
+                self.protocol = protocol
+                self.uid = uid
+                self.network = network
+                self.ws_path = path
+                #self.ws_host = do vless have ws_host?
+                self.security = security
+
         elif self.config_type == 'property':
-            configjson = {
-                "v": self.v,
-                "ps": self.name,
-                "add": self.host,
-                "port": str(self.port),
-                "id": self.uid,
-                "aid": self.alter_id,
-                "net": self.network,
-                "type": 'none',
-                "host": self.ws_host,
-                "path": self.ws_path,
-                "tls": self.tls,
-            }
 
-            encoded_config = base64.b64encode(json.dumps(configjson, sort_keys=True).encode('utf-8')).decode()
-            self.config_url = f'{self.protocol}://{encoded_config}'
+            if self.protocol == 'vmess':
+                configjson = {
+                    "v": self.v,
+                    "ps": self.name,
+                    "add": self.host,
+                    "port": str(self.port),
+                    "id": self.uid,
+                    "aid": self.alter_id,
+                    "net": self.network,
+                    "type": 'none',
+                    "host": self.ws_host,
+                    "path": self.ws_path,
+                    "tls": self.tls,
+                }
 
-        self.config_json = generate(self.config_url)   
+                encoded_config = base64.b64encode(json.dumps(configjson, sort_keys=True).encode('utf-8')).decode()
+                self.config_url = f'{self.protocol}://{encoded_config}'
+            
+            elif self.protocol == 'vless':
+                self.config_url =  f'{self.protocol}://{self.uid}@{self.host}:{self.port}?type={self.network}&security={self.security}&path={quote_plus(self.ws_path)}#{quote_plus(self.name)}'
 
+        self.config_json = vmess2json.generate(self.config_url)
         super(V2rayConfig, self).save(*args, **kwargs)
 
 

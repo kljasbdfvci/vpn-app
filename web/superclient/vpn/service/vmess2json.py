@@ -13,6 +13,8 @@ import traceback
 import urllib.request
 import urllib.parse
 
+
+
 class Option:
   def __init__(self):
     self.inbounds = 'socks:1080,http:8123'
@@ -23,6 +25,7 @@ option = Option()
 
 vmscheme = "vmess://"
 ssscheme = "ss://"
+vlscheme = "vless://"
 
 TPL = {}
 TPL["CLIENT"] = """
@@ -321,9 +324,49 @@ def parseLink(link):
         return parseSs(link)
     elif link.startswith(vmscheme):
         return parseVmess(link)
+    elif link.startswith(vlscheme):
+        return parseVless(link)
     else:
-        print("ERROR: This script supports only vmess://(N/NG) and ss:// links")
+        print("ERROR: This script supports only vmess://(N/NG) and vless://(N/NG) and ss:// links")
         return None
+
+def parseVless(vlesslink):
+    RETOBJ = {
+        "v": "2",
+        "ps": "",
+        "add": "",
+        "port": "",
+        "id": "",
+        "aid": None, # tavajoh kon
+        "net": "",
+        "type": "",
+        "host": "",
+        "path": "",
+        "tls": "",
+        "is_vless": True
+    }
+    parsed_url = urllib.parse.urlparse(vlesslink)
+    netquery = urllib.parse.parse_qs(parsed_url.query)
+    netloc = parsed_url.netloc.split('@')
+    addr = netloc[1].split(':')
+
+    name = parsed_url.fragment
+    host = addr[0]
+    port = addr[1]
+    uid = netloc[0]
+    network = netquery['type'][0]
+    security = netquery['security'][0] # TODO
+    path = netquery['path'][0]
+    
+    RETOBJ["ps"] = name
+    RETOBJ["add"] = host
+    RETOBJ["port"] = port
+    RETOBJ["id"] = uid
+    RETOBJ["net"] = network
+    RETOBJ["path"] = path
+
+    return RETOBJ
+
 
 def parseSs(sslink):
     RETOBJ = {
@@ -417,7 +460,12 @@ def fill_basic(_c, _v):
     _vnext["address"]               = _v["add"]
     _vnext["port"]                  = int(_v["port"])
     _vnext["users"][0]["id"]        = _v["id"]
-    _vnext["users"][0]["alterId"]   = int(_v["aid"])
+
+    if _v.get('is_vless'):
+        _outbound["protocol"] = 'vless'
+        del _vnext["users"][0]["alterId"]
+    else:
+        _vnext["users"][0]["alterId"]   = int(_v["aid"])
 
     _outbound["streamSettings"]["network"]  = _v["net"]
 
