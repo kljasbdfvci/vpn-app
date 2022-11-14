@@ -364,7 +364,8 @@ def parseVless(vlesslink):
     RETOBJ["id"] = uid
     RETOBJ["net"] = network
     RETOBJ["path"] = path
-
+    RETOBJ["tls"] = security
+    
     return RETOBJ
 
 
@@ -463,7 +464,14 @@ def fill_basic(_c, _v):
 
     if _v.get('is_vless'):
         _outbound["protocol"] = 'vless'
+        _outbound['streamSettings']['security'] = _v["tls"]
+
+        _vnext["users"][0]["encryption"] = 'none'
+        _vnext["users"][0]["flow"] = ''
+        del _vnext["users"][0]["email"]
+        del _vnext["users"][0]["security"]
         del _vnext["users"][0]["alterId"]
+
     else:
         _vnext["users"][0]["alterId"]   = int(_v["aid"])
 
@@ -520,6 +528,10 @@ def fill_ws(_c, _v):
     wss["path"] = _v["path"]
     wss["headers"]["Host"] = _v["host"]
     _c["outbounds"][0]["streamSettings"]["wsSettings"] = wss
+
+    if _v.get('is_vless'):
+        del _c["outbounds"][0]['streamSettings']['wsSettings']['connectionReuse']
+
     return _c
 
 def fill_h2(_c, _v):
@@ -755,6 +767,10 @@ def generate(vmess_config_url):
         sys.exit(1)
 
     cc = fill_inbounds(fill_dns(vmess2client(load_TPL("CLIENT"), vc)))
+
+    if vc.get('is_vless'):
+        del cc['routing']['rules']
+
     return json.dumps(cc)
 
 # if __name__ == "__main__":

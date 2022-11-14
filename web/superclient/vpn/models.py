@@ -110,15 +110,14 @@ class V2rayConfig(Configuration):
 
     class Tls(models.TextChoices):
         tls = "tls", "TLS"
-        off = "off", "OFF"
+        none = "none", "None"
 
     host = models.CharField(max_length=128, blank=True)
     port = models.IntegerField(null=True)
     v = models.CharField(max_length=8, default='2')
     protocol = models.CharField(max_length=8, choices=Protocol.choices)
     uid = models.CharField(max_length=64, blank=True)
-    alter_id = models.CharField(max_length=64, null=True, blank=True) #no need for vless
-    security = models.CharField(max_length=64, null=True, blank=True) #use vless
+    alter_id = models.CharField(max_length=64, null=True, blank=True)
     tls = models.CharField(max_length=8, choices=Tls.choices, blank=True)
     tls_allow_insecure = models.BooleanField(default=False)
     network = models.CharField(max_length=8, choices=Network.choices, blank=True)
@@ -171,7 +170,7 @@ class V2rayConfig(Configuration):
                 self.network = network
                 self.ws_path = path
                 #self.ws_host = do vless have ws_host?
-                self.security = security
+                self.tls = security
 
         elif self.config_type == 'property':
 
@@ -194,7 +193,7 @@ class V2rayConfig(Configuration):
                 self.config_url = f'{self.protocol}://{encoded_config}'
             
             elif self.protocol == 'vless':
-                self.config_url =  f'{self.protocol}://{self.uid}@{self.host}:{self.port}?type={self.network}&security={self.security}&path={quote_plus(self.ws_path)}#{quote_plus(self.name)}'
+                self.config_url =  f'{self.protocol}://{self.uid}@{self.host}:{self.port}?type={self.network}&security={self.tls}&path={quote_plus(self.ws_path)}#{quote_plus(self.name)}'
 
         self.config_json = vmess2json.generate(self.config_url)
         super(V2rayConfig, self).save(*args, **kwargs)
