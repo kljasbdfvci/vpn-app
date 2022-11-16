@@ -39,6 +39,7 @@ base {
 	log = "file:$REDSOCKS_LOG";
 
 	// detach from console
+	// daemon = off;
 	daemon = on;
 
 	/* Change uid, gid and root directory, these options require root
@@ -111,6 +112,7 @@ redsocks {
 	// Enable or disable faster data pump based on splice(2) syscall.
 	// Default value depends on your kernel version, true for 2.6.27.13+
 	// splice = false;
+	splice = false;
 
 	// 'ip' and 'port' are IP and tcp-port of proxy-server
 	// You can also use hostname instead of IP, only one (random)
@@ -131,6 +133,7 @@ redsocks {
 	//  Forwarded_ip     -- Forwarded: for=IP # see RFC7239
 	//  Forwarded_ipport -- Forwarded: for="IP:port" # see RFC7239
 	// disclose_src = false;
+	disclose_src = false;
 
 	// various ways to handle proxy failure
 	//  close -- just close connection (default)
@@ -162,8 +165,10 @@ redudp {
 	// dest_ip = 8.8.8.8;
 	// dest_port = 53;
 
-	udp_timeout = 30;
-	udp_timeout_stream = 180;
+	// udp_timeout = 30;
+	// udp_timeout_stream = 180;
+	udp_timeout = 10;
+	udp_timeout_stream = 60;
 }
 
 dnstc {
