@@ -142,8 +142,8 @@ redudp {
 	// 'local_ip' should not be 0.0.0.0 as it's also used for outgoing
 	// packets that are sent as replies - and it should be fixed
 	// if we want NAT to work properly.
-	local_ip = 127.0.0.1;
-	local_port = $REDSOCKS_PORT_TCP;
+	local_ip = 0.0.0.0;
+	local_port = $REDSOCKS_PORT_UDP;
 
 	// 'ip' and 'port' of socks5 proxy server.
 	ip = 127.0.0.1;
