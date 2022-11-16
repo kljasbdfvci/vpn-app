@@ -230,14 +230,19 @@ class Router:
             v2ray_outbounds_port = js["outbounds"][0]["settings"]["vnext"][0]["port"]
             redsocks_config_file = self.VpnList["v2ray"]["redsocks_config_file"]
             redsocks_log_file = self.VpnList["v2ray"]["redsocks_log_file"]
+            use_dns2socks = ""
+            if self.hotspot.dns == "":
+                use_dns2socks = True
+            else:
+                use_dns2socks = False
             dns_server = "8.8.8.8"
             dns2socks_log_file = self.VpnList["v2ray"]["dns2socks_log_file"]
 
-            c = Execte("{} {} {} {} {} {} {} {} {}".format(\
+            c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
                 set_iptables_file, hotspot_interface,\
                 v2ray_inbounds_port, v2ray_outbounds_ip, v2ray_outbounds_port,\
                 redsocks_config_file, redsocks_log_file,\
-                dns_server, dns2socks_log_file)
+                use_dns2socks, dns_server, dns2socks_log_file)
             )
             c.do()
             c.print()

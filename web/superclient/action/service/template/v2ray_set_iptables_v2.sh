@@ -14,8 +14,9 @@ REDSOCKS_LOG=${6}
 REDSOCKS_IP="0.0.0.0"
 REDSOCKS_PORT_TCP=$(expr $SOCKS_PORT + 1)
 REDSOCKS_PORT_UDP=$(expr $SOCKS_PORT + 1)
-DNSServer=${7}
-DNS2SOCKS_LOG=${8}
+USE_DNS2SOCKS=${7}
+DNSServer=${8}
+DNS2SOCKS_LOG=${9}
 
 
 ########################################################################
@@ -207,7 +208,13 @@ if pgrep DNS2SOCKS; then
     sleep 1
 fi
 
-DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS2SOCKS_LOG &>/dev/null &
+if [[ "$USE_DNS2SOCKS" == "True" ]]; then
+	DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS2SOCKS_LOG &>/dev/null &
+
+	# iptables
+	iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
+	iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-port 5300
+fi
 
 ########################################################################
 # iptables
@@ -310,9 +317,5 @@ iptables -t mangle -A PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip 
 
 #
 iptables -A INPUT -i $SUBNET_INTERFACE -p udp --dport $REDSOCKS_PORT_UDP -j ACCEPT
-
-# dns2socks iptables
-iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
-iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-port 5300
 
 exit 0
