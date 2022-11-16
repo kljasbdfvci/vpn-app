@@ -6,10 +6,12 @@
 
 SUBNET_INTERFACE=${1}
 SOCKS_PORT=${2}
+SOCKS_IP="127.0.0.1"
 SOCKS_SERVER_IP=${3}
 SOCKS_SERVER_PORT=${4}
 REDSOCKS_CONF=${5}
 REDSOCKS_LOG=${6}
+REDSOCKS_IP="0.0.0.0"
 REDSOCKS_PORT_TCP=$(expr $SOCKS_PORT + 1)
 REDSOCKS_PORT_UDP=$(expr $SOCKS_PORT + 1)
 DNSServer=${7}
@@ -95,6 +97,7 @@ base {
 	// safety net for misconfigured 'redsocks_conn_max', you should tune
 	// redsocks_conn_max if accept backoff happens.
 	// max_accept_backoff = 60000;
+	max_accept_backoff = 5000;
 }
 
 redsocks {
@@ -102,7 +105,7 @@ redsocks {
 	 * use 0.0.0.0 if you want to listen on every interface.
 	 * 'local_*' are used as port to redirect to.
 	 */
-	local_ip = 0.0.0.0;
+	local_ip = $REDSOCKS_IP;
 	local_port = $REDSOCKS_PORT_TCP;
 
 	// listen() queue length. Default value is SOMAXCONN and it should be
@@ -112,12 +115,12 @@ redsocks {
 	// Enable or disable faster data pump based on splice(2) syscall.
 	// Default value depends on your kernel version, true for 2.6.27.13+
 	// splice = false;
-	splice = false;
+	splice = true;
 
 	// 'ip' and 'port' are IP and tcp-port of proxy-server
 	// You can also use hostname instead of IP, only one (random)
 	// address of multihomed host will be used.
-	ip = 127.0.0.1;
+	ip = $SOCKS_IP;
 	port = $SOCKS_PORT;
 
 	// known types: socks4, socks5, http-connect, http-relay
@@ -139,17 +142,18 @@ redsocks {
 	//  close -- just close connection (default)
 	//  forward_http_err -- forward HTTP error page from proxy as-is
 	// on_proxy_fail = close;
+	on_proxy_fail = close
 }
 
 redudp {
 	// 'local_ip' should not be 0.0.0.0 as it's also used for outgoing
 	// packets that are sent as replies - and it should be fixed
 	// if we want NAT to work properly.
-	local_ip = 0.0.0.0;
+	local_ip = $REDSOCKS_IP;
 	local_port = $REDSOCKS_PORT_UDP;
 
 	// 'ip' and 'port' of socks5 proxy server.
-	ip = 127.0.0.1;
+	ip = $SOCKS_IP;
 	port = $SOCKS_PORT;
 	// login = username;
 	// password = pazzw0rd;
@@ -203,7 +207,7 @@ if pgrep DNS2SOCKS; then
     sleep 1
 fi
 
-DNS2SOCKS 127.0.0.1:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS2SOCKS_LOG &>/dev/null &
+DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS2SOCKS_LOG &>/dev/null &
 
 ########################################################################
 # iptables
@@ -302,7 +306,7 @@ iptables -t mangle -A OUTPUT -p udp -m addrtype --src-type LOCAL ! --dst-type LO
 iptables -t mangle -A PREROUTING -p udp -m addrtype ! --src-type LOCAL ! --dst-type LOCAL -j REDSOCKSUDP
 
 # hand over the marked package to TPROXY for processing
-iptables -t mangle -A PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip 127.0.0.1 --on-port $REDSOCKS_PORT_UDP
+iptables -t mangle -A PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip $SOCKS_IP --on-port $REDSOCKS_PORT_UDP
 
 #
 iptables -A INPUT -i $SUBNET_INTERFACE -p udp --dport $REDSOCKS_PORT_UDP -j ACCEPT
