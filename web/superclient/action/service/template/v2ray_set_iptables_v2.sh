@@ -36,10 +36,10 @@ base {
 	// log = stderr;
 	// log = "file:/path/to/file";
 	// log = "syslog:local7";
-    log = "file:$REDSOCKS_LOG";
+	log = "file:$REDSOCKS_LOG";
 
 	// detach from console
-    daemon = on;
+	daemon = on;
 
 	/* Change uid, gid and root directory, these options require root
 	 * privilegies on startup.
@@ -175,6 +175,7 @@ dnstc {
 }
 
 // you can add more 'redsocks' and 'redudp' sections if you need.
+
 EOF
 
 ########################################################################
