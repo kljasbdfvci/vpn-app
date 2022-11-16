@@ -4,14 +4,14 @@
 # Define various configuration parameters.
 ########################################################################
 
-SOCKS_PORT=${1}
-SUBNET_INTERFACE=${2}
+SUBNET_INTERFACE=${1}
+SOCKS_PORT=${2}
 SOCKS_SERVER_IP=${3}
 SOCKS_SERVER_PORT=${4}
 REDSOCKS_CONF=${5}
 REDSOCKS_LOG=${6}
 REDSOCKS_PORT_TCP=$(expr $SOCKS_PORT + 1)
-REDSOCKS_PORT_UDP="$REDSOCKS_PORT_TCP"
+REDSOCKS_PORT_UDP=$(expr $SOCKS_PORT + 1)
 DNSServer=${7}
 DNS2SOCKS_LOG=${8}
 
