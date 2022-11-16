@@ -167,8 +167,8 @@ redudp {
 
 	// udp_timeout = 30;
 	// udp_timeout_stream = 180;
-	udp_timeout = 10;
-	udp_timeout_stream = 60;
+	udp_timeout = 5;
+	udp_timeout_stream = 30;
 }
 
 dnstc {
