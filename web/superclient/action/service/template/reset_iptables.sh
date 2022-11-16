@@ -20,4 +20,9 @@ if pgrep DNS2SOCKS; then
     killall DNS2SOCKS
 fi
 
+if [ -n "$(ip rule show table 100)" ]; then
+    ip rule  del   table 100 &>/dev/null
+    ip route flush table 100 &>/dev/null
+fi
+
 exit 0
