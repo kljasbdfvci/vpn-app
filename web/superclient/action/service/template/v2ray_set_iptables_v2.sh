@@ -300,7 +300,7 @@ iptables -t mangle -A PREROUTING -p udp -m addrtype ! --src-type LOCAL ! --dst-t
 iptables -t mangle -A PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip 127.0.0.1 --on-port $REDSOCKS_PORT_UDP
 
 #
-iptables -A INPUT -i $SUBNET_INTERFACE -p udp --dport 12345 -j ACCEPT
+iptables -A INPUT -i $SUBNET_INTERFACE -p udp --dport $REDSOCKS_PORT_UDP -j ACCEPT
 
 # dns2socks iptables
 iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
