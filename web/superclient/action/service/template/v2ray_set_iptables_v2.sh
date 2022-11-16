@@ -97,7 +97,7 @@ base {
 	// safety net for misconfigured 'redsocks_conn_max', you should tune
 	// redsocks_conn_max if accept backoff happens.
 	// max_accept_backoff = 60000;
-	max_accept_backoff = 5000;
+	max_accept_backoff = 1000;
 }
 
 redsocks {
@@ -142,7 +142,7 @@ redsocks {
 	//  close -- just close connection (default)
 	//  forward_http_err -- forward HTTP error page from proxy as-is
 	// on_proxy_fail = close;
-	on_proxy_fail = close
+	on_proxy_fail = close;
 }
 
 redudp {
