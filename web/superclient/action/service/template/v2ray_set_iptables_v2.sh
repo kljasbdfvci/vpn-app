@@ -98,7 +98,7 @@ base {
 	// safety net for misconfigured 'redsocks_conn_max', you should tune
 	// redsocks_conn_max if accept backoff happens.
 	// max_accept_backoff = 60000;
-	max_accept_backoff = 1000;
+	max_accept_backoff = 10;
 }
 
 redsocks {
@@ -222,6 +222,8 @@ fi
 
 #
 sysctl -w net.ipv4.ip_forward=1
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A POSTROUTING -t nat -j MASQUERADE
 
 ##################### REDSOCKSTCP #####################
 iptables -t nat -N REDSOCKSTCP
@@ -257,6 +259,8 @@ iptables -t nat -A PREROUTING --in-interface $SUBNET_INTERFACE -p tcp -j REDSOCK
 #
 iptables -A INPUT -i $SUBNET_INTERFACE -p tcp --dport $REDSOCKS_PORT_TCP -j ACCEPT
 
+#
+iptables -t nat -nvL
 
 ##################### REDSOCKSUDP #####################
 
@@ -317,5 +321,8 @@ iptables -t mangle -A PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip 
 
 #
 iptables -A INPUT -i $SUBNET_INTERFACE -p udp --dport $REDSOCKS_PORT_UDP -j ACCEPT
+
+#
+iptables -t mangle -nvL
 
 exit 0
