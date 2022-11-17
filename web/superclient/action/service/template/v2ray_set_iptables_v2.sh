@@ -233,22 +233,22 @@ iptables -t nat -N REDSOCKSTCP
 iptables -t nat -A REDSOCKSTCP -p tcp -d $SOCKS_SERVER_IP --dport $SOCKS_SERVER_PORT -j RETURN
 
 # ignore traffic sent to reserved addresses
-iptables -t nat -A REDSOCKSTCP -d 0.0.0.0/8          -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 10.0.0.0/8         -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 100.64.0.0/10      -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 127.0.0.0/8        -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 169.254.0.0/16     -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 172.16.0.0/12      -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 192.0.0.0/24       -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 192.0.2.0/24       -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 192.88.99.0/24     -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 192.168.0.0/16     -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 198.18.0.0/15      -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 198.51.100.0/24    -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 203.0.113.0/24     -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 224.0.0.0/4        -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 240.0.0.0/4        -j RETURN
-iptables -t nat -A REDSOCKSTCP -d 255.255.255.255/32 -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 0.0.0.0/8          -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 10.0.0.0/8         -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 100.64.0.0/10      -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 127.0.0.0/8        -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 169.254.0.0/16     -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 172.16.0.0/12      -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 192.0.0.0/24       -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 192.0.2.0/24       -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 192.88.99.0/24     -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 192.168.0.0/16     -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 198.18.0.0/15      -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 198.51.100.0/24    -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 203.0.113.0/24     -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 224.0.0.0/4        -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 240.0.0.0/4        -j RETURN
+iptables -t nat -A REDSOCKSTCP -p tcp -d 255.255.255.255/32 -j RETURN
 
 #
 iptables -t nat -A REDSOCKSTCP -p tcp -j REDIRECT --to-ports $REDSOCKS_PORT_TCP
@@ -277,36 +277,36 @@ ip rule  add fwmark 0x2333        table 100
 iptables -t mangle -N REDSOCKSUDP
 
 # connection-mark -> packet-mark
-iptables -t mangle -A REDSOCKSUDP -j CONNMARK --restore-mark
-iptables -t mangle -A REDSOCKSUDP -m mark --mark 0x2333 -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -j CONNMARK --restore-mark
+iptables -t mangle -A REDSOCKSUDP -p udp -m mark --mark 0x2333 -j RETURN
 
 # please modify MyIP, MyPort, etc.
 # ignore traffic sent to ss-server
 iptables -t mangle -A REDSOCKSUDP -p udp -d $SOCKS_SERVER_IP --dport $SOCKS_SERVER_PORT -j RETURN
 
 # ignore traffic sent to reserved addresses
-iptables -t mangle -A REDSOCKSUDP -d 0.0.0.0/8          -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 10.0.0.0/8         -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 100.64.0.0/10      -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 127.0.0.0/8        -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 169.254.0.0/16     -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 172.16.0.0/12      -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 192.0.0.0/24       -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 192.0.2.0/24       -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 192.88.99.0/24     -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 192.168.0.0/16     -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 198.18.0.0/15      -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 198.51.100.0/24    -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 203.0.113.0/24     -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 224.0.0.0/4        -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 240.0.0.0/4        -j RETURN
-iptables -t mangle -A REDSOCKSUDP -d 255.255.255.255/32 -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 0.0.0.0/8          -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 10.0.0.0/8         -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 100.64.0.0/10      -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 127.0.0.0/8        -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 169.254.0.0/16     -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 172.16.0.0/12      -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 192.0.0.0/24       -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 192.0.2.0/24       -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 192.88.99.0/24     -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 192.168.0.0/16     -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 198.18.0.0/15      -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 198.51.100.0/24    -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 203.0.113.0/24     -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 224.0.0.0/4        -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 240.0.0.0/4        -j RETURN
+iptables -t mangle -A REDSOCKSUDP -p udp -d 255.255.255.255/32 -j RETURN
 
 # mark the first packet of the connection
 iptables -t mangle -A REDSOCKSUDP -p udp -m conntrack --ctstate NEW -j MARK --set-mark 0x2333
 
 # packet-mark -> connection-mark
-iptables -t mangle -A REDSOCKSUDP -j CONNMARK --save-mark
+iptables -t mangle -A REDSOCKSUDP -p udp -j CONNMARK --save-mark
 
 ##################### OUTPUT #####################
 # proxy the outgoing traffic from this machine
@@ -317,7 +317,10 @@ iptables -t mangle -A OUTPUT -p udp -m addrtype --src-type LOCAL ! --dst-type LO
 iptables -t mangle -A PREROUTING -p udp -m addrtype ! --src-type LOCAL ! --dst-type LOCAL -j REDSOCKSUDP
 
 # hand over the marked package to TPROXY for processing
-iptables -t mangle -A PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip $SOCKS_IP --on-port $REDSOCKS_PORT_UDP
+iptables -t mangle -A PREROUTING -p udp -m mark --mark 0x2333 -j TPROXY --on-ip $REDSOCKS_IP --on-port $REDSOCKS_PORT_UDP
+
+#
+iptables -t mangle -A PREROUTING --in-interface $SUBNET_INTERFACE -p udp -j REDSOCKSUDP
 
 #
 iptables -A INPUT -i $SUBNET_INTERFACE -p udp --dport $REDSOCKS_PORT_UDP -j ACCEPT
