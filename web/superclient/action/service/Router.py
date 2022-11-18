@@ -22,7 +22,7 @@ class Router:
             },
             "v2ray": {
                 "up_file" : Path(__file__).resolve().parent / "template/v2ray_up.sh",
-                "set_iptables_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables_v2.sh",
+                "set_iptables_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables_v3.sh",
                 "reset_iptables_file" : Path(__file__).resolve().parent / "template/v2ray_reset_iptables.sh",
                 "pid_file" : Path(__file__).resolve().parent / "v2ray.pid",
                 "log_file" : Path(__file__).resolve().parent / "v2ray.log",
