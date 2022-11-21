@@ -174,9 +174,6 @@ class Router:
         else:
             pass
 
-        # quota logs
-        self.log_quota()
-
         return res
 
     def read_pid_file(self):
@@ -366,19 +363,3 @@ class Router:
             res = c.returncode
         
         return res
-
-    def log_quota(self):
-        log_file_list = [
-            self.VpnList["openconnect"]["log_file"],\
-            self.VpnList["v2ray"]["log_file"],\
-            self.VpnList["v2ray"]["badvpn-tun2socks_log_file"],\
-            self.VpnList["v2ray"]["redsocks_log_file"],\
-            self.VpnList["v2ray"]["dns2socks_log_file"],
-        ]
-        for file_path in log_file_list:
-            if os.path.isfile(file_path):
-                file_size = os.stat(file_path).st_size
-                if file_size >= 1048576:
-                    file = open(file_path, "w")
-                    file.write('\n')
-                    file.close()
