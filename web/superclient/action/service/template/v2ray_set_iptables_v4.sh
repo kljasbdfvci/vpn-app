@@ -54,6 +54,7 @@ badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask
 
 # ip_forward 1
 sysctl -w net.ipv4.ip_forward=1
+iptables -A POSTROUTING -t nat -j MASQUERADE
 
 # .rp_filter 2
 list=$(sysctl -a | grep "\.rp_filter")
