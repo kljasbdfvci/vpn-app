@@ -20,10 +20,10 @@ if [ -f "$last_update_time_path" ]; then
 fi
 now_time=$(date +%s)
 if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
-    if [[ ! -f /var/lib/dpkg/lock-frontend ]]; then
+    if [[ -f /var/lib/dpkg/lock-frontend ]]; then
         rm /var/lib/dpkg/lock-frontend
     fi
-    if [[ ! -f /var/lib/dpkg/lock ]]; then
+    if [[ -f /var/lib/dpkg/lock ]]; then
         rm /var/lib/dpkg/lock
     fi
     echo "start apt update"
