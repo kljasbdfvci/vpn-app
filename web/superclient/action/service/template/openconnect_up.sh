@@ -69,7 +69,7 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
         timeout $timeout echo $password | \
         openconnect --reconnect-timeout=30 --background --passwd-on-stdin \
         $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
-        --protocol=$protocol --interface=$interface --pid-file=$pid_file  $gateway --user=$username  --servercert $servercert &>$log_file
+        --protocol=$protocol --interface=$interface --pid-file=$pid_file  $gateway --user=$username  --servercert $servercert | rotatelogs -n 1 $log_file 1M &>/dev/null
         exit_code=$?
         if [ $exit_code == 0 ]; then
             break
