@@ -242,6 +242,7 @@ class Router:
                 c.do()
                 c.print()
                 res = c.returncode
+
             elif set_iptables_version == "v2":
                     # v2
                 set_iptables_file = self.VpnList["v2ray"]["set_iptables_v2_file"]
@@ -270,6 +271,7 @@ class Router:
                 c.do()
                 c.print()
                 res = c.returncode
+
             elif set_iptables_version == "v3":
                 # v3
                 set_iptables_file = self.VpnList["v2ray"]["set_iptables_v3_file"]
