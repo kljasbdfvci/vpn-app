@@ -38,6 +38,13 @@ fi
 # start tuntap
 ########################################################################
 
+if [ -n "$(ip link show | grep $TUN_INTERFACE)" ]; then
+    ifconfig tun0 down
+    ip link set tun0 down
+    ip link delete tun0
+	sleep 1
+fi
+
 ip tuntap add dev $TUN_INTERFACE mode tun
 ip addr add dev $TUN_INTERFACE 10.0.0.1/24
 ip link set dev $TUN_INTERFACE up
@@ -45,11 +52,16 @@ ip link set dev $TUN_INTERFACE up
 route add -net 0.0.0.0 netmask 0.0.0.0 dev $TUN_INTERFACE
 ip route add $SOCKS_SERVER_IP via $INTERNET_GW
 
-sleep 3
+sleep 1
 
 ########################################################################
 # start badvpn-tun2socks
 ########################################################################
+
+if pgrep badvpn-tun2socks; then
+    killall badvpn-tun2socks
+	sleep 1
+fi
 
 badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 4 --socks5-udp &>$BADVPN_TUN2SOCKS_LOG &
 

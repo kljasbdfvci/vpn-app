@@ -268,6 +268,7 @@ iptables -t nat -nvL
 if [ -n "$(ip rule show table 100)" ]; then
     ip rule  del   table 100 &>/dev/null
     ip route flush table 100 &>/dev/null
+	sleep 1
 fi
 
 ip route add local default dev lo table 100
