@@ -9,6 +9,9 @@ config=${5}
 
 exit_code=""
 
+rm $pid_file
+rm $log_file
+
 v2ray -config $config &>$log_file &
 pid=$!
 exit_code=$?

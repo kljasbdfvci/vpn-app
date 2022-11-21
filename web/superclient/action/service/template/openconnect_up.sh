@@ -47,6 +47,9 @@ tmpfile1=$(mktemp)
 tmpfile2=$(mktemp)
 trap 'rm -f $tmpfile1 $tmpfile2' EXIT
 
+rm $pid_file
+rm $log_file
+
 #$(openssl s_client -connect $gateway </dev/null 2>/dev/null | openssl x509 -text > $tmpfile1)
 #res1=$?
 res1=0
@@ -62,11 +65,9 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
         timeout $timeout echo $password | \
         openconnect --reconnect-timeout=30 --background --passwd-on-stdin \
         $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
-        --protocol=$protocol --interface=$interface $gateway --user=$username  --servercert $servercert &>$log_file
-        pid=$!
+        --protocol=$protocol --interface=$interface --pid-file=$pid_file  $gateway --user=$username  --servercert $servercert &>$log_file
         exit_code=$?
         if [ $exit_code == 0 ]; then
-            echo -n $pid > $pid_file
             break
         fi
         n=$((n+1)) 
