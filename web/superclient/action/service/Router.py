@@ -31,6 +31,7 @@ class Router:
                 "pid_file" : Path(__file__).resolve().parent / "v2ray.pid",
                 "log_file" : Path(__file__).resolve().parent / "v2ray.log",
                 "config_file" : Path(__file__).resolve().parent / "v2ray.config",
+                "badvpn-tun2socks_log_file" : Path(__file__).resolve().parent / "badvpn-tun2socks.log",
                 "redsocks_config_file" : Path(__file__).resolve().parent / "redsocks.conf",
                 "redsocks_log_file" : Path(__file__).resolve().parent / "redsocks.log",
                 "dns2socks_log_file" : Path(__file__).resolve().parent / "dns2socks.log",
@@ -311,6 +312,7 @@ class Router:
                 js = json.loads(config_json)
                 v2ray_inbounds_port = js["inbounds"][0]["port"]
                 v2ray_outbounds_ip = js["outbounds"][0]["settings"]["vnext"][0]["address"]
+                badvpn_tun2socks_log_file = self.VpnList["v2ray"]["badvpn-tun2socks_log_file"]
                 use_dns2socks = ""
                 if self.hotspot.dns == "":
                     use_dns2socks = True
@@ -323,6 +325,7 @@ class Router:
                     set_iptables_file,\
                     hotspot_interface, vpn_interface, internet_interface,\
                     v2ray_inbounds_port, v2ray_outbounds_ip,\
+                    badvpn_tun2socks_log_file,\
                     use_dns2socks, dns_server, dns2socks_log_file)
                 )
                 c.do()

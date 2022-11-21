@@ -11,9 +11,10 @@ INTERNET_GW=$(route -n | grep $INTERNET_INTERFACE | grep 'UG ' | awk {'print $2'
 SOCKS_IP="127.0.0.1"
 SOCKS_PORT=${4}
 SOCKS_SERVER_IP=${5}
-USE_DNS2SOCKS=${6}
-DNSServer=${7}
-DNS2SOCKS_LOG=${8}
+BADVPN_TUN2SOCKS_LOG=${6}
+USE_DNS2SOCKS=${7}
+DNSServer=${8}
+DNS2SOCKS_LOG=${9}
 
 ########################################################################
 # start dns2socks
@@ -44,7 +45,7 @@ ip link set dev $TUN_INTERFACE up
 route add -net 0.0.0.0 netmask 0.0.0.0 dev $TUN_INTERFACE
 ip route add $SOCKS_SERVER_IP via $INTERNET_GW
 
-badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 5 --udpgw-transparent-dns --socks5-udp &>/dev/null &
+badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 4 --socks5-udp &>$BADVPN_TUN2SOCKS_LOG &
 
 ########################################################################
 # iptables
@@ -62,16 +63,5 @@ do
 		sysctl -w $item=2
 	fi
 done
-
-#
-iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-iptables -A POSTROUTING -t nat -j MASQUERADE
-
-# 
-iptables -t nat -A POSTROUTING -o $TUN_INTERFACE -j MASQUERADE
-iptables -A FORWARD -i $TUN_INTERFACE -o $SUBNET_INTERFACE -j ACCEPT -m state --state RELATED,ESTABLISHED
-iptables -A FORWARD -i $SUBNET_INTERFACE -o $TUN_INTERFACE -j ACCEPT
-iptables -A OUTPUT --out-interface $SUBNET_INTERFACE -j ACCEPT
-iptables -A INPUT --in-interface $SUBNET_INTERFACE -j ACCEPT
 
 exit 0
