@@ -319,7 +319,7 @@ class Router:
                 dns_server = "8.8.8.8"
                 dns2socks_log_file = self.VpnList["v2ray"]["dns2socks_log_file"]
 
-                c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
+                c = Execte("{} {} {} {} {} {} {} {} {}".format(\
                     set_iptables_file,\
                     hotspot_interface, vpn_interface, internet_interface,\
                     v2ray_inbounds_port, v2ray_outbounds_ip,\
