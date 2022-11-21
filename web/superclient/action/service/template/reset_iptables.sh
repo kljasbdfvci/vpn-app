@@ -25,4 +25,18 @@ if [ -n "$(ip rule show table 100)" ]; then
     ip route flush table 100 &>/dev/null
 fi
 
+if [ -n "$(ip link show | grep tun0)" ]; then
+    ifconfig tun0 down
+    ip link set tun0 down
+    ip link delete tun0
+fi
+
+list=$(sysctl -a | grep "\.rp_filter")
+for item in $list
+do
+	if [[ "$item" == *"rp_filter"* ]]; then
+		sysctl -w $item=0
+	fi
+done
+
 exit 0
