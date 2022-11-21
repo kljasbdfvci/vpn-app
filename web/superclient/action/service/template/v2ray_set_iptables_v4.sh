@@ -7,7 +7,7 @@
 SUBNET_INTERFACE=${1}
 TUN_INTERFACE=${2}
 INTERNET_INTERFACE=${3}
-INTERNET_GW=$(route -n | grep $INTERNET_INTERFACE | grep 'UG ' | awk {'print $2'} | tr -d '\n')
+INTERNET_GW=$(route -n | grep $INTERNET_INTERFACE | grep 'UG' | awk {'print $2'} | head -n 1 | tr -d '\n')
 SOCKS_IP="127.0.0.1"
 SOCKS_PORT=${4}
 SOCKS_SERVER_IP=${5}
