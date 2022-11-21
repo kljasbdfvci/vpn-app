@@ -35,7 +35,7 @@ if [[ "$USE_DNS2SOCKS" == "True" ]]; then
 fi
 
 ########################################################################
-# start dns2socks
+# start tuntap
 ########################################################################
 
 ip tuntap add dev $TUN_INTERFACE mode tun
@@ -44,6 +44,12 @@ ip link set dev $TUN_INTERFACE up
 
 route add -net 0.0.0.0 netmask 0.0.0.0 dev $TUN_INTERFACE
 ip route add $SOCKS_SERVER_IP via $INTERNET_GW
+
+sleep 3
+
+########################################################################
+# start badvpn-tun2socks
+########################################################################
 
 badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 4 --socks5-udp &>$BADVPN_TUN2SOCKS_LOG &
 
