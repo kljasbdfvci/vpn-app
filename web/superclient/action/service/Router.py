@@ -311,7 +311,6 @@ class Router:
                 js = json.loads(config_json)
                 v2ray_inbounds_port = js["inbounds"][0]["port"]
                 v2ray_outbounds_ip = js["outbounds"][0]["settings"]["vnext"][0]["address"]
-                v2ray_outbounds_port = js["outbounds"][0]["settings"]["vnext"][0]["port"]
                 use_dns2socks = ""
                 if self.hotspot.dns == "":
                     use_dns2socks = True
@@ -323,7 +322,7 @@ class Router:
                 c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
                     set_iptables_file,\
                     hotspot_interface, vpn_interface, internet_interface,\
-                    v2ray_inbounds_port, v2ray_outbounds_ip, v2ray_outbounds_port,\
+                    v2ray_inbounds_port, v2ray_outbounds_ip,\
                     use_dns2socks, dns_server, dns2socks_log_file)
                 )
                 c.do()
