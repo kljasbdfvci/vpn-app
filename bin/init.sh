@@ -32,12 +32,6 @@ if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
     echo "start apt upgrade"
     apt upgrade --fix-broken --fix-missing -y
     sleep 1
-    echo "start apt autoremove"
-    apt autoremove -y
-    sleep 1
-    echo "start apt autoclean"
-    apt autoclean -y
-    sleep 1
     echo -n $now_time > $last_update_time_path
     echo "system update successful."
 else
