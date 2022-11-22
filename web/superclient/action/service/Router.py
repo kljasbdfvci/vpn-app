@@ -16,8 +16,8 @@ class Router:
                 "up_file" : Path(__file__).resolve().parent / "template/openconnect_up.sh",
                 "set_iptables_file" : Path(__file__).resolve().parent / "template/openconnect_set_iptables.sh",
                 "reset_iptables_file" : Path(__file__).resolve().parent / "template/openconnect_reset_iptables.sh",
-                "pid_file" : "/var/run/openconnect.pid",
-                "log_file" : "/var/log/openconnect.log",
+                "pid_file" : "/tmp/openconnect.pid",
+                "log_file" : "/tmp/openconnect.log",
                 "interface" : "tun0"
             },
             "v2ray": {
@@ -28,13 +28,13 @@ class Router:
                 "set_iptables_v3_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables_v3.sh",
                 "set_iptables_v4_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables_v4.sh",
                 "reset_iptables_file" : Path(__file__).resolve().parent / "template/v2ray_reset_iptables.sh",
-                "pid_file" : "/var/run/v2ray.pid",
-                "log_file" : "/var/log/v2ray.log",
+                "pid_file" : "/tmp/v2ray.pid",
+                "log_file" : "/tmp/v2ray.log",
                 "config_file" : Path(__file__).resolve().parent / "v2ray.config",
-                "badvpn-tun2socks_log_file" : "/var/log/badvpn-tun2socks.log",
+                "badvpn-tun2socks_log_file" : "/tmp/badvpn-tun2socks.log",
                 "redsocks_config_file" : Path(__file__).resolve().parent / "redsocks.conf",
-                "redsocks_log_file" : "/var/log/redsocks.log",
-                "dns2socks_log_file" : "/var/log/dns2socks.log",
+                "redsocks_log_file" : "/tmp/redsocks.log",
+                "dns2socks_log_file" : "/tmp/dns2socks.log",
                 "interface" : "tun0"
             },
         }
