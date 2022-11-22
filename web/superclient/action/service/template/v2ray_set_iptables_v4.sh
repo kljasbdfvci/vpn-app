@@ -21,7 +21,7 @@ DNS2SOCKS_LOG=${9}
 ########################################################################
 
 if pgrep DNS2SOCKS; then
-    killall DNS2SOCKS
+    killall DNS2SOCKS &>/dev/null
     sleep 1
 fi
 
@@ -39,9 +39,9 @@ fi
 ########################################################################
 
 if [ -n "$(ip link show | grep $TUN_INTERFACE)" ]; then
-    ifconfig tun0 down
-    ip link set tun0 down
-    ip link delete tun0
+    ifconfig tun0 down &>/dev/null
+    ip link set tun0 down &>/dev/null
+    ip link delete tun0 &>/dev/null
 	sleep 1
 fi
 
@@ -58,12 +58,12 @@ sleep 1
 # start badvpn-tun2socks
 ########################################################################
 
-if pgrep badvpn-tun2socks; then
-    killall badvpn-tun2socks
+if pgrep 'badvpn-tun2socks'; then
+    killall 'badvpn-tun2socks' &>/dev/null
 	sleep 1
 fi
 
-badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 3 --socks5-udp &>$BADVPN_TUN2SOCKS_LOG &
+badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 3 --socks5-udp &>$BADVPN_TUN2SOCKS_LOG &>/dev/null &
 
 ########################################################################
 # iptables

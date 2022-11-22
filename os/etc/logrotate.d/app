@@ -21,6 +21,7 @@
     rotate 1
     nocompress
 }
+
 /tmp/badvpn-tun2socks.log {
     size 1M
     copytruncate
