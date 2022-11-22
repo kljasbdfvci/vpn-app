@@ -20,8 +20,8 @@ DNS2SOCKS_LOG=${9}
 # start dns2socks
 ########################################################################
 
-if pgrep DNS2SOCKS; then
-    killall DNS2SOCKS &>/dev/null
+if pgrep 'DNS2SOCKS'; then
+    killall 'DNS2SOCKS' &>/dev/null
     sleep 1
 fi
 

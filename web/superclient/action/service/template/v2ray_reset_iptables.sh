@@ -12,13 +12,13 @@ iptables -t nat -X
 iptables -t mangle -F
 iptables -t mangle -X
 
-if pgrep redsocks; then
-    killall redsocks &>/dev/null
+if pgrep 'redsocks'; then
+    killall 'redsocks' &>/dev/null
     sleep 1
 fi
 
-if pgrep DNS2SOCKS; then
-    killall DNS2SOCKS &>/dev/null
+if pgrep 'DNS2SOCKS'; then
+    killall 'DNS2SOCKS' &>/dev/null
     sleep 1
 fi
 
