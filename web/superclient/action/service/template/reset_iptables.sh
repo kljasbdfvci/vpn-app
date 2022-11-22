@@ -13,12 +13,12 @@ iptables -t mangle -F
 iptables -t mangle -X
 
 if pgrep redsocks; then
-    killall redsocks
+    killall redsocks &>/dev/null
     sleep 1
 fi
 
 if pgrep DNS2SOCKS; then
-    killall DNS2SOCKS
+    killall DNS2SOCKS &>/dev/null
     sleep 1
 fi
 
@@ -28,15 +28,15 @@ if [ -n "$(ip rule show table 100)" ]; then
     sleep 1
 fi
 
-if pgrep badvpn-tun2socks; then
-    killall badvpn-tun2socks
+if pgrep 'badvpn-tun2socks'; then
+    killall 'badvpn-tun2socks' &>/dev/null
     sleep 1
 fi
 
 if [ -n "$(ip link show | grep tun0)" ]; then
-    ifconfig tun0 down
-    ip link set tun0 down
-    ip link delete tun0
+    ifconfig tun0 down &>/dev/null
+    ip link set tun0 down &>/dev/null
+    ip link delete tun0 &>/dev/null
     sleep 1
 fi
 
