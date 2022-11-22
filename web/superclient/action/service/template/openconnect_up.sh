@@ -54,10 +54,10 @@ if [[ -f $log_file ]]; then
     rm $log_file
 fi
 
-#$(openssl s_client -connect $gateway </dev/null 2>/dev/null | openssl x509 -text > $tmpfile1)
+#$(timeout $timeout openssl s_client -connect $gateway </dev/null 2>/dev/null | openssl x509 -text > $tmpfile1)
 #res1=$?
 res1=0
-$(openssl s_client -showcerts -connect $gateway </dev/null 2>/dev/null | openssl x509 -outform PEM > $tmpfile2)
+$(timeout $timeout openssl s_client -showcerts -connect $gateway </dev/null 2>/dev/null | openssl x509 -outform PEM > $tmpfile2)
 res2=$?
 if [ $res1 == 0 ] && [ $res2 == 0 ]; then
     servercert=$(openssl x509 -in $tmpfile2 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)
