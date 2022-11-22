@@ -7,40 +7,40 @@
 }
 
 /var/log/openconnect.log {
-    size 10M
+    size 1M
     copytruncate
     missingok
-    rotate 1
+    rotate 4
     nocompress
 }
 
 /var/log/v2ray.log {
-    size 10M
+    size 1M
     copytruncate
     missingok
-    rotate 1
+    rotate 4
     nocompress
 }
 /var/log/badvpn-tun2socks.log {
-    size 10M
+    size 1M
     copytruncate
     missingok
-    rotate 1
+    rotate 4
     nocompress
 }
 
 /var/log/redsocks.log {
-    size 10M
+    size 1M
     copytruncate
     missingok
-    rotate 1
+    rotate 4
     nocompress
 }
 
 /var/log/dns2socks.log{
-    size 10M
+    size 1M
     copytruncate
     missingok
-    rotate 1
+    rotate 4
     nocompress
 }
