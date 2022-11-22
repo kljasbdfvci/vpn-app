@@ -27,7 +27,7 @@ fi
 
 if [[ "$USE_DNS2SOCKS" == "True" ]]; then
 	#
-	DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 | rotatelogs -n 1 $DNS2SOCKS_LOG 1M &>/dev/null &
+	DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS2SOCKS_LOG &>/dev/null &
 
 	# iptables
 	iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
@@ -63,7 +63,7 @@ if pgrep badvpn-tun2socks; then
 	sleep 1
 fi
 
-badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 4 --socks5-udp | rotatelogs -n 1 $BADVPN_TUN2SOCKS_LOG 1M &>/dev/null &
+badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 4 --socks5-udp &>$BADVPN_TUN2SOCKS_LOG &
 
 ########################################################################
 # iptables

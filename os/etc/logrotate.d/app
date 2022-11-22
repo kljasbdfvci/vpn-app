@@ -1,0 +1,46 @@
+/tmp/app-web.log {
+    size 10M
+    copytruncate
+    missingok
+    rotate 1
+    nocompress
+}
+
+/var/log/openconnect.log {
+    size 10M
+    copytruncate
+    missingok
+    rotate 1
+    nocompress
+}
+
+/var/log/v2ray.log {
+    size 10M
+    copytruncate
+    missingok
+    rotate 1
+    nocompress
+}
+/var/log/badvpn-tun2socks.log {
+    size 10M
+    copytruncate
+    missingok
+    rotate 1
+    nocompress
+}
+
+/var/log/redsocks.log {
+    size 10M
+    copytruncate
+    missingok
+    rotate 1
+    nocompress
+}
+
+/var/log/dns2socks.log{
+    size 10M
+    copytruncate
+    missingok
+    rotate 1
+    nocompress
+}

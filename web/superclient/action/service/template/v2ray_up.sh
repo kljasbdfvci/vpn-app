@@ -16,7 +16,7 @@ if [[ -f $log_file ]]; then
     rm $log_file
 fi
 
-v2ray -config $config | rotatelogs -n 1 $log_file 1M &>/dev/null &
+v2ray -config $config &>$log_file &
 pid=$!
 exit_code=$?
 if [ "$exit_code" == 0 ]; then
