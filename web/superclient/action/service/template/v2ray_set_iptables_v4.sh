@@ -33,7 +33,9 @@ if [ $DNS_MODE == "_2" ]; then
 	str=$str"#MYDNS_START"
 
 	# add new dns
-	echo -e $str"\n"$(cat /etc/resolv.conf) > /etc/resolv.conf
+	resolv=$(cat /etc/resolv.conf)
+	echo -e $str"\n" > /etc/resolv.conf
+	echo resolv >> /etc/resolv.conf
 
 elif [ $DNS_MODE == "_4" ]; then
 	if pgrep 'DNS2SOCKS'; then
