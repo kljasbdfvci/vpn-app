@@ -13,7 +13,10 @@ DNS_LOG=${5}
 if [ $DNS_MODE == "_2" ]; then
 
 	# remove old dns
-	sed -n -e '/#MYDNS_START/,/#MYDNS_END/!p' -i /etc/resolv.conf
+	if [ -n "$(cat /etc/resolv.conf | grep '#MYDNS_')" ]; then
+		sed -n -e '/#MYDNS_START/,/#MYDNS_END/!p' -i /etc/resolv.conf
+		sleep 1
+	fi
 
 	# make dns str
 	str="#MYDNS_START\n"
