@@ -44,14 +44,12 @@ elif [ $DNS_MODE == "_4" ]; then
 		sleep 1
 	fi
 
-	if [[ "$USE_DNS2SOCKS" == "True" ]]; then
-		#
-		DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS2SOCKS_LOG &>/dev/null &
+	#
+	DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS2SOCKS_LOG &>/dev/null &
 
-		# iptables
-		iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
-		iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-port 5300
-	fi
+	# iptables
+	iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
+	iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-port 5300
 fi
 
 ########################################################################
