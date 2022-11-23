@@ -12,26 +12,43 @@ SOCKS_IP="127.0.0.1"
 SOCKS_PORT=${4}
 SOCKS_SERVER_IP=${5}
 BADVPN_TUN2SOCKS_LOG=${6}
-USE_DNS2SOCKS=${7}
+DNS_MODE=${7}
 DNSServer=${8}
-DNS2SOCKS_LOG=${9}
+DNS_LOG=${9}
 
 ########################################################################
-# start dns2socks
+# start dns
 ########################################################################
 
-if pgrep 'DNS2SOCKS'; then
-    killall 'DNS2SOCKS' &>/dev/null
-    sleep 1
-fi
+if [ $DNS_MODE == "_2" ]; then
 
-if [[ "$USE_DNS2SOCKS" == "True" ]]; then
-	#
-	DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS2SOCKS_LOG &>/dev/null &
+	# remove old dns
+	sed -n -e '/#MYDNS_START/,/#MYDNS_END/!p' -i /etc/resolv.conf
 
-	# iptables
-	iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
-	iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-port 5300
+	# make dns str
+	str="#MYDNS_START\n"
+	for item in ${DNSServer//;/ } ; do
+		str=$str"nameserver $item\n"
+	done
+	str=$str"#MYDNS_START"
+
+	# add new dns
+	echo -e $str"\n"$(cat /etc/resolv.conf) > /etc/resolv.conf
+
+elif [ $DNS_MODE == "_4" ]; then
+	if pgrep 'DNS2SOCKS'; then
+		killall 'DNS2SOCKS' &>/dev/null
+		sleep 1
+	fi
+
+	if [[ "$USE_DNS2SOCKS" == "True" ]]; then
+		#
+		DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS2SOCKS_LOG &>/dev/null &
+
+		# iptables
+		iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
+		iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-port 5300
+	fi
 fi
 
 ########################################################################
@@ -66,7 +83,7 @@ fi
 badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 3 --socks5-udp &>$BADVPN_TUN2SOCKS_LOG &>/dev/null &
 
 ########################################################################
-# iptables
+# start iptables
 ########################################################################
 
 # policy

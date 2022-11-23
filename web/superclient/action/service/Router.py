@@ -7,6 +7,7 @@ import logging
 from .Execte import *
 from ...vpn.models import *
 from ...hotspot.models import *
+from ...setting.models import Setting
 
 class Router:
     def __init__(self, vpn : Configuration, hotspot : Profile):
@@ -40,6 +41,7 @@ class Router:
         }
         self.vpn = vpn
         self.hotspot = hotspot
+        self.setting = Setting.objects.first()
 
     def ConnectVPN(self, timeout, try_count):
         res = -1
@@ -220,7 +222,15 @@ class Router:
             hotspot_interface = self.hotspot.interface
             vpn_interface = self.VpnList["openconnect"]["interface"]
             set_iptables_file = self.VpnList["openconnect"]["set_iptables_file"]
-            c = Execte("{} {} {}".format(set_iptables_file, hotspot_interface, vpn_interface))
+            dns_mode = self.setting.dns_Mode
+            if self.setting.dns == "":
+                dns_mode = self.setting.DnsMode._1
+            dns_server = ""
+            if dns_mode == self.setting.DnsMode._2:
+                dns_server = self.setting.dns
+                dns_log = "/dev/null"
+
+            c = Execte("{} {} {} {} {} {}".format(set_iptables_file, hotspot_interface, vpn_interface, dns_mode, dns_server, dns_log))
             c.do()
             c.print()
             res = c.returncode
@@ -313,20 +323,23 @@ class Router:
                 v2ray_inbounds_port = js["inbounds"][0]["port"]
                 v2ray_outbounds_ip = js["outbounds"][0]["settings"]["vnext"][0]["address"]
                 badvpn_tun2socks_log_file = self.VpnList["v2ray"]["badvpn-tun2socks_log_file"]
-                use_dns2socks = ""
-                if self.hotspot.dns == "":
-                    use_dns2socks = True
-                else:
-                    use_dns2socks = False
-                dns_server = "8.8.8.8"
-                dns2socks_log_file = self.VpnList["v2ray"]["dns2socks_log_file"]
+                dns_mode = self.setting.dns_Mode
+                if self.setting.dns == "":
+                    dns_mode = self.setting.DnsMode._1
+                dns_server = ""
+                if dns_mode == self.setting.DnsMode._2:
+                    dns_server = self.setting.dns
+                    dns_log = "/dev/null"
+                elif dns_mode == self.setting.DnsMode._4:
+                    dns_server = self.setting.dns.split(",")[0]
+                    dns_log = self.VpnList["v2ray"]["dns2socks_log_file"]
 
                 c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
                     set_iptables_file,\
                     hotspot_interface, vpn_interface, internet_interface,\
                     v2ray_inbounds_port, v2ray_outbounds_ip,\
                     badvpn_tun2socks_log_file,\
-                    use_dns2socks, dns_server, dns2socks_log_file)
+                    dns_mode, dns_server, dns_log)
                 )
                 c.do()
                 c.print()

@@ -198,4 +198,5 @@ fi
 # web
 python3 "$this_dir_path/../web/manage.py" migrate
 python3 "$this_dir_path/../web/manage.py" ensure_adminuser --username=admin --password=admin &
+python3 "$this_dir_path/../web/manage.py" ensure_setting
 python3 "$this_dir_path/../web/manage.py" runserver 0.0.0.0:80 --noreload &>/tmp/app-web.log &

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'superclient.vpn',
     'superclient.hotspot',
     'superclient.action',
+    'superclient.setting',
 ]
 
 MIDDLEWARE = [

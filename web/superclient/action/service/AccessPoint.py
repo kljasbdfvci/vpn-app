@@ -7,9 +7,10 @@ from pathlib import Path
 ### local
 from .ConfigItem import *
 from .Execte import *
+from ...setting.models import Setting
 
 class AccessPoint:
-    def __init__(self, interface, channel, ssid, wpa_passphrase, ip, dhcp_ip_from, dhcp_ip_to, netmask, dns):
+    def __init__(self, interface, channel, ssid, wpa_passphrase, ip, dhcp_ip_from, dhcp_ip_to, netmask, setting : Setting):
         # hostapd configs
         self.interface = ConfigItem("interface", interface)
         self.channel = ConfigItem("channel", channel)
@@ -31,7 +32,7 @@ class AccessPoint:
         self.dhcp_ip_from = dhcp_ip_from
         self.dhcp_ip_to = dhcp_ip_to
         self.netmask = netmask
-        self.dns = dns
+        self.setting = setting
         self.lease_time = "24h"
 
     def _check_dependencies(self):
@@ -105,8 +106,8 @@ class AccessPoint:
         time.sleep(2)
         
         dns = ""
-        if self.dns != "":
-            dns_list = self.dns.split(",")
+        if self.setting.dns_Mode == self.setting.DnsMode._3 and self.setting.dns != "":
+            dns_list = self.setting.dns.split(",")
             for i in range(len(dns_list)):
                 dns_list[i] = "/#/" + dns_list[i]
             dns = "--address=" + ",".join(dns_list)
