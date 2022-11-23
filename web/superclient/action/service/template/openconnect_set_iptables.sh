@@ -25,7 +25,7 @@ if [ $DNS_MODE == "_2" ]; then
 	# add new dns
 	resolv=$(cat /etc/resolv.conf)
 	echo -e $str"\n" > /etc/resolv.conf
-	echo resolv >> /etc/resolv.conf
+	echo -n $resolv >> /etc/resolv.conf
     
 fi
 
