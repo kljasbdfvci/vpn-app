@@ -28,12 +28,18 @@ if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
     fi
     echo "start apt update"
     apt update --fix-missing
+    res_update=$?
     sleep 1
     echo "start apt upgrade"
     apt upgrade --fix-broken --fix-missing -y
+    res_upgrade=$?
     sleep 1
-    echo -n $now_time > $last_update_time_path
-    echo "system update successful."
+    if [[ $res_update == 0 ]] && [[ $res_upgrade == 0 ]]
+        echo -n $now_time > $last_update_time_path
+        echo "system update successful."
+    else
+        echo "system update failed."
+    fi
 else
     echo "system update not need."
 fi
