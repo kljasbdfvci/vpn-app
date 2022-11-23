@@ -34,7 +34,7 @@ if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
     apt upgrade --fix-broken --fix-missing -y
     res_upgrade=$?
     sleep 1
-    if [[ $res_update == 0 ]] && [[ $res_upgrade == 0 ]]
+    if [[ $res_update == 0 ]] && [[ $res_upgrade == 0 ]]; then
         echo -n $now_time > $last_update_time_path
         echo "system update successful."
     else
