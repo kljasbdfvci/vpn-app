@@ -27,7 +27,7 @@ if [ $DNS_MODE == "_2" ]; then
 
 	# make dns str
 	str="#MYDNS_START\n"
-	for item in ${DNSServer//;/ } ; do
+	for item in ${DNSServer//,/ } ; do
 		str=$str"nameserver $item\n"
 	done
 	str=$str"#MYDNS_START"

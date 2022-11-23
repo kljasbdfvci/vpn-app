@@ -11,3 +11,7 @@ class Setting(models.Model):
         
     dns_Mode = models.CharField(max_length=8, choices=DnsMode.choices, default=DnsMode._2)
     dns = models.CharField(max_length=128, default='1.1.1.1,8.8.8.8,208.67.222.222', blank=True)
+
+    def save(self, *args, **kwargs):
+        self.dns = "".join(self.dns.split())
+        super(Setting, self).save(*args, **kwargs)
