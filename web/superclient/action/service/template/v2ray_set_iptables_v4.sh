@@ -30,7 +30,7 @@ if [ $DNS_MODE == "_2" ]; then
 	for item in ${DNSServer//,/ } ; do
 		str=$str"nameserver $item\n"
 	done
-	str=$str"#MYDNS_START"
+	str=$str"#MYDNS_END"
 
 	# add new dns
 	echo -e "$str\n$(cat /etc/resolv.conf)" > /etc/resolv.conf
