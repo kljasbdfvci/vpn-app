@@ -34,6 +34,8 @@ class AccessPoint:
         self.netmask = netmask
         self.setting = setting
         self.lease_time = "24h"
+        self.dnsmasq_log_path = "/tmp/dnsmasq.log"
+        self.dnsmasq_leases_path = "/tmp/dnsmasq.leases"
 
     def _check_dependencies(self):
         check = True
@@ -112,19 +114,24 @@ class AccessPoint:
                 dns_list[i] = "/#/" + dns_list[i]
             dns = "--address=" + ",".join(dns_list)
 
-        logging.debug('running dnsmasq.')
-        c5 = Execte('dnsmasq --dhcp-authoritative --no-negcache --interface={} --listen-address={} --dhcp-range={},{},{},{} {}'\
-            .format(self.interface.value, self.ip, self.dhcp_ip_from, self.dhcp_ip_to, self.netmask, self.lease_time, dns), False)
+        logging.debug('delete last dnsmasq log.')
+        c5 = Execte('rm {}'.format(self.dnsmasq_log_path), False)
         c5.do()
         c5.print()
+
+        logging.debug('running dnsmasq.')
+        c6 = Execte('dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --interface={} --listen-address={} --dhcp-range={},{},{},{} --log-facility={} --dhcp-leasefile={} {}'\
+            .format(self.interface.value, self.ip, self.dhcp_ip_from, self.dhcp_ip_to, self.netmask, self.lease_time, self.dnsmasq_log_path, self.dnsmasq_leases_path, dns), False)
+        c6.do()
+        c6.print()
 
         logging.debug('waiting 2 sec.')
         time.sleep(2)
 
         logging.debug('running hostapd.')
-        c6 = Execte('hostapd -B {}'.format(self.hostapd_config_path), False)
-        c6.do()
-        c6.print()
+        c7 = Execte('hostapd -B {}'.format(self.hostapd_config_path), False)
+        c7.do()
+        c7.print()
 
         logging.debug('hotspot is running.')
 

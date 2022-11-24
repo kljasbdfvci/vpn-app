@@ -6,6 +6,14 @@
     nocompress
 }
 
+/tmp/dnsmasq.log {
+    size 1M
+    copytruncate
+    missingok
+    rotate 1
+    nocompress
+}
+
 /tmp/openconnect.log {
     size 1M
     copytruncate
@@ -38,7 +46,7 @@
     nocompress
 }
 
-/tmp/dns2socks.log{
+/tmp/dns2socks.log {
     size 1M
     copytruncate
     missingok
