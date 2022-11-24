@@ -120,7 +120,7 @@ class AccessPoint:
         c5.print()
 
         logging.debug('running dnsmasq.')
-        c6 = Execte('dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --interface={} --listen-address={} --dhcp-range={},{},{},{} --log-facility={} --dhcp-leasefile={} {}'\
+        c6 = Execte('dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp --interface={} --listen-address={} --dhcp-range={},{},{},{} --log-facility={} --dhcp-leasefile={} {}'\
             .format(self.interface.value, self.ip, self.dhcp_ip_from, self.dhcp_ip_to, self.netmask, self.lease_time, self.dnsmasq_log_path, self.dnsmasq_leases_path, dns), False)
         c6.do()
         c6.print()
