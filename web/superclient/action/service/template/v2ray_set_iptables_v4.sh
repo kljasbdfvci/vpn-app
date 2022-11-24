@@ -39,7 +39,7 @@ if [ $DNS_MODE == "_2" ]; then
 	echo -e "$str\n$(cat /etc/resolv.conf)" > /etc/resolv.conf
 
 elif [ $DNS_MODE == "_4" ]; then
-	if pgrep 'DNS2SOCKS'; then
+	if pgrep -f 'DNS2SOCKS'; then
 		killall 'DNS2SOCKS' &>/dev/null
 		sleep 1
 	fi
@@ -76,7 +76,7 @@ sleep 1
 # start badvpn-tun2socks
 ########################################################################
 
-if pgrep 'badvpn-tun2socks'; then
+if pgrep -f 'badvpn-tun2socks'; then
     killall 'badvpn-tun2socks' &>/dev/null
 	sleep 1
 fi

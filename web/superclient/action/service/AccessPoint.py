@@ -113,7 +113,7 @@ class AccessPoint:
             dns = "--address=" + ",".join(dns_list)
 
         logging.debug('running dnsmasq.')
-        c5 = Execte('dnsmasq --dhcp-authoritative --interface={} --listen-address={} --dhcp-range={},{},{},{} {}'\
+        c5 = Execte('dnsmasq --dhcp-authoritative --no-negcache --interface={} --listen-address={} --dhcp-range={},{},{},{} {}'\
             .format(self.interface.value, self.ip, self.dhcp_ip_from, self.dhcp_ip_to, self.netmask, self.lease_time, dns), False)
         c5.do()
         c5.print()

@@ -12,7 +12,7 @@ iptables -t nat -X
 iptables -t mangle -F
 iptables -t mangle -X
 
-if pgrep 'redsocks'; then
+if pgrep -f 'redsocks'; then
     killall 'redsocks' &>/dev/null
     sleep 1
 fi
@@ -22,7 +22,7 @@ if [ -n "$(cat /etc/resolv.conf | grep '#MYDNS_')" ]; then
     sleep 1
 fi
 
-if pgrep 'DNS2SOCKS'; then
+if pgrep -f 'DNS2SOCKS'; then
     killall 'DNS2SOCKS' &>/dev/null
     sleep 1
 fi
@@ -33,7 +33,7 @@ if [ -n "$(ip rule show table 100)" ]; then
     sleep 1
 fi
 
-if pgrep 'badvpn-tun2socks'; then
+if pgrep -f 'badvpn-tun2socks'; then
     killall 'badvpn-tun2socks' &>/dev/null
     sleep 1
 fi
