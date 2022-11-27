@@ -86,3 +86,37 @@ class Network:
             c.print()
             res = c.returncode
             output = c.getSTD()
+
+        
+        # lanConfig
+        for wlan in self.wlanConfig:
+            up_file = self.list["wlanconfig"]["up_file"]
+            ssid = ""
+            if wlan.ssid != "":
+                ssid = "--ssid {}".format(wlan.ssid)
+            wpa_passphrase = ""
+            if wlan.wpa_passphrase != "":
+                wpa_passphrase = "--wpa_passphrase {}".format(wlan.wpa_passphrase)
+            interface = ""
+            if wlan.interface != "":
+                interface = "--interface {}".format(wlan.interface)
+            dhcp = ""
+            if wlan.dhcp == True:
+                dhcp = "--dhcp"
+            ip_address = ""
+            if wlan.ip_address != "":
+                ip_address = "--ip_address {}".format(wlan.ip_address)
+            subnet_mask_1 = ""
+            if wlan.subnet_mask != "":
+                subnet_mask = "--subnet_mask {}".format(wlan.subnet_mask)
+            log_file = self.list["wlanconfig"]["log_file"]
+            c = Execte("{} {} {} {} {} {} {} &> {}".format(\
+                up_file, ssid, wpa_passphrase,\
+                interface, dhcp,\
+                ip_address, subnet_mask,\
+                log_file)
+            )
+            c.do()
+            c.print()
+            res = c.returncode
+            output = c.getSTD()
