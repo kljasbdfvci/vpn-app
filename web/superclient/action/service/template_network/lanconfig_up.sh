@@ -8,31 +8,6 @@ parse_options() {
                 shift # past argument
                 shift # past value
                 ;;
-            -s|--ssid)
-                ssid="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -p|--wpa_passphrase)
-                wpa_passphrase="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -c|--wpa_supplicant_config_file)
-                wpa_supplicant_config_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -P|--wpa_supplicant_pid_file)
-                wpa_supplicant_pid_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -f|--wpa_supplicant_log_file)
-                wpa_supplicant_log_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
             -d|--dhcp)
                 dhcp="yes"
                 shift # past argument
@@ -93,60 +68,31 @@ parse_options $@
 
 exit_code=0
 
-# wpa_passphrase
-wpa_passphrase "$ssid" "$wpa_passphrase" | tee $wpa_supplicant_config_file
-
-# wpa_supplicant
-pid=$(cat $wpa_supplicant_pid_file)
-if kill -0 $pid &> /dev/null
-then
-    kill -9 $pid
-    echo "wpa_supplicant killed with pid $pid"
-fi
-
-wpa_supplicant -B -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -f $wpa_supplicant_log_file -i $interface
-sleep 5
-
-# dhcp
 dhcp_res=0
-ifconfig $interface down
-sleep 1
 if [ $dhcp == "yes" ]; then
     timeout 30 dhclient -v $interface
     dhcp_res=$?
 fi
 
-# static 1
 ip1_res=0
-ifconfig $interface:1 down
-sleep 1
 if [[ -n $ip_address_1 ]] && [[ -n $subnet_mask_1 ]]; then
     ifconfig $interface:1 $ip_address_1 netmask $subnet_mask_1 up
     ip1_res=$?
 fi
 
-# static 2
 ip2_res=0
-ifconfig $interface:2 down
-sleep 1
 if [[ -n $ip_address_2 ]] && [[ -n $subnet_mask_2 ]]; then
     ifconfig $interface:2 $ip_address_2 netmask $subnet_mask_2 up
     ip2_res=$?
 fi
 
-# static 3
 ip3_res=0
-ifconfig $interface:3 down
-sleep 1
 if [[ -n $ip_address_3 ]] && [[ -n $subnet_mask_3 ]]; then
     ifconfig $interface:3 $ip_address_3 netmask $subnet_mask_3 up
     ip3_res=$?
 fi
 
-# static 4
 ip4_res=0
-ifconfig $interface:4 down
-sleep 1
 if [[ -n $ip_address_4 ]] && [[ -n $subnet_mask_4 ]]; then
     ifconfig $interface:4 $ip_address_4 netmask $subnet_mask_4 up
     ip4_res=$?

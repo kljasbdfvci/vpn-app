@@ -1,10 +1,5 @@
 #!/bin/bash
 
-interface, ip_address, subnet_mask,\
-                dhcp_ip_address_from, dhcp_ip_address_to,\
-                dns,\
-                dnsmasq_pid_file, dnsmasq_log_file,\
-
 parse_options() {
     while [[ $# -gt 0 ]]; do
         case $1 in

@@ -12,23 +12,23 @@ from ...setting.models import Setting
 class Router:
     def __init__(self, vpn : Configuration, hotspot : Profile):
         self.VpnList = {
-            "reset_iptables_file" : Path(__file__).resolve().parent / "template/reset_iptables.sh",
+            "reset_iptables_file" : Path(__file__).resolve().parent / "template_router/reset_iptables.sh",
             "openconnect": {
-                "up_file" : Path(__file__).resolve().parent / "template/openconnect_up.sh",
-                "set_iptables_file" : Path(__file__).resolve().parent / "template/openconnect_set_iptables.sh",
-                "reset_iptables_file" : Path(__file__).resolve().parent / "template/openconnect_reset_iptables.sh",
+                "up_file" : Path(__file__).resolve().parent / "template_router/openconnect_up.sh",
+                "set_iptables_file" : Path(__file__).resolve().parent / "template_router/openconnect_set_iptables.sh",
+                "reset_iptables_file" : Path(__file__).resolve().parent / "template_router/openconnect_reset_iptables.sh",
                 "pid_file" : "/tmp/openconnect.pid",
                 "log_file" : "/tmp/openconnect.log",
                 "interface" : "tun0"
             },
             "v2ray": {
-                "up_file" : Path(__file__).resolve().parent / "template/v2ray_up.sh",
+                "up_file" : Path(__file__).resolve().parent / "template_router/v2ray_up.sh",
                 "set_iptables_version" : "v4",
-                "set_iptables_v1_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables_v1.sh",
-                "set_iptables_v2_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables_v2.sh",
-                "set_iptables_v3_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables_v3.sh",
-                "set_iptables_v4_file" : Path(__file__).resolve().parent / "template/v2ray_set_iptables_v4.sh",
-                "reset_iptables_file" : Path(__file__).resolve().parent / "template/v2ray_reset_iptables.sh",
+                "set_iptables_v1_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables_v1.sh",
+                "set_iptables_v2_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables_v2.sh",
+                "set_iptables_v3_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables_v3.sh",
+                "set_iptables_v4_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables_v4.sh",
+                "reset_iptables_file" : Path(__file__).resolve().parent / "template_router/v2ray_reset_iptables.sh",
                 "pid_file" : "/tmp/v2ray.pid",
                 "log_file" : "/tmp/v2ray.log",
                 "config_file" : Path(__file__).resolve().parent / "v2ray.config",
