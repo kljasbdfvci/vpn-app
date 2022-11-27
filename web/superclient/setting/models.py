@@ -37,12 +37,15 @@ class LanConfig(Network):
 class WlanConfig(Network):
     ssid = models.CharField(max_length=128)
     wpa_passphrase = models.CharField(max_length=128)
-    class Mode(models.TextChoices):
-        dhcp = "dhcp", "DHCP"
-        static = "static", "STATIC"
-    mode = models.CharField(max_length=16, choices=Mode.choices, default=Mode.dhcp)
-    ip_address = models.CharField(max_length=16, blank=True)
-    subnet_mask = models.CharField(max_length=16, blank=True)
+    dhcp = models.BooleanField(default=True)
+    ip_address_1 = models.CharField(max_length=16, blank=True)
+    subnet_mask_1 = models.CharField(max_length=16, blank=True)
+    ip_address_2 = models.CharField(max_length=16, blank=True)
+    subnet_mask_2 = models.CharField(max_length=16, blank=True)
+    ip_address_3 = models.CharField(max_length=16, blank=True)
+    subnet_mask_3 = models.CharField(max_length=16, blank=True)
+    ip_address_4 = models.CharField(max_length=16, blank=True)
+    subnet_mask_4 = models.CharField(max_length=16, blank=True)
 
 class HotspotConfig(Network):
     ssid = models.CharField(max_length=128)
@@ -74,7 +77,7 @@ def validate_interface(value):
 
 class DhcpServerConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[validate_interface])
-    subnet_mask = models.CharField(max_length=16, default='255.255.255.0')
     ip_address = models.CharField(max_length=16, default='192.168.10.1')
+    subnet_mask = models.CharField(max_length=16, default='255.255.255.0')
     dhcp_ip_address_from = models.CharField(max_length=16, default='192.168.10.10')
     dhcp_ip_address_to = models.CharField(max_length=16, default='192.168.10.30')

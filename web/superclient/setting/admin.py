@@ -43,7 +43,7 @@ class WlanConfigAdminForm(forms.ModelForm):
 @admin.register(WlanConfig)
 class WLanConfigAdmin(admin.ModelAdmin):
     form = WlanConfigAdminForm
-    list_display = ('interface', 'ssid', 'mode', 'ip_address', 'subnet_mask')
+    list_display = ('interface', 'ssid', 'dhcp', 'ip_address_1', 'subnet_mask_1')
 
 class HotspotConfigAdminForm(forms.ModelForm):
     interface = forms.ChoiceField(choices=tuple((key, key) for key in get_wlan_interfaces()))
