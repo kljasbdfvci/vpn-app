@@ -9,5 +9,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if Setting.objects.count() == 0:
-            s = Setting(id=1)
+            s = Setting(id = 1)
             s.save()
