@@ -73,12 +73,14 @@ class Network:
             subnet_mask_4 = ""
             if lan.subnet_mask_4 != "":
                 subnet_mask_4 = "--subnet_mask_4 {}".format(lan.subnet_mask_4)
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
+            log_file = self.list["lanconfig"]["log_file"]
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} &> {}".format(\
                 up_file, interface, dhcp,\
                 ip_address_1, subnet_mask_1,\
                 ip_address_2, subnet_mask_2,\
                 ip_address_3, subnet_mask_3,\
-                ip_address_4, subnet_mask_4)
+                ip_address_4, subnet_mask_4,\
+                log_file)
             )
             c.do()
             c.print()

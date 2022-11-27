@@ -68,26 +68,31 @@ parse_options $@
 
 exit_code=0
 
+dhcp_res=0
 if [ $dhcp == "yes" ]; then
-    dhclient timeout 5 -v $interface
+    timeout 5 dhclient -v $interface
     dhcp_res=$?
 fi
 
+ip1_res=0
 if [[ -n $ip_address_1 ]] && [[ -n $subnet_mask_1 ]]; then
     ifconfig $interface:1 $ip_address_1 netmask $subnet_mask_1
     ip1_res=$?
 fi
 
+ip2_res=0
 if [[ -n $ip_address_2 ]] && [[ -n $subnet_mask_2 ]]; then
     ifconfig $interface:2 $ip_address_2 netmask $subnet_mask_2
     ip2_res=$?
 fi
 
+ip3_res=0
 if [[ -n $ip_address_3 ]] && [[ -n $subnet_mask_3 ]]; then
     ifconfig $interface:3 $ip_address_3 netmask $subnet_mask_3
     ip3_res=$?
 fi
 
+ip4_res=0
 if [[ -n $ip_address_4 ]] && [[ -n $subnet_mask_4 ]]; then
     ifconfig $interface:4 $ip_address_4 netmask $subnet_mask_4
     ip4_res=$?
