@@ -57,7 +57,7 @@ class Network:
         down_file = self.list["all"]["down_file"]
         log_file = self.list["all"]["log_file"]
         c = Execte("{} &>> {}".format(\
-            up_file, log_file)
+            down_file, log_file)
         )
         c.do()
         c.print()
