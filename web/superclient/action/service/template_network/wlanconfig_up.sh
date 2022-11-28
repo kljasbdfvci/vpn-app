@@ -97,9 +97,9 @@ exit_code=0
 wpa_passphrase "$ssid" "$wpa_passphrase" | tee $wpa_supplicant_config_file
 
 # wpa_supplicant
-
+ifconfig $interface up
 wpa_supplicant -B -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -f $wpa_supplicant_log_file -i $interface
-sleep 5
+sleep 10
 
 # dhcp
 dhcp_res=0
