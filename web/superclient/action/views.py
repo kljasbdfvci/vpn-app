@@ -10,7 +10,7 @@ def index(request):
     status = Status.get()
 
     if request.method == 'POST':
-        apply_setting = request.POST.dict()['apply']
+        apply_setting = request.POST.dict().get('apply')
         if apply_setting:
             Network().Apply()
 
