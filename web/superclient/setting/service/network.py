@@ -18,7 +18,7 @@ def get_wlan_interfaces():
     return addrs
 
 def get_first_eth_interface():
-    return get_eth_interfaces[0]
+    return get_eth_interfaces()[0]
 
 def get_first_wlan_interface():
-    return get_wlan_interfaces[0]
+    return get_wlan_interfaces()[0]
