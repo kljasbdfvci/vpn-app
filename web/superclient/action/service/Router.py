@@ -6,7 +6,6 @@ import logging
 # local
 from .Execte import *
 from ...vpn.models import *
-from ...hotspot.models import *
 from ...setting.models import Setting
 
 class Router:
