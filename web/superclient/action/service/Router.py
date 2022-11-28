@@ -10,7 +10,7 @@ from ...hotspot.models import *
 from ...setting.models import Setting
 
 class Router:
-    def __init__(self, vpn : Configuration, hotspot : Profile):
+    def __init__(self, vpn : Configuration):
         self.VpnList = {
             "reset_iptables_file" : Path(__file__).resolve().parent / "template_router/reset_iptables.sh",
             "openconnect": {
@@ -23,11 +23,7 @@ class Router:
             },
             "v2ray": {
                 "up_file" : Path(__file__).resolve().parent / "template_router/v2ray_up.sh",
-                "set_iptables_version" : "v4",
-                "set_iptables_v1_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables_v1.sh",
-                "set_iptables_v2_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables_v2.sh",
-                "set_iptables_v3_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables_v3.sh",
-                "set_iptables_v4_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables_v4.sh",
+                "set_iptables_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables.sh",
                 "reset_iptables_file" : Path(__file__).resolve().parent / "template_router/v2ray_reset_iptables.sh",
                 "pid_file" : "/tmp/v2ray.pid",
                 "log_file" : "/tmp/v2ray.log",
@@ -40,7 +36,6 @@ class Router:
             },
         }
         self.vpn = vpn
-        self.hotspot = hotspot
         self.setting = Setting.objects.first()
 
     def ConnectVPN(self, timeout, try_count):
@@ -220,117 +215,38 @@ class Router:
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
             set_iptables_file = self.VpnList["openconnect"]["set_iptables_file"]
-            hotspot_interface = self.hotspot.interface
-            vpn_interface = self.VpnList["openconnect"]["interface"]
-            c = Execte("{} {} {} {} {} {}".format(set_iptables_file, hotspot_interface, vpn_interface))
+
+            c = Execte("{}".format(set_iptables_file))
             c.do()
             c.print()
             res = c.returncode
 
         elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
-            set_iptables_version = self.VpnList["v2ray"]["set_iptables_version"]
+            set_iptables_file = self.VpnList["v2ray"]["set_iptables_file"]
+            vpn_interface = self.VpnList["v2ray"]["interface"]
+            config_json = v2ray.config_json
+            js = json.loads(config_json)
+            v2ray_inbounds_port = js["inbounds"][0]["port"]
+            v2ray_outbounds_ip = js["outbounds"][0]["settings"]["vnext"][0]["address"]
+            badvpn_tun2socks_log_file = self.VpnList["v2ray"]["badvpn-tun2socks_log_file"]
+            dns_mode = self.setting.DnsMode._1 if self.setting.dns == "" else self.setting.dns_Mode
+            dns_server = ""
+            dns_log = ""
+            if dns_mode == self.setting.DnsMode._4:
+                dns_server = self.setting.dns.split(",")[0]
+                dns_log = self.VpnList["v2ray"]["dns2socks_log_file"]
 
-            if set_iptables_version == "v1":
-                # v1
-                v2ray = self.vpn.subclass
-                set_iptables_file = self.VpnList["v2ray"]["set_iptables_v1_file"]
-                config_json = v2ray.config_json
-                js = json.loads(config_json)
-                v2ray_port = js["inbounds"][0]["port"]
-                hotspot_interface = self.hotspot.interface
-                hotspot_ip = self.hotspot.ip
-                hotspot_netmask = self.hotspot.netmask
-                c = Execte("{} {} {} {} {} {}".format(set_iptables_file, v2ray_port, hotspot_interface, hotspot_ip, hotspot_netmask, "eth0"))
-                c.do()
-                c.print()
-                res = c.returncode
-
-            elif set_iptables_version == "v2":
-                    # v2
-                set_iptables_file = self.VpnList["v2ray"]["set_iptables_v2_file"]
-                hotspot_interface = self.hotspot.interface
-                config_json = v2ray.config_json
-                js = json.loads(config_json)
-                v2ray_inbounds_port = js["inbounds"][0]["port"]
-                v2ray_outbounds_ip = js["outbounds"][0]["settings"]["vnext"][0]["address"]
-                v2ray_outbounds_port = js["outbounds"][0]["settings"]["vnext"][0]["port"]
-                redsocks_config_file = self.VpnList["v2ray"]["redsocks_config_file"]
-                redsocks_log_file = self.VpnList["v2ray"]["redsocks_log_file"]
-                use_dns2socks = ""
-                if self.hotspot.dns == "":
-                    use_dns2socks = True
-                else:
-                    use_dns2socks = False
-                dns_server = "8.8.8.8"
-                dns2socks_log_file = self.VpnList["v2ray"]["dns2socks_log_file"]
-
-                c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
-                    set_iptables_file, hotspot_interface,\
-                    v2ray_inbounds_port, v2ray_outbounds_ip, v2ray_outbounds_port,\
-                    redsocks_config_file, redsocks_log_file,\
-                    use_dns2socks, dns_server, dns2socks_log_file)
-                )
-                c.do()
-                c.print()
-                res = c.returncode
-
-            elif set_iptables_version == "v3":
-                # v3
-                set_iptables_file = self.VpnList["v2ray"]["set_iptables_v3_file"]
-                hotspot_interface = self.hotspot.interface
-                config_json = v2ray.config_json
-                js = json.loads(config_json)
-                v2ray_inbounds_port = js["inbounds"][0]["port"]
-                v2ray_outbounds_ip = js["outbounds"][0]["settings"]["vnext"][0]["address"]
-                v2ray_outbounds_port = js["outbounds"][0]["settings"]["vnext"][0]["port"]
-                redsocks_config_file = self.VpnList["v2ray"]["redsocks_config_file"]
-                redsocks_log_file = self.VpnList["v2ray"]["redsocks_log_file"]
-                use_dns2socks = ""
-                if self.hotspot.dns == "":
-                    use_dns2socks = True
-                else:
-                    use_dns2socks = False
-                dns_server = "8.8.8.8"
-                dns2socks_log_file = self.VpnList["v2ray"]["dns2socks_log_file"]
-
-                c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
-                    set_iptables_file, hotspot_interface,\
-                    v2ray_inbounds_port, v2ray_outbounds_ip, v2ray_outbounds_port,\
-                    redsocks_config_file, redsocks_log_file,\
-                    use_dns2socks, dns_server, dns2socks_log_file)
-                )
-                c.do()
-                c.print()
-                res = c.returncode
-            
-            elif set_iptables_version == "v4":
-                # v4
-                set_iptables_file = self.VpnList["v2ray"]["set_iptables_v4_file"]
-                hotspot_interface = self.hotspot.interface
-                vpn_interface = self.VpnList["v2ray"]["interface"]
-                config_json = v2ray.config_json
-                js = json.loads(config_json)
-                v2ray_inbounds_port = js["inbounds"][0]["port"]
-                v2ray_outbounds_ip = js["outbounds"][0]["settings"]["vnext"][0]["address"]
-                badvpn_tun2socks_log_file = self.VpnList["v2ray"]["badvpn-tun2socks_log_file"]
-                dns_mode = self.setting.DnsMode._1 if self.setting.dns == "" else self.setting.dns_Mode
-                dns_server = ""
-                dns_log = ""
-                if dns_mode == self.setting.DnsMode._4:
-                    dns_server = self.setting.dns.split(",")[0]
-                    dns_log = self.VpnList["v2ray"]["dns2socks_log_file"]
-
-                c = Execte("{} {} {} {} {} {} {} {} {}".format(\
-                    set_iptables_file,\
-                    hotspot_interface, vpn_interface,\
-                    v2ray_inbounds_port, v2ray_outbounds_ip,\
-                    badvpn_tun2socks_log_file,\
-                    dns_mode, dns_server, dns_log)
-                )
-                c.do()
-                c.print()
-                res = c.returncode
+            c = Execte("{} {} {} {} {} {} {} {}".format(\
+                set_iptables_file,\
+                vpn_interface,\
+                v2ray_inbounds_port, v2ray_outbounds_ip,\
+                badvpn_tun2socks_log_file,\
+                dns_mode, dns_server, dns_log)
+            )
+            c.do()
+            c.print()
+            res = c.returncode
 
         else:
             res = -1

@@ -4,16 +4,15 @@
 # Define various configuration parameters.
 ########################################################################
 
-SUBNET_INTERFACE=${1}
-TUN_INTERFACE=${2}
+TUN_INTERFACE=${1}
 INTERNET_GW=$(route -n | grep 'UG' | awk {'print $2'} | head -n 1 | tr -d '\n')
 SOCKS_IP="127.0.0.1"
-SOCKS_PORT=${3}
-SOCKS_SERVER_IP=${4}
-BADVPN_TUN2SOCKS_LOG=${5}
-DNS_MODE=${6}
-DNSServer=${7}
-DNS_LOG=${8}
+SOCKS_PORT=${2}
+SOCKS_SERVER_IP=${3}
+BADVPN_TUN2SOCKS_LOG=${4}
+DNS_MODE=${5}
+DNSServer=${6}
+DNS_LOG=${7}
 
 ########################################################################
 # start dns
