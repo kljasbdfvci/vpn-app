@@ -51,15 +51,7 @@ class Network:
 
     def Apply(self):
 
-        # all_down
-        down_file = self.list["all"]["down_file"]
-        c = Execte("{}".format(\
-            down_file)
-        )
-        c.do()
-        c.print()
-        res = c.returncode
-        output = c.getSTD()
+        self.reset()
 
         # lanConfig
         for lan in self.lanConfig:
@@ -219,3 +211,26 @@ class Network:
             c.print()
             res = c.returncode
             output = c.getSTD()
+
+    def reset(self):
+        # all_down
+        down_file = self.list["all"]["down_file"]
+        wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"])
+        wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"])
+        wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"])
+        hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
+        hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
+        hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
+        dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"].format("*"))
+        dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format("*"))
+        dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format("*"))
+        c = Execte("{}".format(\
+            down_file,
+            wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file,\
+            hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
+            dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file)
+        )
+        c.do()
+        c.print()
+        res = c.returncode
+        output = c.getSTD()
