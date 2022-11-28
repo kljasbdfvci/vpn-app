@@ -173,13 +173,13 @@ class Network:
             channel = "--channel '{}'".format(hotspot.channel)
             ssid = "--ssid '{}'".format(hotspot.ssid)
             wpa_passphrase = "--wpa_passphrase '{}'".format(hotspot.wpa_passphrase)
-            hotspot_config_file = "--hotspotconfig_file '{}'".format(self.list["hotspotconfig"]["hotspot_config_file"])
-            hotspot_pid_file = "--hotspot_pid_file '{}'".format(self.list["hotspotconfig"]["hotspot_pid_file"])
-            hotspot_log_file = "--hotspot_log_file '{}'".format(self.list["hotspotconfig"]["hotspot_log_file"])
+            hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
+            hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
+            hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
             log_file = self.list["hotspotconfig"]["log_file"]
             c = Execte("{} {} {} {} {} {} {} {} &>> {}".format(\
                 up_file, interface, channel, ssid, wpa_passphrase,\
-                hotspot_config_file, hotspot_pid_file, hotspot_log_file,\
+                hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
                 log_file)
             )
             c.do()
