@@ -64,10 +64,13 @@ parse_options $@
 
 exit_code=0
 
-$address=""
-if [ $dns != "" ]; then
+address=""
+if [ -n "$dns" ]; then
     address="--address="$dns
+fi
+
+ifconfig $interface $ip_address netmask $subnet_mask up
 
 dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
---interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,24h \
+--interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,$subnet_mask,24h \
 --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file $address

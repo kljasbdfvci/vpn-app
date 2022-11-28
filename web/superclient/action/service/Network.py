@@ -205,7 +205,7 @@ class Network:
             dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format(dhcpServer.interface))
             dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format(dhcpServer.interface))
             log_file = self.list["dhcpserverconfig"]["log_file"]
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} &>> {}".format(\
+            c = Execte("{} {} {} {} {} {} {} {} {} {} &>> {}".format(\
                 up_file, interface, ip_address, subnet_mask,\
                 dhcp_ip_address_from, dhcp_ip_address_to,\
                 dns,\
