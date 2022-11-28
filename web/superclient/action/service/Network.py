@@ -38,6 +38,9 @@ class Network:
                 "dnsmasq_log_file" : "/tmp/dnsmasq_{}.log",
                 "dnsmasq_lease_file" : "/tmp/dnsmasq_{}.leases",
             },
+            "dns": {
+                "up_file" : Path(__file__).resolve().parent / "template_network/dns_up.sh",
+            },
         }
         
         self.lanConfig = LanConfig.objects.all()
@@ -183,22 +186,32 @@ class Network:
             subnet_mask = "--subnet_mask '{}'".format(dhcpServer.subnet_mask)
             dhcp_ip_address_from = "--dhcp_ip_address_from '{}'".format(dhcpServer.dhcp_ip_address_from)
             dhcp_ip_address_to = "--dhcp_ip_address_to '{}'".format(dhcpServer.dhcp_ip_address_to)
-            dns = ""
-            if self.setting.dns_Mode == self.setting.DnsMode._3 and self.setting.dns != "":
+            dns_mode = self.setting.DnsMode._1 if self.setting.dns == "" else self.setting.dns_Mode
+            dns_server = ""
+            if dns_mode == self.setting.DnsMode._3:
                 dns_list = self.setting.dns.split(",")
                 for i in range(len(dns_list)):
                     dns_list[i] = "/#/" + dns_list[i]
-                dns = "--dns '{}'".format(",".join(dns_list))
+                dns_server = "--dns_server '{}'".format(",".join(dns_list))
             dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"].format(dhcpServer.interface))
             dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format(dhcpServer.interface))
             dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format(dhcpServer.interface))
             c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, interface, ip_address, subnet_mask,\
                 dhcp_ip_address_from, dhcp_ip_address_to,\
-                dns,\
+                dns_server,\
                 dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file)
             )
             c.do()
             c.print()
             res = c.returncode
             output = c.getSTD()
+
+        # dns
+        dns_mode = self.setting.DnsMode._1 if self.setting.dns == "" else self.setting.dns_Mode
+        if dns_mode == self.setting.DnsMode._2:
+            up_file = self.list["dns"]["up_file"]
+            dns_server = "--dns_server {}".format(self.setting.dns)
+            c = Execte("{} {}".format(\
+                up_file, dns_server)
+            )

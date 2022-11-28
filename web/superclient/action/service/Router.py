@@ -219,18 +219,10 @@ class Router:
 
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
+            set_iptables_file = self.VpnList["openconnect"]["set_iptables_file"]
             hotspot_interface = self.hotspot.interface
             vpn_interface = self.VpnList["openconnect"]["interface"]
-            set_iptables_file = self.VpnList["openconnect"]["set_iptables_file"]
-            dns_mode = self.setting.dns_Mode
-            if self.setting.dns == "":
-                dns_mode = self.setting.DnsMode._1
-            dns_server = ""
-            if dns_mode == self.setting.DnsMode._2:
-                dns_server = self.setting.dns
-                dns_log = "/dev/null"
-
-            c = Execte("{} {} {} {} {} {}".format(set_iptables_file, hotspot_interface, vpn_interface, dns_mode, dns_server, dns_log))
+            c = Execte("{} {} {} {} {} {}".format(set_iptables_file, hotspot_interface, vpn_interface))
             c.do()
             c.print()
             res = c.returncode
@@ -323,14 +315,9 @@ class Router:
                 v2ray_inbounds_port = js["inbounds"][0]["port"]
                 v2ray_outbounds_ip = js["outbounds"][0]["settings"]["vnext"][0]["address"]
                 badvpn_tun2socks_log_file = self.VpnList["v2ray"]["badvpn-tun2socks_log_file"]
-                dns_mode = self.setting.dns_Mode
-                if self.setting.dns == "":
-                    dns_mode = self.setting.DnsMode._1
+                dns_mode = self.setting.DnsMode._1 if self.setting.dns == "" else self.setting.dns_Mode
                 dns_server = ""
-                if dns_mode == self.setting.DnsMode._2:
-                    dns_server = self.setting.dns
-                    dns_log = "/dev/null"
-                elif dns_mode == self.setting.DnsMode._4:
+                if dns_mode == self.setting.DnsMode._4:
                     dns_server = self.setting.dns.split(",")[0]
                     dns_log = self.VpnList["v2ray"]["dns2socks_log_file"]
 

@@ -17,11 +17,6 @@ if pgrep -f 'redsocks'; then
     sleep 1
 fi
 
-if [ -n "$(cat /etc/resolv.conf | grep '#MYDNS_')" ]; then
-    sed -n -e '/#MYDNS_START/,/#MYDNS_END/!p' -i /etc/resolv.conf
-    sleep 1
-fi
-
 if pgrep -f 'DNS2SOCKS'; then
     killall 'DNS2SOCKS' &>/dev/null
     sleep 1

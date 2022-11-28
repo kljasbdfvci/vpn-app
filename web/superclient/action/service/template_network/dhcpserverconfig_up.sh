@@ -28,8 +28,8 @@ parse_options() {
                 shift # past argument
                 shift # past value
                 ;;
-            -d|--dns)
-                dns="$2"
+            -d|--dns_server)
+                dns_server="$2"
                 shift # past argument
                 shift # past value
                 ;;
@@ -65,7 +65,7 @@ parse_options $@
 exit_code=0
 
 address=""
-if [ -n "$dns" ]; then
+if [ -n "$dns_server" ]; then
     address="--address="$dns
 fi
 

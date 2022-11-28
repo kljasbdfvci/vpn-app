@@ -20,25 +20,7 @@ DNS_LOG=${9}
 # start dns
 ########################################################################
 
-if [ $DNS_MODE == "_2" ]; then
-
-	# remove old dns
-	if [ -n "$(cat /etc/resolv.conf | grep '#MYDNS_')" ]; then
-		sed -n -e '/#MYDNS_START/,/#MYDNS_END/!p' -i /etc/resolv.conf
-		sleep 1
-	fi
-
-	# make dns str
-	str="#MYDNS_START\n"
-	for item in ${DNSServer//,/ } ; do
-		str=$str"nameserver $item\n"
-	done
-	str=$str"#MYDNS_END"
-
-	# add new dns
-	echo -e "$str\n$(cat /etc/resolv.conf)" > /etc/resolv.conf
-
-elif [ $DNS_MODE == "_4" ]; then
+if [ $DNS_MODE == "_4" ]; then
 	if pgrep -f 'DNS2SOCKS'; then
 		killall 'DNS2SOCKS' &>/dev/null
 		sleep 1
