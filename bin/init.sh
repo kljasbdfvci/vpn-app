@@ -197,12 +197,7 @@ fi
 
 # web
 python3 "$this_dir_path/../web/manage.py" migrate
-ensure_adminuser_path="/disk/ensure_adminuser_path"
-if [[ ! -f $ensure_adminuser_path ]]; then
-    python3 "$this_dir_path/../web/manage.py" ensure_adminuser --username=admin --password=admin
-    touch $ensure_adminuser_path
-    echo "create $ensure_adminuser_path successful."
-fi
+python3 "$this_dir_path/../web/manage.py" ensure_adminuser --username=admin --password=admin
 ensure_setting_path="/disk/ensure_setting_path"
 if [[ ! -f $ensure_setting_path ]]; then
     python3 "$this_dir_path/../web/manage.py" ensure_setting
