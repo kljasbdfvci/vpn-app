@@ -104,7 +104,8 @@ sleep 5
 # dhcp
 dhcp_res=0
 if [ $dhcp == "yes" ]; then
-    timeout 30 dhclient -v $interface
+    ifconfig $interface up
+    timeout 60 dhclient -v $interface
     dhcp_res=$?
 fi
 
