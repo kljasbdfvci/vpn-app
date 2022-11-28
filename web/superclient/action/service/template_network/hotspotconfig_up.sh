@@ -72,3 +72,12 @@ config=$config"rsn_pairwise=CCMP\n"
 echo -e $config > $hostapd_config_file
 
 hostapd -B $hostapd_config_file -P $hostapd_pid_file -t -d &> $hostapd_log_file
+hostapd_res=$?
+
+if [[ $hostapd_res == 0 ]]; then
+    exit_code=0
+else
+    exit_code=1
+fi
+
+exit $exit_code

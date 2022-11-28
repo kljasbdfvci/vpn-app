@@ -137,7 +137,9 @@ if [[ -n $ip_address_4 ]] && [[ -n $subnet_mask_4 ]]; then
 fi
 
 if [[ $dhcp_res == 0 ]] && [[ $ip1_res == 0 ]] && [[ $ip2_res == 0 ]] && [[ $ip3_res == 0 ]] && [[ $ip4_res == 0 ]]; then
-    exit 0
+    exit_code=0
 else
-    exit 1
+    exit_code=1
 fi
+
+exit $exit_code
