@@ -25,6 +25,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
         }
         #links {
             position: absolute;
@@ -47,7 +48,7 @@
             color: #181818;
             margin-right: 15px;
         }
-        #main-form {
+        form {
             width: 50vw;
             min-width: 500px;
             display: flex;
@@ -72,6 +73,14 @@
             height: 32px;
             width: 100%;
             margin: 6px 0;
+        }
+        #apply-setting-submit-button {
+            background-color: rgb(84, 188, 217);
+            margin: 30px 0;
+            /* padding: 16px; */
+            font-weight: bolder;
+            text-align: center;
+            border: 2px solid #181818;    
         }
         #submit-button {
             background-color: blueviolet;
@@ -106,21 +115,12 @@
             <a class="shortcut" href="/settingsvpn/v2rayurlconfig/add/">v2ray (config url) ➕</a>
         </div>
 
-        {% if profiles %}
         <form id="main-form" action="/" method="post">
             {% csrf_token %}
             <div id="main-form-items">
                 {% if isOn %}
-                <p for="submit-button">Hotspot SSID: {{activeProfileSSID}}</p>
                 <p for="submit-button">VPN Connection: {{activeVpn}}</p>
                 {% else %}
-                <label for="select-profile">Select Hotspot profile</label>
-                <select class="main-form-item" id="select-profile" name="profile" id="profiles">
-                    {% for profile in profiles %}
-                    <option value="{{profile}}">{{profile}}</option>
-                    {% endfor %}
-                </select>
-                <span class="main-form-item-spliter"></span>
                 <label for="select-vpn">Select Vpn Connection</label>
                 <select class="main-form-item" id="select-vpn" name="vpn" id="vpns">
                     {% for vpn in vpns %}
@@ -132,9 +132,15 @@
                 <input class="main-form-item" id="submit-button" type="submit" value="{{ submitText }}">
             </div>
         </form>
-        {% else %}
-        <a href="/settingshotspot/profile/add/">Add Hotspot Profile ➕</a>
-        {% endif %}
+        <form id="apply-setting-form" action="/" method="post">
+            {% csrf_token %}
+            <div id="main-form-items">
+                <select class="main-form-item" id="apply-setting" name="apply" id="apply" hidden>
+                    <option value="true"></option>
+                </select>
+                <input class="main-form-item" id="apply-setting-submit-button" type="submit" value="Apply Setting">
+            </div>
+        </form>
     </div>
 </body>
 </html>

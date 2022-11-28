@@ -43,17 +43,6 @@ def service_checker():
 def start_services(status: ServiceStatus):
     logging.info('starting services...')
 
-    if status.active_profile and not status.active_profile.access_point.is_running():
-        logging.info('starting hotspot...')
-        status.active_profile.access_point.start()
-    elif status.active_profile != status.selected_profile:
-        logging.info('changing active hotspot profile...')
-        status.change_active_profile(status.selected_profile)
-        status.active_profile.access_point.stop()
-        # will start on next iteration
-    else:
-        logging.info('[NO-CHANGE] hotspot service already started...')
-
     if not get_active_router() or not get_active_router().is_running():
         logging.info('starting vpn...')
         start_vpn_service(status)
@@ -99,13 +88,6 @@ def start_vpn_service(status: ServiceStatus):
 def stop_services(status: ServiceStatus):
     logging.info('stoping services...')
 
-    hoptspot_profile = status.active_profile
-    if hoptspot_profile and hoptspot_profile.access_point.is_running():
-        logging.info('stoping hotspot...')
-        hoptspot_profile.access_point.stop()
-    else:
-        logging.info('[NO-CHANGE] hotspot service already stopped...')
-
     router = get_active_router()
     if router and router.is_running():
         logging.info('stoping vpn...')
@@ -116,5 +98,5 @@ def stop_services(status: ServiceStatus):
 
 def get_active_router():
     status = ServiceStatus.get()
-    return Router(status.active_vpn, status.active_profile) if status.active_vpn and status.active_profile else None 
+    return Router(status.active_vpn) if status.active_vpn else None 
 
