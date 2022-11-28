@@ -159,8 +159,8 @@ class Network:
             output = c.getSTD()
 
         # hotspotConfig
-        if self.hotspotConfig != None:
-            hotspot = self.hotspotConfig
+        hotspot = self.hotspotConfig
+        if hotspot != None:
             up_file = self.list["hotspotconfig"]["up_file"]
             interface = "--interface '{}'".format(hotspot.interface)
             channel = "--channel '{}'".format(hotspot.channel)
