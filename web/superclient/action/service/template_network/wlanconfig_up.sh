@@ -109,7 +109,7 @@ if [ $dhcp == "yes" ]; then
     try=2
     until [ "$n" -ge $try ]
     do
-        echo -e "\n\nTry($n)\n\n"
+        echo "Try($n)"
         timeout 30 dhclient -v $interface
         dhcp_res=$?
         if [ $dhcp_res == 0 ]; then
