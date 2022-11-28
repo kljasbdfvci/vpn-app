@@ -10,5 +10,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if DhcpServerConfig.objects.count() == 0:
-            s = DhcpServerConfig(id = 1, interface = get_first_wlan_interface(), ssid = "Power Freenet", wpa_passphrase = "12345678")
+            s = DhcpServerConfig(interface = get_first_wlan_interface())
             s.save()
