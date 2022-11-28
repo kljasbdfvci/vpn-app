@@ -109,8 +109,6 @@ sleep 5
 
 # dhcp
 dhcp_res=0
-ifconfig $interface down
-sleep 1
 if [ $dhcp == "yes" ]; then
     timeout 30 dhclient -v $interface
     dhcp_res=$?
@@ -118,8 +116,6 @@ fi
 
 # static 1
 ip1_res=0
-ifconfig $interface:1 down
-sleep 1
 if [[ -n $ip_address_1 ]] && [[ -n $subnet_mask_1 ]]; then
     ifconfig $interface:1 $ip_address_1 netmask $subnet_mask_1 up
     ip1_res=$?
@@ -127,8 +123,6 @@ fi
 
 # static 2
 ip2_res=0
-ifconfig $interface:2 down
-sleep 1
 if [[ -n $ip_address_2 ]] && [[ -n $subnet_mask_2 ]]; then
     ifconfig $interface:2 $ip_address_2 netmask $subnet_mask_2 up
     ip2_res=$?
@@ -136,8 +130,6 @@ fi
 
 # static 3
 ip3_res=0
-ifconfig $interface:3 down
-sleep 1
 if [[ -n $ip_address_3 ]] && [[ -n $subnet_mask_3 ]]; then
     ifconfig $interface:3 $ip_address_3 netmask $subnet_mask_3 up
     ip3_res=$?
@@ -145,8 +137,6 @@ fi
 
 # static 4
 ip4_res=0
-ifconfig $interface:4 down
-sleep 1
 if [[ -n $ip_address_4 ]] && [[ -n $subnet_mask_4 ]]; then
     ifconfig $interface:4 $ip_address_4 netmask $subnet_mask_4 up
     ip4_res=$?
