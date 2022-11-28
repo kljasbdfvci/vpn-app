@@ -70,7 +70,7 @@ if [ -n "$dns_server" ]; then
 fi
 
 ifconfig $interface $ip_address netmask $subnet_mask up
-$ip_res=$?
+ip_res=$?
 
 dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
 --interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,$subnet_mask,24h \
