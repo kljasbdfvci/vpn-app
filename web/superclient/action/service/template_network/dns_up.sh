@@ -4,7 +4,7 @@ parse_options() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -d|--dns_server)
-                interface="$2"
+                dns_server="$2"
                 shift # past argument
                 shift # past value
                 ;;
