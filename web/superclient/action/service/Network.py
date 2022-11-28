@@ -166,7 +166,7 @@ class Network:
             hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
             hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
             hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
-            c = Execte("{} {} {} {} {} {} {} {} &>> {}".format(\
+            c = Execte("{} {} {} {} {} {} {} {}".format(\
                 up_file, interface, channel, ssid, wpa_passphrase,\
                 hostapd_config_file, hostapd_pid_file, hostapd_log_file)
             )
