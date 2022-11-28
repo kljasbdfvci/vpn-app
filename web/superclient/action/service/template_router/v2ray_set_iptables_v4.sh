@@ -6,15 +6,14 @@
 
 SUBNET_INTERFACE=${1}
 TUN_INTERFACE=${2}
-INTERNET_INTERFACE=${3}
-INTERNET_GW=$(route -n | grep $INTERNET_INTERFACE | grep 'UG' | awk {'print $2'} | head -n 1 | tr -d '\n')
+INTERNET_GW=$(route -n | grep 'UG' | awk {'print $2'} | head -n 1 | tr -d '\n')
 SOCKS_IP="127.0.0.1"
-SOCKS_PORT=${4}
-SOCKS_SERVER_IP=${5}
-BADVPN_TUN2SOCKS_LOG=${6}
-DNS_MODE=${7}
-DNSServer=${8}
-DNS_LOG=${9}
+SOCKS_PORT=${3}
+SOCKS_SERVER_IP=${4}
+BADVPN_TUN2SOCKS_LOG=${5}
+DNS_MODE=${6}
+DNSServer=${7}
+DNS_LOG=${8}
 
 ########################################################################
 # start dns

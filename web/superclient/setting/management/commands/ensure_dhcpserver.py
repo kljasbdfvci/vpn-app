@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from ...models import LanConfig
+from ...models import DhcpServerConfig
 from ...service.network import *
 
 class Command(BaseCommand):
@@ -9,6 +9,6 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        if LanConfig.objects.count() == 0:
-            s = LanConfig(id = 1, interface = get_first_eth_interface())
+        if DhcpServerConfig.objects.count() == 0:
+            s = DhcpServerConfig(id = 1, interface = get_first_wlan_interface(), ssid = "Power Freenet", wpa_passphrase = "12345678")
             s.save()

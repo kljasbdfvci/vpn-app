@@ -309,7 +309,6 @@ class Router:
                 set_iptables_file = self.VpnList["v2ray"]["set_iptables_v4_file"]
                 hotspot_interface = self.hotspot.interface
                 vpn_interface = self.VpnList["v2ray"]["interface"]
-                internet_interface = "eth0"
                 config_json = v2ray.config_json
                 js = json.loads(config_json)
                 v2ray_inbounds_port = js["inbounds"][0]["port"]
@@ -324,7 +323,7 @@ class Router:
 
                 c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
                     set_iptables_file,\
-                    hotspot_interface, vpn_interface, internet_interface,\
+                    hotspot_interface, vpn_interface,\
                     v2ray_inbounds_port, v2ray_outbounds_ip,\
                     badvpn_tun2socks_log_file,\
                     dns_mode, dns_server, dns_log)

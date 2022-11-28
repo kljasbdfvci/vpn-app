@@ -65,14 +65,15 @@ parse_options $@
 exit_code=0
 
 # lanConfig
-for interface in $(ifconfig | cut -d ' ' -f1 | tr ':' '\n' | awk NF | grep 'eth')
-do
-    ifconfig $iface down
-    ifconfig $iface:1 down
-    ifconfig $iface:2 down
-    ifconfig $iface:3 down
-    ifconfig $iface:4 down
-    sleep 1
+for dev in $(ls /sys/class/net); do
+    if [ -d "/sys/class/net/$dev/phydev" ]; then
+        ifconfig $dev down
+        ifconfig $dev:1 down
+        ifconfig $dev:2 down
+        ifconfig $dev:3 down
+        ifconfig $dev:4 down
+        sleep 1
+    fi
 done
 
 # wlanConfig
@@ -88,14 +89,15 @@ rm $wpa_supplicant_config_file
 rm $wpa_supplicant_pid_file
 rm $wpa_supplicant_log_file
 
-for interface in $(ifconfig | cut -d ' ' -f1 | tr ':' '\n' | awk NF | grep 'wl')
-do
-    ifconfig $iface down
-    ifconfig $iface:1 down
-    ifconfig $iface:2 down
-    ifconfig $iface:3 down
-    ifconfig $iface:4 down
-    sleep 1
+for dev in $(ls /sys/class/net); do
+    if [ -d "/sys/class/net/$dev/wireless" ]; then
+        ifconfig $dev down
+        ifconfig $dev:1 down
+        ifconfig $dev:2 down
+        ifconfig $dev:3 down
+        ifconfig $dev:4 down
+        sleep 1
+    fi
 done
 
 # hotspotConfig

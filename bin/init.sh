@@ -197,8 +197,35 @@ fi
 
 # web
 python3 "$this_dir_path/../web/manage.py" migrate
-python3 "$this_dir_path/../web/manage.py" ensure_adminuser --username=admin --password=admin
-python3 "$this_dir_path/../web/manage.py" ensure_setting
-python3 "$this_dir_path/../web/manage.py" ensure_lan
+ensure_adminuser_path="/disk/ensure_adminuser_path"
+if [[ ! -f $ensure_adminuser_path ]]; then
+    python3 "$this_dir_path/../web/manage.py" ensure_adminuser --username=admin --password=admin
+    touch $ensure_adminuser_path
+    echo "create $ensure_adminuser_path successful."
+fi
+ensure_setting_path="/disk/ensure_setting_path"
+if [[ ! -f $ensure_setting_path ]]; then
+    python3 "$this_dir_path/../web/manage.py" ensure_setting
+    touch $ensure_setting_path
+    echo "create $ensure_setting_path successful."
+fi
+ensure_lan_path="/disk/ensure_lan_path"
+if [[ ! -f $ensure_lan_path ]]; then
+    python3 "$this_dir_path/../web/manage.py" ensure_lan
+    touch $ensure_lan_path
+    echo "create $ensure_lan_path successful."
+fi
+ensure_hotspot_path="/disk/ensure_hotspot_path"
+if [[ ! -f $ensure_hotspot_path ]]; then
+    python3 "$this_dir_path/../web/manage.py" ensure_hotspot
+    touch $ensure_hotspot_path
+    echo "create $ensure_hotspot_path successful."
+fi
+ensure_dhcpserver_path="/disk/ensure_dhcpserver_path"
+if [[ ! -f $ensure_dhcpserver_path ]]; then
+    python3 "$this_dir_path/../web/manage.py" ensure_dhcpserver
+    touch $ensure_dhcpserver_path
+    echo "create $ensure_dhcpserver_path successful."
+fi
 python3 "$this_dir_path/../web/manage.py" network_apply
 python3 "$this_dir_path/../web/manage.py" runserver 0.0.0.0:80 --noreload &>/tmp/app-web.log &

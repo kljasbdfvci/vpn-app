@@ -5,8 +5,6 @@ from .service.network import *
 
 @admin.register(Setting)
 class SettingAdmin(admin.ModelAdmin):
-    #form = ProfileAdminForm
-    #list_display = ('name', 'interface', 'ssid')
     def has_add_permission(self, request):
         base_add_permission = super(SettingAdmin, self).has_add_permission(request)
         if base_add_permission:
@@ -15,6 +13,11 @@ class SettingAdmin(admin.ModelAdmin):
                 return True
             else:
                 return False
+
+    def has_delete_permission(self, request, obj = None):
+        base_delete_permission = super(SettingAdmin, self).has_delete_permission(request, obj)
+        if base_delete_permission:
+            return False
 
     class Meta:
         model = Setting
