@@ -105,8 +105,19 @@ sleep 10
 dhcp_res=0
 if [ $dhcp == "yes" ]; then
     ifconfig $interface up
-    timeout 60 dhclient -v $interface
-    dhcp_res=$?
+    n=0
+    try=2
+    until [ "$n" -ge $try ]
+    do
+        echo -e "\n\nTry($n)\n\n"
+        timeout 30 dhclient -v $interface
+        dhcp_res=$?
+        if [ $dhcp_res == 0 ]; then
+            break
+        fi
+        n=$((n+1)) 
+        sleep 1
+    done
 fi
 
 # static 1
