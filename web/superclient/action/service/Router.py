@@ -317,6 +317,7 @@ class Router:
                 badvpn_tun2socks_log_file = self.VpnList["v2ray"]["badvpn-tun2socks_log_file"]
                 dns_mode = self.setting.DnsMode._1 if self.setting.dns == "" else self.setting.dns_Mode
                 dns_server = ""
+                dns_log = ""
                 if dns_mode == self.setting.DnsMode._4:
                     dns_server = self.setting.dns.split(",")[0]
                     dns_log = self.VpnList["v2ray"]["dns2socks_log_file"]
