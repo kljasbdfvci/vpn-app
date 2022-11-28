@@ -23,18 +23,18 @@ parse_options() {
                 shift # past argument
                 shift # past value
                 ;;
-            -c|--hotspot_config_file)
-                hotspot_config_file="$2"
+            -c|--hostapd_config_file)
+                hostapd_config_file="$2"
                 shift # past argument
                 shift # past value
                 ;;
-            -P|--hotspot_pid_file)
-                wpa_passphrase="$2"
+            -P|--hostapd_pid_file)
+                hostapd_pid_file="$2"
                 shift # past argument
                 shift # past value
                 ;;
-            -l|--hotspot_log_file)
-                hotspot_log_file="$2"
+            -l|--hostapd_log_file)
+                hostapd_log_file="$2"
                 shift # past argument
                 shift # past value
                 ;;
@@ -69,6 +69,6 @@ config=$config"wpa_key_mgmt=WPA-PSK\n"
 config=$config"wpa_pairwise=TKIP\n"
 config=$config"rsn_pairwise=CCMP\n"
 
-echo -e $config > $hotspot_config_file
+echo -e $config > $hostapd_config_file
 
-hostapd -B $hotspot_config_file -P $hotspot_pid_file -t -d &> $hotspot_log_file
+hostapd -B $hostapd_config_file -P $hostapd_pid_file -t -d &> $hostapd_log_file

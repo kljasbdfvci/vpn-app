@@ -97,12 +97,6 @@ exit_code=0
 wpa_passphrase "$ssid" "$wpa_passphrase" | tee $wpa_supplicant_config_file
 
 # wpa_supplicant
-#pid=$(cat $wpa_supplicant_pid_file)
-#if kill -0 $pid &> /dev/null
-#then
-#    kill -9 $pid
-#    echo "wpa_supplicant killed with pid $pid"
-#fi
 
 wpa_supplicant -B -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -f $wpa_supplicant_log_file -i $interface
 sleep 5
