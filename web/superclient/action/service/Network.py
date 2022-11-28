@@ -209,7 +209,6 @@ class Network:
 
         # dns
         dns_mode = self.setting.DnsMode._1 if self.setting.dns == "" else self.setting.dns_Mode
-        print(dns_mode)
         if dns_mode == self.setting.DnsMode._2:
             up_file = self.list["dns"]["up_file"]
             dns_server = "--dns_server '{}'".format(self.setting.dns)
