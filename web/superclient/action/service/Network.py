@@ -204,9 +204,9 @@ class Network:
         return res
 
     def get_lan_interfaces(self):
-        c = Execte("nmcli device status | grep ethernet | cut -d " " -f1")
+        c = Execte("nmcli device status | grep ethernet | cut -d ' ' -f1")
         c.do()
-        addrs = c.stdout.split("\n")
+        addrs = c.stdout.strip().split("\n")
         addrs.sort()
         return addrs
     
@@ -223,9 +223,9 @@ class Network:
         #    if os.path.isdir("/sys/class/net/" + path + "/wireless"):
         #        addrs.append(path)
         #addrs.sort()
-        c = Execte("nmcli device status | grep wifi | cut -d " " -f1")
+        c = Execte("nmcli device status | grep wifi | cut -d ' ' -f1")
         c.do()
-        addrs = c.stdout.split("\n")
+        addrs = c.stdout.strip().split("\n")
         addrs.sort()
         return addrs
 

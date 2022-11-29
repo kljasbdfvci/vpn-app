@@ -65,15 +65,13 @@ parse_options $@
 exit_code=0
 
 # lanConfig
-for dev in $(ls /sys/class/net); do
-    if [ -d "/sys/class/net/$dev/phydev" ]; then
-        ifconfig $dev down
-        ifconfig $dev:1 down
-        ifconfig $dev:2 down
-        ifconfig $dev:3 down
-        ifconfig $dev:4 down
-        sleep 1
-    fi
+for dev in $(nmcli device status | grep ethernet | cut -d ' ' -f1); do
+    ifconfig $dev down
+    ifconfig $dev:1 down
+    ifconfig $dev:2 down
+    ifconfig $dev:3 down
+    ifconfig $dev:4 down
+    sleep 1
 done
 
 # wlanConfig
@@ -89,15 +87,13 @@ rm $wpa_supplicant_config_file
 rm $wpa_supplicant_pid_file
 rm $wpa_supplicant_log_file
 
-for dev in $(ls /sys/class/net); do
-    if [ -d "/sys/class/net/$dev/wireless" ]; then
-        ifconfig $dev down
-        ifconfig $dev:1 down
-        ifconfig $dev:2 down
-        ifconfig $dev:3 down
-        ifconfig $dev:4 down
-        sleep 1
-    fi
+for dev in $(nmcli device status | grep wifi | cut -d ' ' -f1); do
+    ifconfig $dev down
+    ifconfig $dev:1 down
+    ifconfig $dev:2 down
+    ifconfig $dev:3 down
+    ifconfig $dev:4 down
+    sleep 1
 done
 
 # hotspotConfig
