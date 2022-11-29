@@ -154,9 +154,8 @@ else
     echo "copy os files failed."
 fi
 
-# disable systemctl
+# disable dnsmasq
 service="dnsmasq.service"
-
 if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
     systemctl stop $service
     systemctl disable $service
@@ -164,6 +163,8 @@ if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
 else
     echo "$service is already disable."
 fi
+
+# disable hostapd
 service="hostapd.service"
 if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
     systemctl stop $service
@@ -171,6 +172,16 @@ if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
     echo "$service is disabled."
 else
     echo "$service is already disable."
+fi
+
+# enable NetworkManager
+service="NetworkManager.service"
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" != 0 ]]; then
+    systemctl enable $service
+    systemctl start $service
+    echo "$service is enabled."
+else
+    echo "$service is already enable."
 fi
 
 # kill pid if get port 80

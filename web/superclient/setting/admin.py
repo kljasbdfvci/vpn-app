@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from .models import *
-from ..action.service.Network import *
+from ..action.service.Network_Util import *
 
 @admin.register(Setting)
 class SettingAdmin(admin.ModelAdmin):
@@ -24,7 +24,7 @@ class SettingAdmin(admin.ModelAdmin):
         fields = '__all__'
 
 class LanConfigAdminForm(forms.ModelForm):
-    interface = forms.ChoiceField(choices=tuple((key, key) for key in Network().get_lan_interfaces()))
+    interface = forms.ChoiceField(choices=tuple((key, key) for key in Network_Util().get_lan_interfaces()))
 
     class Meta:
         model = LanConfig
@@ -37,7 +37,7 @@ class LanConfigAdmin(admin.ModelAdmin):
 
 
 class WlanConfigAdminForm(forms.ModelForm):
-    interface = forms.ChoiceField(choices=tuple((key, key) for key in Network().get_wlan_interfaces()))
+    interface = forms.ChoiceField(choices=tuple((key, key) for key in Network_Util().get_wlan_interfaces()))
 
     class Meta:
         model = LanConfig
@@ -49,7 +49,7 @@ class WLanConfigAdmin(admin.ModelAdmin):
     list_display = ('interface', 'ssid', 'dhcp', 'ip_address_1', 'subnet_mask_1')
 
 class HotspotConfigAdminForm(forms.ModelForm):
-    interface = forms.ChoiceField(choices=tuple((key, key) for key in Network().get_wlan_interfaces()))
+    interface = forms.ChoiceField(choices=tuple((key, key) for key in Network_Util().get_wlan_interfaces()))
 
     class Meta:
         model = HotspotConfig
@@ -71,7 +71,7 @@ class HotspotConfigAdmin(admin.ModelAdmin):
                 return False
 
 class DhcpServerConfigAdminForm(forms.ModelForm):
-    interface = forms.ChoiceField(choices=tuple((key, key) for key in Network().get_interfaces()))
+    interface = forms.ChoiceField(choices=tuple((key, key) for key in Network_Util().get_interfaces()))
 
     class Meta:
         model = DhcpServerConfig

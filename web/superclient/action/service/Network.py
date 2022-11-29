@@ -3,6 +3,7 @@ import os
 
 # local
 from .Execte import *
+from .Network_Util import *
 from ...setting.models import *
 
 class Network:
@@ -53,7 +54,7 @@ class Network:
 
         # lanConfig
         for lan in self.lanConfig:
-            if self.is_lan_interface(lan.interface):
+            if Network_Util().is_lan_interface(lan.interface):
                 up_file = self.list["lanconfig"]["up_file"]
                 interface = "--interface '{}'".format(lan.interface) if lan.interface != "" else ""
                 dhcp = "--dhcp" if lan.dhcp else ""
@@ -80,7 +81,7 @@ class Network:
 
         # wlanConfig
         for wlan in self.wlanConfig:
-            if self.is_wlan_interface(wlan.interface):
+            if Network_Util().is_wlan_interface(wlan.interface):
                 up_file = self.list["wlanconfig"]["up_file"]
                 interface = "--interface '{}'".format(wlan.interface) if wlan.interface != "" else ""
                 ssid = "--ssid '{}'".format(wlan.ssid)
@@ -114,7 +115,7 @@ class Network:
 
         # hotspotConfig
         hotspot = self.hotspotConfig
-        if hotspot != None and self.is_wlan_interface(hotspot.interface):
+        if hotspot != None and Network_Util().is_wlan_interface(hotspot.interface):
             up_file = self.list["hotspotconfig"]["up_file"]
             interface = "--interface '{}'".format(hotspot.interface)
             channel = "--channel '{}'".format(hotspot.channel)
@@ -134,7 +135,7 @@ class Network:
 
         # dhcpServerConfig
         for dhcpServer in self.dhcpServerConfig:
-            if self.is_interface(dhcpServer.interface):
+            if Network_Util().is_interface(dhcpServer.interface):
                 up_file = self.list["dhcpserverconfig"]["up_file"]
                 interface = "--interface '{}'".format(dhcpServer.interface)
                 ip_address = "--ip_address '{}'".format(dhcpServer.ip_address)
@@ -195,43 +196,3 @@ class Network:
         c.print()
         res = c.returncode
         output = c.getSTD()
-
-    def get_interfaces(self):
-        return self.get_lan_interfaces() + self.get_wlan_interfaces()
-
-    def is_interface(self, interface):
-        res = True if interface in self.get_interfaces() else False
-        return res
-
-    def get_lan_interfaces(self):
-        c = Execte("nmcli device status | grep ethernet | cut -d ' ' -f1")
-        c.do()
-        addrs = c.stdout.strip().split("\n")
-        addrs.sort()
-        return addrs
-    
-    def is_lan_interface(self, interface):
-        res = True if interface in self.get_lan_interfaces() else False
-        return res
-
-    def get_first_lan_interface(self):
-        return self.get_lan_interfaces()[0]
-
-    def get_wlan_interfaces(self):
-        #addrs = []
-        #for path in os.listdir("/sys/class/net"):
-        #    if os.path.isdir("/sys/class/net/" + path + "/wireless"):
-        #        addrs.append(path)
-        #addrs.sort()
-        c = Execte("nmcli device status | grep wifi | cut -d ' ' -f1")
-        c.do()
-        addrs = c.stdout.strip().split("\n")
-        addrs.sort()
-        return addrs
-
-    def is_wlan_interface(self, interface):
-        res = True if interface in self.get_wlan_interfaces() else False
-        return res
-
-    def get_first_wlan_interface(self):
-        return self.get_wlan_interfaces()[0]
