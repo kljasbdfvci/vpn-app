@@ -71,7 +71,7 @@ def start_vpn_service(status: ServiceStatus):
         else:
             logging.info(f'[NO-CHANGE] use active vpn: {status.active_vpn.title}')
 
-        res, output = get_active_router().ConnectVPN(timeout=30, try_count=6)
+        res, output = get_active_router().ConnectVPN(timeout_arg=30, try_count_arg=6)
         status.active_vpn.add_log(output)
         if res == 0:
             status.active_vpn.increase_success()
