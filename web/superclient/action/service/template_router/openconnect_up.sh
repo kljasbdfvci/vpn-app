@@ -1,86 +1,84 @@
 #!/bin/bash
 
-parse_options() {
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            --pid_file)
-                pid_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --log_file)
-                log_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --timeout)
-                timeout="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --try_count)
-                try_count="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --protocol)
-                protocol="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --gateway)
-                gateway="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --username)
-                username="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --password)
-                password="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --interface)
-                interface="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --no_dtls)
-                no_dtls="yes"
-                shift # past argument
-                ;;
-            --passtos)
-                passtos="yes"
-                shift # past argument
-                ;;
-            --no_deflate)
-                no_deflate="yes"
-                shift # past argument
-                ;;
-            --deflate)
-                deflate="yes"
-                shift # past argument
-                ;;
-            --no_http_keepalive)
-                no_http_keepalive="yes"
-                shift # past argument
-                ;;
-            -*|--*)
-                echo "Unknown option $1"
-                exit 1
-                ;;
-            *)
-                echo "Invalid value $1"
-                exit 1
-                ;;
-        esac
-    done
-}
-
-parse_options $@
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --pid_file)
+            pid_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --log_file)
+            log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --timeout)
+            timeout="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --try_count)
+            try_count="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --protocol)
+            protocol="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --gateway)
+            gateway="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --username)
+            username="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --password)
+            password="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --interface)
+            interface="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --no_dtls)
+            no_dtls="yes"
+            shift # past argument
+            ;;
+        --passtos)
+            passtos="yes"
+            shift # past argument
+            ;;
+        --no_deflate)
+            no_deflate="yes"
+            shift # past argument
+            ;;
+        --deflate)
+            deflate="yes"
+            shift # past argument
+            ;;
+        --no_http_keepalive)
+            no_http_keepalive="yes"
+            shift # past argument
+            ;;
+        -*|--*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1") # save positional arg
+            shift # past argument
+            ;;
+    esac
+done
+set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 # no_dtls
 if [ "$no_dtls" == "yes" ]; then

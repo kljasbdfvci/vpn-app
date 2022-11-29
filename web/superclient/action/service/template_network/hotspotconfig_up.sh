@@ -1,56 +1,54 @@
 #!/bin/bash
 
-parse_options() {
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            -i|--interface)
-                interface="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -c|--channel)
-                channel="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -s|--ssid)
-                ssid="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -p|--wpa_passphrase)
-                wpa_passphrase="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -c|--hostapd_config_file)
-                hostapd_config_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -P|--hostapd_pid_file)
-                hostapd_pid_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -l|--hostapd_log_file)
-                hostapd_log_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -*|--*)
-                echo "Unknown option $1"
-                exit 1
-                ;;
-            *)
-                echo "Invalid value $1"
-                exit 1
-                ;;
-        esac
-    done
-}
-
-parse_options $@
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -i|--interface)
+            interface="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -c|--channel)
+            channel="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -s|--ssid)
+            ssid="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -p|--wpa_passphrase)
+            wpa_passphrase="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -c|--hostapd_config_file)
+            hostapd_config_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -P|--hostapd_pid_file)
+            hostapd_pid_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -l|--hostapd_log_file)
+            hostapd_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -*|--*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1") # save positional arg
+            shift # past argument
+            ;;
+    esac
+done
+set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=0
 

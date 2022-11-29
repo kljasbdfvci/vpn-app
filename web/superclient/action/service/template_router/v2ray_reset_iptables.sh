@@ -1,19 +1,19 @@
 #!/bin/bash
 
-parse_options() {
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            -*|--*)
-                echo "Unknown option $1"
-                exit 1
-                ;;
-            *)
-                echo "Invalid value $1"
-                exit 1
-                ;;
-        esac
-    done
-}
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -*|--*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1") # save positional arg
+            shift # past argument
+            ;;
+    esac
+done
+set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 parse_options $@
 

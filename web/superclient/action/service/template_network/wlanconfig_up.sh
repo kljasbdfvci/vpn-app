@@ -1,100 +1,98 @@
 #!/bin/bash
 
-parse_options() {
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            -i|--interface)
-                interface="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -s|--ssid)
-                ssid="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -p|--wpa_passphrase)
-                wpa_passphrase="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -D|--driver)
-                driver="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -c|--wpa_supplicant_config_file)
-                wpa_supplicant_config_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -P|--wpa_supplicant_pid_file)
-                wpa_supplicant_pid_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -f|--wpa_supplicant_log_file)
-                wpa_supplicant_log_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -d|--dhcp)
-                dhcp="yes"
-                shift # past argument
-                ;;
-            -ip1|--ip_address_1)
-                ip_address_1="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -mask1|--subnet_mask_1)
-                subnet_mask_1="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -ip2|--ip_address_2)
-                ip_address_2="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -mask2|--subnet_mask_2)
-                subnet_mask_2="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -ip3|--ip_address_3)
-                ip_address_3="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -mask3|--subnet_mask_3)
-                subnet_mask_1="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -ip4|--ip_address_4)
-                ip_address_4="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -mask4|--subnet_mask_4)
-                subnet_mask_1="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -*|--*)
-                echo "Unknown option $1"
-                exit 1
-                ;;
-            *)
-                echo "Invalid value $1"
-                exit 1
-                ;;
-        esac
-    done
-}
-
-parse_options $@
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -i|--interface)
+            interface="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -s|--ssid)
+            ssid="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -p|--wpa_passphrase)
+            wpa_passphrase="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -D|--driver)
+            driver="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -c|--wpa_supplicant_config_file)
+            wpa_supplicant_config_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -P|--wpa_supplicant_pid_file)
+            wpa_supplicant_pid_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -f|--wpa_supplicant_log_file)
+            wpa_supplicant_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -d|--dhcp)
+            dhcp="yes"
+            shift # past argument
+            ;;
+        -ip1|--ip_address_1)
+            ip_address_1="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -mask1|--subnet_mask_1)
+            subnet_mask_1="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -ip2|--ip_address_2)
+            ip_address_2="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -mask2|--subnet_mask_2)
+            subnet_mask_2="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -ip3|--ip_address_3)
+            ip_address_3="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -mask3|--subnet_mask_3)
+            subnet_mask_1="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -ip4|--ip_address_4)
+            ip_address_4="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -mask4|--subnet_mask_4)
+            subnet_mask_1="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -*|--*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1") # save positional arg
+            shift # past argument
+            ;;
+    esac
+done
+set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=0
 

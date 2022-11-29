@@ -1,56 +1,54 @@
 #!/bin/bash
 
-parse_options() {
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            --vpn_interface)
-                vpn_interface="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --v2ray_inbounds_port)
-                v2ray_inbounds_port="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --v2ray_outbounds_ip)
-                v2ray_outbounds_ip="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --badvpn_tun2socks_log_file)
-                badvpn_tun2socks_log_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            --dns_mode)
-                dns_mode="$2"
-                shift # past argument
-                shift # past value
-                ;;
-			--dns_server)
-                dns_server="$2"
-                shift # past argument
-                shift # past value
-                ;;
-			--dns_log)
-                dns_log="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -*|--*)
-                echo "Unknown option $1"
-                exit 1
-                ;;
-            *)
-                echo "Invalid value $1"
-                exit 1
-                ;;
-        esac
-    done
-}
-
-parse_options $@
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --vpn_interface)
+            vpn_interface="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --v2ray_inbounds_port)
+            v2ray_inbounds_port="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --v2ray_outbounds_ip)
+            v2ray_outbounds_ip="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --badvpn_tun2socks_log_file)
+            badvpn_tun2socks_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dns_mode)
+            dns_mode="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dns_server)
+            dns_server="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dns_log)
+            dns_log="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -*|--*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1") # save positional arg
+            shift # past argument
+            ;;
+    esac
+done
+set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 ########################################################################
 # Define various configuration parameters.

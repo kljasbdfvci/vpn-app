@@ -1,66 +1,64 @@
 #!/bin/bash
 
-parse_options() {
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            -wc|--wpa_supplicant_config_file)
-                wpa_supplicant_config_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -wP|--wpa_supplicant_pid_file)
-                wpa_supplicant_pid_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -wl|--wpa_supplicant_log_file)
-                wpa_supplicant_log_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -hc|--hostapd_config_file)
-                hostapd_config_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -hP|--hostapd_pid_file)
-                hostapd_pid_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -hl|--hostapd_log_file)
-                hostapd_log_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -dP|--dnsmasq_pid_file)
-                dnsmasq_pid_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -d8|--dnsmasq_log_file)
-                dnsmasq_log_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -dl|--dnsmasq_lease_file)
-                dnsmasq_lease_file="$2"
-                shift # past argument
-                shift # past value
-                ;;
-            -*|--*)
-                echo "Unknown option $1"
-                exit 1
-                ;;
-            *)
-                echo "Invalid value $1"
-                exit 1
-                ;;
-        esac
-    done
-}
-
-parse_options $@
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -wc|--wpa_supplicant_config_file)
+            wpa_supplicant_config_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -wP|--wpa_supplicant_pid_file)
+            wpa_supplicant_pid_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -wl|--wpa_supplicant_log_file)
+            wpa_supplicant_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -hc|--hostapd_config_file)
+            hostapd_config_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -hP|--hostapd_pid_file)
+            hostapd_pid_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -hl|--hostapd_log_file)
+            hostapd_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -dP|--dnsmasq_pid_file)
+            dnsmasq_pid_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -d8|--dnsmasq_log_file)
+            dnsmasq_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -dl|--dnsmasq_lease_file)
+            dnsmasq_lease_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -*|--*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1") # save positional arg
+            shift # past argument
+            ;;
+    esac
+done
+set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=0
 
