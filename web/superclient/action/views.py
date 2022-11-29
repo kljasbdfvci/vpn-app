@@ -11,7 +11,7 @@ def index(request):
     status = Status.get()
 
     if request.method == 'POST':
-        if 'apply' in dict.keys():
+        if 'apply' in request.POST.dict().keys():
             Network().Apply()
             if status.on:
                 Router(status.active_vpn).DisconnectVPN()
