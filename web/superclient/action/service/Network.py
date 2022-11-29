@@ -72,7 +72,7 @@ class Network:
                 ip_address_1, subnet_mask_1,\
                 ip_address_2, subnet_mask_2,\
                 ip_address_3, subnet_mask_3,\
-                ip_address_4, subnet_mask_4)
+                ip_address_4, subnet_mask_4), True
             )
             c.do()
             c.print()
@@ -105,7 +105,7 @@ class Network:
                 ip_address_1, subnet_mask_1,\
                 ip_address_2, subnet_mask_2,\
                 ip_address_3, subnet_mask_3,\
-                ip_address_4, subnet_mask_4)
+                ip_address_4, subnet_mask_4), True
             )
             c.do()
             c.print()

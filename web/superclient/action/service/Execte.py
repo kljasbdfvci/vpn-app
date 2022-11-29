@@ -13,6 +13,8 @@ class Execte:
     def do(self):
         if self.isBackground:
             self.returncode = os.system(self.command)
+            self.stdout = ""
+            self.stderr = ""
         else:
             popen = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True, close_fds=False)
             popen.wait()
