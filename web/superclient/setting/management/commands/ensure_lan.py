@@ -10,5 +10,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if LanConfig.objects.count() == 0:
-            s = LanConfig(interface = Network.get_first_lan_interface())
+            s = LanConfig(interface = Network().get_first_lan_interface())
             s.save()

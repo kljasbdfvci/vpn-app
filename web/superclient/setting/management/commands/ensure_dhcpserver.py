@@ -10,5 +10,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if DhcpServerConfig.objects.count() == 0:
-            s = DhcpServerConfig(interface = Network.get_first_wlan_interface())
+            s = DhcpServerConfig(interface = Network().get_first_wlan_interface())
             s.save()
