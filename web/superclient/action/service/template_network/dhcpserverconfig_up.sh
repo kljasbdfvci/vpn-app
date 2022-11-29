@@ -73,6 +73,7 @@ ifconfig $interface $ip_address netmask $subnet_mask up
 ip_res=$?
 
 dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
+--bind-interfaces --except-interface=lo \
 --interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,$subnet_mask,24h \
 --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file $address
 dnsmasq_res=$?
