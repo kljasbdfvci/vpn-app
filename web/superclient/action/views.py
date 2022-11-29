@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from pathlib import Path
 from superclient.vpn.models import Configuration
+from web.superclient.action.service.Router import Router
 from .models import ServiceStatus as Status
 from .service.Execte import *
 from .service.Network import *
@@ -10,9 +11,10 @@ def index(request):
     status = Status.get()
 
     if request.method == 'POST':
-        apply_setting = request.POST.dict().get('apply')
-        if apply_setting:
+        if 'apply' in dict.keys():
             Network().Apply()
+            if status.on:
+                Router(status.active_vpn).DisconnectVPN()
 
         else:
             if not status.on:
