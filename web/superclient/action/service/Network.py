@@ -85,6 +85,7 @@ class Network:
             interface = "--interface '{}'".format(wlan.interface) if wlan.interface != "" else ""
             ssid = "--ssid '{}'".format(wlan.ssid)
             wpa_passphrase = "--wpa_passphrase '{}'".format(wlan.wpa_passphrase)
+            driver = "--driver '{}'".format(wlan.driver)
             wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"])
             wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"])
             wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"])
@@ -98,7 +99,7 @@ class Network:
             ip_address_4 = "--ip_address_4 '{}'".format(wlan.ip_address_4) if wlan.ip_address_4 != "" else ""
             subnet_mask_4 = "--subnet_mask_4 '{}'".format(wlan.subnet_mask_4) if wlan.subnet_mask_4 != "" else ""
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
-                up_file, interface, ssid, wpa_passphrase,\
+                up_file, interface, ssid, wpa_passphrase, driver,\
                 wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file,\
                 dhcp,\
                 ip_address_1, subnet_mask_1,\

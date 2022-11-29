@@ -18,6 +18,11 @@ parse_options() {
                 shift # past argument
                 shift # past value
                 ;;
+            -D|--driver)
+                driver="$2"
+                shift # past argument
+                shift # past value
+                ;;
             -c|--wpa_supplicant_config_file)
                 wpa_supplicant_config_file="$2"
                 shift # past argument
@@ -98,7 +103,7 @@ wpa_passphrase "$ssid" "$wpa_passphrase" | tee $wpa_supplicant_config_file
 
 # wpa_supplicant
 ifconfig $interface up
-wpa_supplicant -B -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -f $wpa_supplicant_log_file -i $interface
+wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -f $wpa_supplicant_log_file -i $interface
 sleep 10
 
 # dhcp
