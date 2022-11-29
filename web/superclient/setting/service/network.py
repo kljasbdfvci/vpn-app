@@ -8,6 +8,7 @@ def get_eth_interfaces():
     for path in os.listdir("/sys/class/net"):
         if os.path.isdir("/sys/class/net/" + path + "/phydev"):
             addrs.append(path)
+    addrs.sort()
     return addrs
 
 def get_wlan_interfaces():
@@ -15,6 +16,7 @@ def get_wlan_interfaces():
     for path in os.listdir("/sys/class/net"):
         if os.path.isdir("/sys/class/net/" + path + "/wireless"):
             addrs.append(path)
+    addrs.sort()
     return addrs
 
 def get_first_eth_interface():
