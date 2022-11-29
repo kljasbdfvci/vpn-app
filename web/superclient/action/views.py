@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from pathlib import Path
 from superclient.vpn.models import Configuration
-from web.superclient.action.service.Router import Router
+from superclient.action.service.Router import Router
 from .models import ServiceStatus as Status
 from .service.Execte import *
 from .service.Network import *
