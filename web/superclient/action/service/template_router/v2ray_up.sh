@@ -1,11 +1,46 @@
 #!/bin/bash
 
-pid_file=${1}
-log_file=${2}
-timeout=${3}
-try=${4}
+parse_options() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --pid_file)
+                pid_file="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            --log_file)
+                log_file="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            --timeout)
+                timeout="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            --try_count)
+                try_count="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            --config)
+                config="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            -*|--*)
+                echo "Unknown option $1"
+                exit 1
+                ;;
+            *)
+                echo "Invalid value $1"
+                exit 1
+                ;;
+        esac
+    done
+}
 
-config=${5}
+parse_options $@
 
 exit_code=""
 

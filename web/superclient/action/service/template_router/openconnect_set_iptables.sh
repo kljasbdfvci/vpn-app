@@ -1,5 +1,22 @@
 #!/bin/bash
 
+parse_options() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -*|--*)
+                echo "Unknown option $1"
+                exit 1
+                ;;
+            *)
+                echo "Invalid value $1"
+                exit 1
+                ;;
+        esac
+    done
+}
+
+parse_options $@
+
 ########################################################################
 # start iptables
 ########################################################################

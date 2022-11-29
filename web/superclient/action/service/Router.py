@@ -37,26 +37,27 @@ class Router:
         self.vpn = vpn
         self.setting = Setting.objects.first()
 
-    def ConnectVPN(self, timeout, try_count):
+    def ConnectVPN(self, timeout_arg, try_count_arg):
         res = -1
         output = ""
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
 
             up_file = self.VpnList["openconnect"]["up_file"]
-            pid_file = self.VpnList["openconnect"]["pid_file"]
-            log_file = self.VpnList["openconnect"]["log_file"]
-
-            protocol = openconnect.protocol
-            gateway = openconnect.host + ":" + str(openconnect.port)
-            username = openconnect.username
-            password = openconnect.password
-            interface = self.VpnList["openconnect"]["interface"]
-            no_dtls = openconnect.no_dtls
-            passtos = openconnect.passtos
-            no_deflate = openconnect.no_deflate
-            deflate = openconnect.deflate
-            no_http_keepalive = openconnect.no_http_keepalive
+            pid_file = "--pid_file {}".format(self.VpnList["openconnect"]["pid_file"])
+            log_file = "--log_file {}".format(self.VpnList["openconnect"]["log_file"])
+            timeout = "--timeout {}".format(timeout_arg)
+            try_count = "--try_count {}".format(try_count_arg)
+            protocol = "--protocol {}".format(openconnect.protocol)
+            gateway = "--gateway {}".format(openconnect.host + ":" + str(openconnect.port))
+            username = "--username {}".format(openconnect.username)
+            password = "--password {}".format(openconnect.password)
+            interface = "--interface {}".format(self.VpnList["openconnect"]["interface"])
+            no_dtls = "--no_dtls" if openconnect.no_dtls else ""
+            passtos = "--passtos" if openconnect.passtos else ""
+            no_deflate = "--no_deflate" if openconnect.no_deflate else ""
+            deflate = "--deflate" if openconnect.deflate else ""
+            no_http_keepalive = "--no_http_keepalive" if openconnect.no_http_keepalive else ""
             
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, pid_file, log_file, timeout, try_count, \
@@ -71,19 +72,22 @@ class Router:
             v2ray = self.vpn.subclass
             
             up_file = self.VpnList["v2ray"]["up_file"]
-            pid_file = self.VpnList["v2ray"]["pid_file"]
-            log_file = self.VpnList["v2ray"]["log_file"]
-
+            pid_file = "--pid_file {}".format(self.VpnList["v2ray"]["pid_file"])
+            log_file = "--log_file {}".format(self.VpnList["v2ray"]["log_file"])
+            timeout = "--timeout {}".format(timeout_arg)
+            try_count = "--try_count {}".format(try_count_arg)
+            # write config file
             config_file = self.VpnList["v2ray"]["config_file"]
             config_json = v2ray.config_json
-            
             f = open(config_file, "w")
             f.write(config_json)
             f.close()
+            #
+            config = "--config {}".format(config_file)
 
             c = Execte("{} {} {} {} {} {}".format(\
                 up_file, pid_file, log_file, timeout, try_count, \
-                config_file)
+                config)
             )
             c.do()
             c.print()
@@ -213,6 +217,7 @@ class Router:
 
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
+
             set_iptables_file = self.VpnList["openconnect"]["set_iptables_file"]
 
             c = Execte("{}".format(set_iptables_file))
@@ -222,26 +227,23 @@ class Router:
 
         elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
+
             set_iptables_file = self.VpnList["v2ray"]["set_iptables_file"]
-            vpn_interface = self.VpnList["v2ray"]["interface"]
+            vpn_interface = "--vpn_interface {}".format(self.VpnList["v2ray"]["interface"])
             config_json = v2ray.config_json
             js = json.loads(config_json)
-            v2ray_inbounds_port = js["inbounds"][0]["port"]
-            v2ray_outbounds_ip = js["outbounds"][0]["settings"]["vnext"][0]["address"]
-            badvpn_tun2socks_log_file = self.VpnList["v2ray"]["badvpn-tun2socks_log_file"]
-            dns_mode = self.setting.DnsMode._1 if self.setting.dns == "" else self.setting.dns_Mode
-            dns_server = ""
-            dns_log = ""
-            if dns_mode == self.setting.DnsMode._4:
-                dns_server = self.setting.dns.split(",")[0]
-                dns_log = self.VpnList["v2ray"]["dns2socks_log_file"]
+            v2ray_inbounds_port = "--vpn_interface {}".format(js["inbounds"][0]["port"])
+            v2ray_outbounds_ip = "--vpn_interface {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
+            badvpn_tun2socks_log_file = "--vpn_interface {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
+            dns_server = "--dns_server {}".format(self.setting.dns.split(",")[0]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
+            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
 
-            c = Execte("{} {} {} {} {} {} {} {}".format(\
+            c = Execte("{} {} {} {} {} {} {}".format(\
                 set_iptables_file,\
                 vpn_interface,\
                 v2ray_inbounds_port, v2ray_outbounds_ip,\
                 badvpn_tun2socks_log_file,\
-                dns_mode, dns_server, dns_log)
+                dns_server, dns_log)
             )
             c.do()
             c.print()
@@ -256,7 +258,9 @@ class Router:
 
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
+
             reset_iptables_file = self.VpnList["openconnect"]["reset_iptables_file"]
+
             c = Execte("{}".format(reset_iptables_file))
             c.do()
             c.print()
@@ -264,7 +268,9 @@ class Router:
 
         elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
+
             reset_iptables_file = self.VpnList["v2ray"]["reset_iptables_file"]
+
             c = Execte("{}".format(reset_iptables_file))
             c.do()
             c.print()
@@ -272,6 +278,7 @@ class Router:
 
         else:
             reset_iptables_file = self.VpnList["reset_iptables_file"]
+            
             c = Execte("{}".format(reset_iptables_file))
             c.do()
             c.print()

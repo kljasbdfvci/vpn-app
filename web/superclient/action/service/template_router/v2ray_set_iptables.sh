@@ -1,31 +1,76 @@
 #!/bin/bash
 
+parse_options() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --vpn_interface)
+                vpn_interface="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            --v2ray_inbounds_port)
+                v2ray_inbounds_port="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            --v2ray_outbounds_ip)
+                v2ray_outbounds_ip="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            --badvpn_tun2socks_log_file)
+                badvpn_tun2socks_log_file="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            --dns_mode)
+                dns_mode="$2"
+                shift # past argument
+                shift # past value
+                ;;
+			--dns_server)
+                dns_server="$2"
+                shift # past argument
+                shift # past value
+                ;;
+			--dns_log)
+                dns_log="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            -*|--*)
+                echo "Unknown option $1"
+                exit 1
+                ;;
+            *)
+                echo "Invalid value $1"
+                exit 1
+                ;;
+        esac
+    done
+}
+
+parse_options $@
+
 ########################################################################
 # Define various configuration parameters.
 ########################################################################
 
-TUN_INTERFACE=${1}
-INTERNET_GW=$(route -n | grep 'UG' | awk {'print $2'} | head -n 1 | tr -d '\n')
-SOCKS_IP="127.0.0.1"
-SOCKS_PORT=${2}
-SOCKS_SERVER_IP=${3}
-BADVPN_TUN2SOCKS_LOG=${4}
-DNS_MODE=${5}
-DNSServer=${6}
-DNS_LOG=${7}
+default_gateway=$(route -n | grep 'UG' | awk {'print $2'} | head -n 1 | tr -d '\n')
+v2ray_inbounds_ip="127.0.0.1"
 
 ########################################################################
 # start dns
 ########################################################################
 
-if [ $DNS_MODE == "_4" ]; then
+if [ -n "$dns_server" ] && [ -n "$dns_log" ]; then
 	if pgrep -f 'DNS2SOCKS'; then
 		killall 'DNS2SOCKS' &>/dev/null
 		sleep 1
 	fi
 
 	#
-	DNS2SOCKS $SOCKS_IP:$SOCKS_PORT $DNSServer 127.0.0.1:5300 /l:$DNS_LOG &>/dev/null &
+	DNS2SOCKS $v2ray_inbounds_ip:$v2ray_inbounds_port $dns_server 127.0.0.1:5300 /l:$dns_log &>/dev/null &
 
 	# iptables
 	iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
@@ -36,19 +81,19 @@ fi
 # start tuntap
 ########################################################################
 
-if [ -n "$(ip link show | grep $TUN_INTERFACE)" ]; then
+if [ -n "$(ip link show | grep $vpn_interface)" ]; then
     ifconfig tun0 down &>/dev/null
     ip link set tun0 down &>/dev/null
     ip link delete tun0 &>/dev/null
 	sleep 1
 fi
 
-ip tuntap add dev $TUN_INTERFACE mode tun
-ip addr add dev $TUN_INTERFACE 10.0.0.1/24
-ip link set dev $TUN_INTERFACE up
+ip tuntap add dev $vpn_interface mode tun
+ip addr add dev $vpn_interface 10.0.0.1/24
+ip link set dev $vpn_interface up
 
-route add -net 0.0.0.0 netmask 0.0.0.0 dev $TUN_INTERFACE
-ip route add $SOCKS_SERVER_IP via $INTERNET_GW
+route add -net 0.0.0.0 netmask 0.0.0.0 dev $vpn_interface
+ip route add $v2ray_outbounds_ip via $default_gateway
 
 sleep 1
 
@@ -61,7 +106,7 @@ if pgrep -f 'badvpn-tun2socks'; then
 	sleep 1
 fi
 
-badvpn-tun2socks --tundev $TUN_INTERFACE --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $SOCKS_IP:$SOCKS_PORT --loglevel 3 --socks5-udp &>$BADVPN_TUN2SOCKS_LOG &>/dev/null &
+badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 3 --socks5-udp &>$badvpn_tun2socks_log_file &>/dev/null &
 
 ########################################################################
 # start iptables
