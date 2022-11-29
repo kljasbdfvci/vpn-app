@@ -232,9 +232,9 @@ class Router:
             vpn_interface = "--vpn_interface {}".format(self.VpnList["v2ray"]["interface"])
             config_json = v2ray.config_json
             js = json.loads(config_json)
-            v2ray_inbounds_port = "--vpn_interface {}".format(js["inbounds"][0]["port"])
-            v2ray_outbounds_ip = "--vpn_interface {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
-            badvpn_tun2socks_log_file = "--vpn_interface {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
+            v2ray_inbounds_port = "--v2ray_inbounds_port {}".format(js["inbounds"][0]["port"])
+            v2ray_outbounds_ip = "--v2ray_outbounds_ip {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
+            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
             dns_server = "--dns_server {}".format(self.setting.dns.split(",")[0]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
             dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
 
@@ -278,7 +278,7 @@ class Router:
 
         else:
             reset_iptables_file = self.VpnList["reset_iptables_file"]
-            
+
             c = Execte("{}".format(reset_iptables_file))
             c.do()
             c.print()
