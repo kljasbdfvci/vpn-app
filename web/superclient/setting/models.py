@@ -35,10 +35,10 @@ class WlanConfig(Network):
     ssid = models.CharField(max_length=128)
     wpa_passphrase = models.CharField(max_length=128)
     class Driver(models.TextChoices):
-        _nl80211 = "nl80211", "nl80211"
-        _wext = "wext", "wext"
-        _all = "all", "nl80211,wext"
-    driver = models.CharField(max_length=128, choices=Driver.choices, default=Driver._all)
+        nl80211 = "nl80211", "nl80211"
+        wext = "wext", "wext"
+        all = "nl80211,wext", "nl80211,wext"
+    driver = models.CharField(max_length=128, choices=Driver.choices, default=Driver.all)
     dhcp = models.BooleanField(default=True)
     ip_address_1 = models.CharField(max_length=16, blank=True)
     subnet_mask_1 = models.CharField(max_length=16, blank=True)
