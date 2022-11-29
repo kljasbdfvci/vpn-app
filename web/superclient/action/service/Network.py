@@ -204,10 +204,9 @@ class Network:
         return res
 
     def get_lan_interfaces(self):
-        addrs = []
-        for path in os.listdir("/sys/class/net"):
-            if os.path.isdir("/sys/class/net/" + path + "/phydev"):
-                addrs.append(path)
+        c = Execte("nmcli device status | grep ethernet | cut -d " " -f1")
+        c.do()
+        addrs = c.stdout.split("\n")
         addrs.sort()
         return addrs
     
@@ -219,10 +218,14 @@ class Network:
         return self.get_lan_interfaces()[0]
 
     def get_wlan_interfaces(self):
-        addrs = []
-        for path in os.listdir("/sys/class/net"):
-            if os.path.isdir("/sys/class/net/" + path + "/wireless"):
-                addrs.append(path)
+        #addrs = []
+        #for path in os.listdir("/sys/class/net"):
+        #    if os.path.isdir("/sys/class/net/" + path + "/wireless"):
+        #        addrs.append(path)
+        #addrs.sort()
+        c = Execte("nmcli device status | grep wifi | cut -d " " -f1")
+        c.do()
+        addrs = c.stdout.split("\n")
         addrs.sort()
         return addrs
 
