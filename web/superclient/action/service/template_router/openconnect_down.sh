@@ -39,7 +39,7 @@ iptables -F
 iptables -X
 iptables -t nat -F
 iptables -t nat -X
-iptables -t mangle -Fsss
+iptables -t mangle -F
 iptables -t mangle -X
 
 sysctl -w net.ipv4.ip_forward=1

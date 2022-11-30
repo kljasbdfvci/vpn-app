@@ -40,6 +40,9 @@ class Network:
             "dns": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/dns_up.sh",
             },
+            "iptables": {
+                "up_file" : Path(__file__).resolve().parent / "template_network/iptable_up.sh",
+            },
         }
         
         self.lanConfig = LanConfig.objects.all()
@@ -173,6 +176,16 @@ class Network:
             c.print()
             res = c.returncode
             output = c.getSTD()
+
+        # iptables
+        up_file = self.list["iptables"]["up_file"]
+        c = Execte("{}".format(
+            up_file)
+        )
+        c.do()
+        c.print()
+        res = c.returncode
+        output = c.getSTD()
 
     def _reset(self):
         # all_down

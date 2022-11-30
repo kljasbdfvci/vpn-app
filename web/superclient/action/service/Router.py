@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 import json
-import logging
 
 # local
 from .Execte import *
@@ -11,7 +10,6 @@ from ...setting.models import Setting
 class Router:
     def __init__(self, vpn : Configuration):
         self.VpnList = {
-            "reset_iptables_file" : Path(__file__).resolve().parent / "template_router/reset_iptables.sh",
             "openconnect": {
                 "up_file" : Path(__file__).resolve().parent / "template_router/openconnect_up.sh",
                 "down_file" : Path(__file__).resolve().parent / "template_router/openconnect_down.sh",
@@ -107,10 +105,6 @@ class Router:
             res = -1
             output = "Not Implimnet Yet"
 
-        #if res == 0:
-        #    self.reset_ip_table()
-        #    self.set_ip_table()
-
         return res, output
 
     def DisconnectVPN(self):
@@ -148,142 +142,33 @@ class Router:
             res = c.returncode
             output = c.getSTD()
 
-        #self.reset_ip_table()
-
         return res, output
 
     def is_running(self):
         res = False
-        if isinstance(self.vpn.subclass, OpenconnectConfig):
-            openconnect = self.vpn.subclass
-            pid = self.read_pid_file()
-            if pid != 0:
-                c = Execte("kill -0 {}".format(pid))
-                c.do()
-                c.print()
-                if c.isSuccess:
-                    res = True
 
-        elif isinstance(self.vpn.subclass, V2rayConfig):
-            v2ray = self.vpn.subclass
-            pid = self.read_pid_file()
-            if pid != 0:
-                c = Execte("kill -0 {}".format(pid))
-                c.do()
-                c.print()
-                if c.isSuccess:
-                    res = True        
-        else:
-            pass
+        pid = self.read_pid_file()
+        if pid != 0:
+            c = Execte("kill -0 {}".format(pid))
+            c.do()
+            c.print()
+            if c.isSuccess:
+                res = True
 
         return res
 
     def read_pid_file(self):
         pid = 0
+        pid_file = ""
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
             pid_file = self.VpnList["openconnect"]["pid_file"]
-            if os.path.isfile(pid_file):
-                file = open(pid_file, "r")
-                pid = file.read().strip()
-        
         elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
             pid_file = self.VpnList["v2ray"]["pid_file"]
-            if os.path.isfile(pid_file):
-                file = open(pid_file, "r")
-                pid = file.read().strip()
 
-        else:
-            pass
+        if pid_file != "" and os.path.isfile(pid_file):
+            file = open(pid_file, "r")
+            pid = file.read().strip()
 
         return pid
-
-    def delete_pid_file(self):
-        if isinstance(self.vpn.subclass, OpenconnectConfig):
-            openconnect = self.vpn.subclass
-            pid_file = self.VpnList["openconnect"]["pid_file"]
-            if os.path.isfile(pid_file):
-                os.remove(pid_file)
-
-        elif isinstance(self.vpn.subclass, V2rayConfig):
-            v2ray = self.vpn.subclass
-            pid_file = self.VpnList["v2ray"]["pid_file"]
-            if os.path.isfile(pid_file):
-                os.remove(pid_file)
-
-        else:
-            pass
-
-    def set_ip_table(self):
-
-        if isinstance(self.vpn.subclass, OpenconnectConfig):
-            openconnect = self.vpn.subclass
-
-            set_iptables_file = self.VpnList["openconnect"]["set_iptables_file"]
-
-            c = Execte("{}".format(set_iptables_file))
-            c.do()
-            c.print()
-            res = c.returncode
-
-        elif isinstance(self.vpn.subclass, V2rayConfig):
-            v2ray = self.vpn.subclass
-
-            set_iptables_file = self.VpnList["v2ray"]["set_iptables_file"]
-            vpn_interface = "--vpn_interface {}".format(self.VpnList["v2ray"]["interface"])
-            config_json = v2ray.config_json
-            js = json.loads(config_json)
-            v2ray_inbounds_port = "--v2ray_inbounds_port {}".format(js["inbounds"][0]["port"])
-            v2ray_outbounds_ip = "--v2ray_outbounds_ip {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
-            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
-            dns_server = "--dns_server {}".format(self.setting.dns.split(",")[0]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
-            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
-
-            c = Execte("{} {} {} {} {} {} {}".format(\
-                set_iptables_file,\
-                vpn_interface,\
-                v2ray_inbounds_port, v2ray_outbounds_ip,\
-                badvpn_tun2socks_log_file,\
-                dns_server, dns_log)
-            )
-            c.do()
-            c.print()
-            res = c.returncode
-
-        else:
-            res = -1
-
-        return res
-
-    def reset_ip_table(self):
-
-        if isinstance(self.vpn.subclass, OpenconnectConfig):
-            openconnect = self.vpn.subclass
-
-            reset_iptables_file = self.VpnList["openconnect"]["reset_iptables_file"]
-
-            c = Execte("{}".format(reset_iptables_file))
-            c.do()
-            c.print()
-            res = c.returncode
-
-        elif isinstance(self.vpn.subclass, V2rayConfig):
-            v2ray = self.vpn.subclass
-
-            reset_iptables_file = self.VpnList["v2ray"]["reset_iptables_file"]
-
-            c = Execte("{}".format(reset_iptables_file))
-            c.do()
-            c.print()
-            res = c.returncode
-
-        else:
-            reset_iptables_file = self.VpnList["reset_iptables_file"]
-
-            c = Execte("{}".format(reset_iptables_file))
-            c.do()
-            c.print()
-            res = c.returncode
-        
-        return res

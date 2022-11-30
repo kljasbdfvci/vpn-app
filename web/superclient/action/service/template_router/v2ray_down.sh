@@ -45,13 +45,13 @@ while [[ $# -gt 0 ]]; do
 done
 set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
-if [ -f $pid_file ]; then
+if [ -f "$pid_file" ]; then
     pid=$(cat $pid_file | xargs)
     kill -2 $pid || kill -9 $pid
     rm $pid_file
 fi
 
-if [ -f $log_file ]; then
+if [ -f "$log_file" ]; then
     rm $log_file
 fi
 
@@ -67,7 +67,7 @@ if pgrep -f 'DNS2SOCKS'; then
     killall 'DNS2SOCKS' &>/dev/null
 fi
 
-if [ -f $dns_log ]; then
+if [ -f "$dns_log" ]; then
     rm $dns_log
 fi
 
@@ -90,7 +90,7 @@ iptables -F
 iptables -X
 iptables -t nat -F
 iptables -t nat -X
-iptables -t mangle -Fsss
+iptables -t mangle -F
 iptables -t mangle -X
 
 sysctl -w net.ipv4.ip_forward=1
