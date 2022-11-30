@@ -25,13 +25,13 @@ while [[ $# -gt 0 ]]; do
 done
 set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
-if [ -f $pid_file ]; then
+if [ -f "$pid_file" ]; then
     pid=$(cat $pid_file | xargs)
     kill -2 $pid || kill -9 $pid
     rm $pid_file
 fi
 
-if [ -f $log_file ]; then
+if [ -f "$log_file" ]; then
     rm $log_file
 fi
 
