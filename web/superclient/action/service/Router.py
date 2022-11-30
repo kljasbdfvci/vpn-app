@@ -14,24 +14,20 @@ class Router:
             "reset_iptables_file" : Path(__file__).resolve().parent / "template_router/reset_iptables.sh",
             "openconnect": {
                 "up_file" : Path(__file__).resolve().parent / "template_router/openconnect_up.sh",
-                "set_iptables_file" : Path(__file__).resolve().parent / "template_router/openconnect_set_iptables.sh",
-                "reset_iptables_file" : Path(__file__).resolve().parent / "template_router/openconnect_reset_iptables.sh",
+                "down_file" : Path(__file__).resolve().parent / "template_router/openconnect_down.sh",
                 "pid_file" : "/tmp/openconnect.pid",
                 "log_file" : "/tmp/openconnect.log",
                 "interface" : "tun0"
             },
             "v2ray": {
                 "up_file" : Path(__file__).resolve().parent / "template_router/v2ray_up.sh",
-                "set_iptables_file" : Path(__file__).resolve().parent / "template_router/v2ray_set_iptables.sh",
-                "reset_iptables_file" : Path(__file__).resolve().parent / "template_router/v2ray_reset_iptables.sh",
+                "down_file" : Path(__file__).resolve().parent / "template_router/v2ray_down.sh",
                 "pid_file" : "/tmp/v2ray.pid",
                 "log_file" : "/tmp/v2ray.log",
+                "interface" : "tun0",
                 "config_file" : Path(__file__).resolve().parent / "v2ray.config",
                 "badvpn-tun2socks_log_file" : "/tmp/badvpn-tun2socks.log",
-                "redsocks_config_file" : Path(__file__).resolve().parent / "redsocks.conf",
-                "redsocks_log_file" : "/tmp/redsocks.log",
                 "dns2socks_log_file" : "/tmp/dns2socks.log",
-                "interface" : "tun0"
             },
         }
         self.vpn = vpn
@@ -84,10 +80,23 @@ class Router:
             f.close()
             #
             config = "--config {}".format(config_file)
+            
+            vpn_interface = "--vpn_interface {}".format(self.VpnList["v2ray"]["interface"])
+            config_json = v2ray.config_json
+            js = json.loads(config_json)
+            v2ray_inbounds_port = "--v2ray_inbounds_port {}".format(js["inbounds"][0]["port"])
+            v2ray_outbounds_ip = "--v2ray_outbounds_ip {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
+            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
+            dns_server = "--dns_server {}".format(self.setting.dns.split(",")[0]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
+            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
 
-            c = Execte("{} {} {} {} {} {}".format(\
-                up_file, pid_file, log_file, timeout, try_count, \
-                config)
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                up_file, pid_file, log_file, timeout, try_count,\
+                config,\
+                vpn_interface,\
+                v2ray_inbounds_port, v2ray_outbounds_ip,\
+                badvpn_tun2socks_log_file,\
+                dns_server, dns_log)
             )
             c.do()
             c.print()
@@ -98,9 +107,9 @@ class Router:
             res = -1
             output = "Not Implimnet Yet"
 
-        if res == 0:
-            self.reset_ip_table()
-            self.set_ip_table()
+        #if res == 0:
+        #    self.reset_ip_table()
+        #    self.set_ip_table()
 
         return res, output
 
@@ -109,44 +118,37 @@ class Router:
         output = ""
         if isinstance(self.vpn.subclass, OpenconnectConfig):
             openconnect = self.vpn.subclass
-            pid = self.read_pid_file()
-            if pid != 0:
-                if self.is_running():
-                    c = Execte("kill -2 {} || kill -9 {}".format(pid, pid))
-                    c.do()
-                    c.print()
-                    res = c.returncode
-                    output = c.getSTD()
-                else:
-                    res = 0
-                    output = "vpn is already disable."
-                self.delete_pid_file()
-            else:
-                res = 0
-                output = "vpn is already disable."
+
+            down_file = self.VpnList["openconnect"]["down_file"]
+            pid_file = "--pid_file {}".format(self.VpnList["openconnect"]["pid_file"])
+            log_file = "--log_file {}".format(self.VpnList["openconnect"]["log_file"])
+
+            c = Execte("{} {} {}".format(down_file, pid_file, log_file))
+            c.do()
+            c.print()
+            res = c.returncode
+            output = c.getSTD()
             
         elif isinstance(self.vpn.subclass, V2rayConfig):
             v2ray = self.vpn.subclass
-            pid = self.read_pid_file()
-            if pid != 0:
-                if self.is_running():
-                    c = Execte("kill -2 {} || kill -9 {}".format(pid, pid))
-                    c.do()
-                    c.print()
-                    res = c.returncode
-                    output = c.getSTD()
-                else:
-                    res = 0
-                    output = "vpn is already disable."
-                self.delete_pid_file()
-            else:
-                res = 0
-                output = "vpn is already disable."
-        else:
-            res = -1
-            output = "Not Implimnet Yet"
 
-        self.reset_ip_table()
+            down_file = self.VpnList["v2ray"]["down_file"]
+            pid_file = "--pid_file {}".format(self.VpnList["v2ray"]["pid_file"])
+            log_file = "--log_file {}".format(self.VpnList["v2ray"]["log_file"])
+            vpn_interface = "--vpn_interface {}".format(self.VpnList["v2ray"]["interface"])
+            config_json = v2ray.config_json
+            js = json.loads(config_json)
+            v2ray_outbounds_ip = "--v2ray_outbounds_ip {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
+            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
+            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
+
+            c = Execte("{} {} {} {} {} {} {}".format(down_file, pid_file, log_file, vpn_interface, v2ray_outbounds_ip, badvpn_tun2socks_log_file, dns_log))
+            c.do()
+            c.print()
+            res = c.returncode
+            output = c.getSTD()
+
+        #self.reset_ip_table()
 
         return res, output
 

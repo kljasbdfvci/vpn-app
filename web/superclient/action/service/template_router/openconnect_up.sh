@@ -117,13 +117,6 @@ tmpfile1=$(mktemp)
 tmpfile2=$(mktemp)
 trap 'rm -f $tmpfile1 $tmpfile2' EXIT
 
-if [[ -f $pid_file ]]; then
-    rm $pid_file
-fi
-if [[ -f $log_file ]]; then
-    rm $log_file
-fi
-
 #$(timeout $timeout openssl s_client -connect $gateway </dev/null 2>/dev/null | openssl x509 -text > $tmpfile1)
 #res1=$?
 res1=0
@@ -149,6 +142,11 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
     done
 else
     exit_code=10
+fi
+
+if [ $exit_code == 0 ]; then
+    #
+    iptables -t nat -A POSTROUTING -j MASQUERADE
 fi
 
 exit $exit_code
