@@ -174,16 +174,6 @@ else
     echo "$service is already disable."
 fi
 
-# enable NetworkManager
-service="NetworkManager.service"
-if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" != 0 ]]; then
-    systemctl enable $service
-    systemctl start $service
-    echo "$service is enabled."
-else
-    echo "$service is already enable."
-fi
-
 # kill pid if get port 80
 port="80"
 if [ -n "$(fuser $port/tcp)" ]; then
