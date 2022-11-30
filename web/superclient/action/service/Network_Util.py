@@ -1,7 +1,12 @@
+from pathlib import Path
+
 # local
 from .Execte import *
 
 class Network_Util:
+
+    def __init__(self):
+        self.interface_list = Path(__file__).resolve().parent / "template_network/interface_list.sh"
 
     def get_interfaces(self):
         return self.get_lan_interfaces() + self.get_wlan_interfaces()
@@ -11,7 +16,7 @@ class Network_Util:
         return res
 
     def get_lan_interfaces(self):
-        c = Execte("nmcli device status | grep ethernet | cut -d ' ' -f1")
+        c = Execte("{} {}".format(self.interface_list, "eth"))
         c.do()
         addrs = c.stdout.strip().split("\n")
         addrs.sort()
@@ -30,7 +35,7 @@ class Network_Util:
         #    if os.path.isdir("/sys/class/net/" + path + "/wireless"):
         #        addrs.append(path)
         #addrs.sort()
-        c = Execte("nmcli device status | grep wifi | cut -d ' ' -f1")
+        c = Execte("{} {}".format(self.interface_list, "wlan"))
         c.do()
         addrs = c.stdout.strip().split("\n")
         addrs.sort()
