@@ -41,7 +41,7 @@ class Network:
                 "up_file" : Path(__file__).resolve().parent / "template_network/dns_up.sh",
             },
             "iptables": {
-                "up_file" : Path(__file__).resolve().parent / "template_network/iptable_up.sh",
+                "up_file" : Path(__file__).resolve().parent / "template_network/iptables_up.sh",
             },
         }
         
