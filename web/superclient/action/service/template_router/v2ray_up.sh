@@ -75,7 +75,7 @@ while [[ $# -gt 0 ]]; do
 done
 set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
-exit_code=""
+exit_code=1
 
 v2ray -config $config &>$log_file &
 pid=$!
@@ -139,6 +139,22 @@ if [ "$exit_code" == 0 ]; then
             sysctl -w $item=2
         fi
     done
+
+    # iptables reset
+    iptables -F
+    iptables -X
+    iptables -t nat -F
+    iptables -t nat -X
+    iptables -t mangle -F
+    iptables -t mangle -X
+
+    # ip_forward 1
+    sysctl -w net.ipv4.ip_forward=1
+
+    # policy
+    iptables -P INPUT ACCEPT
+    iptables -P FORWARD ACCEPT
+    iptables -P OUTPUT ACCEPT
 fi
 
 exit $exit_code

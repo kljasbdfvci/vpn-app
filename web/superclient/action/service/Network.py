@@ -53,8 +53,15 @@ class Network:
 
     def Apply(self):
 
-        self._reset()
+        self.Reset()
+        self.ApplyLanConfig()
+        self.ApplyWlanConfig()
+        self.ApplyHotspotConfig()
+        self.ApplyDhcpServerConfig()
+        self.ApplyDns()
+        self.ApplyIptables()
 
+    def ApplyLanConfig(self):
         # lanConfig
         for lan in self.lanConfig:
             if Network_Util().is_lan_interface(lan.interface):
@@ -82,6 +89,7 @@ class Network:
                 res = c.returncode
                 output = c.getSTD()
 
+    def ApplyWlanConfig(self):
         # wlanConfig
         for wlan in self.wlanConfig:
             if Network_Util().is_wlan_interface(wlan.interface):
@@ -116,6 +124,7 @@ class Network:
                 res = c.returncode
                 output = c.getSTD()
 
+    def ApplyHotspotConfig(self):
         # hotspotConfig
         hotspot = self.hotspotConfig
         if hotspot != None and Network_Util().is_wlan_interface(hotspot.interface):
@@ -136,6 +145,7 @@ class Network:
             res = c.returncode
             output = c.getSTD()
 
+    def ApplyDhcpServerConfig(self):
         # dhcpServerConfig
         for dhcpServer in self.dhcpServerConfig:
             if Network_Util().is_interface(dhcpServer.interface):
@@ -164,7 +174,8 @@ class Network:
                 c.print()
                 res = c.returncode
                 output = c.getSTD()
-
+        
+    def ApplyDns(self):
         # dns
         if self.setting.dns == self.setting.DnsMode._2 and self.setting.dns != "":
             up_file = self.list["dns"]["up_file"]
@@ -177,6 +188,7 @@ class Network:
             res = c.returncode
             output = c.getSTD()
 
+    def ApplyIptables(self):
         # iptables
         up_file = self.list["iptables"]["up_file"]
         c = Execte("{}".format(
@@ -187,7 +199,7 @@ class Network:
         res = c.returncode
         output = c.getSTD()
 
-    def _reset(self):
+    def Reset(self):
         # all_down
         down_file = self.list["all"]["down_file"]
         wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"])

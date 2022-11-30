@@ -45,6 +45,8 @@ while [[ $# -gt 0 ]]; do
 done
 set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
+exit_code=0
+
 if [ -f "$pid_file" ]; then
     pid=$(cat $pid_file | xargs)
     kill -2 $pid || kill -9 $pid
@@ -105,4 +107,4 @@ iptables -P OUTPUT ACCEPT
 # router
 iptables -t nat -A POSTROUTING -j MASQUERADE
 
-exit 0
+exit $exit_code
