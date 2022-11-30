@@ -139,15 +139,6 @@ if [ "$exit_code" == 0 ]; then
             sysctl -w $item=2
         fi
     done
-
-    # ip_forward 1
-    sysctl -w net.ipv4.ip_forward=1
-
-    # policy
-    iptables -P INPUT ACCEPT
-    iptables -P FORWARD ACCEPT
-    iptables -P OUTPUT ACCEPT
-
 fi
 
 exit $exit_code

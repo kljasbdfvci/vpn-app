@@ -25,4 +25,7 @@ iptables -P INPUT ACCEPT
 iptables -P FORWARD ACCEPT
 iptables -P OUTPUT ACCEPT
 
+# router
+iptables -t nat -A POSTROUTING -j MASQUERADE
+
 exit $exit_code

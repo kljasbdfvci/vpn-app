@@ -123,9 +123,10 @@ if [ -n "$(cat /etc/resolv.conf | grep '#MYDNS_')" ]; then
     sleep 1
 fi
 
-# iptables
+# ip_forward 0
 sysctl -w net.ipv4.ip_forward=0
 
+# iptables reset
 iptables -F
 iptables -X
 iptables -t nat -F
