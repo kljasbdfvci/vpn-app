@@ -32,14 +32,14 @@ class Execte:
 
     def getSTD(self, max_line = None):
         out = ""
-        if stdout != None:
+        if self.stdout != None:
             stdout = self.stdout.strip()
             if stdout != "":
                 if max_line != None and len(stdout.splitlines()) > max_line:
                     out = out + "stdout: '{}'.".format('\n'.join(stdout.splitlines()[-max_line:]).strip())
                 else:
                     out = out + "stdout: '{}'.".format(stdout.strip())
-        if stderr != None:
+        if self.stderr != None:
             stderr = self.stderr.strip()
             if stderr != "":
                 if out != "":
