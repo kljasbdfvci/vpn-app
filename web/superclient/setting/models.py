@@ -70,7 +70,7 @@ class HotspotConfig(Network):
     channel = models.CharField(max_length=8, choices=Channel.choices, default=Channel._6)
 
 def validate_interface(value):
-    if WlanConfig.objects.filter(interface = value).count() != 0:
+    if WlanConfig.objects.filter(interface = value).count() != 0 or LanConfig.objects.filter(interface = value).count() != 0 :
         raise ValidationError(
         _('Network with this Interface already exists.'),
         params={},
