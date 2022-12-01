@@ -20,8 +20,8 @@ class Setting(models.Model):
 def LanConfig_validate_interface(value):
     if DhcpServerConfig.objects.filter(interface = value).count() != 0:
         raise ValidationError(
-            _("Network interface %s already exists in 'Dhcp server configs'."),
-            params={value},
+            _("Network interface '%s' already exists in 'Dhcp server configs'."),
+            params=(value),
         )
 
 class LanConfig(models.Model):
@@ -37,16 +37,17 @@ class LanConfig(models.Model):
     subnet_mask_4 = models.CharField(max_length=16, blank=True)
 
 def WlanConfig_validate_interface(value):
-    if DhcpServerConfig.objects.filter(interface = value).count() != 0:
+    if HotspotConfig.objects.filter(interface = value).count() != 0:
         raise ValidationError(
-            _("Network interface %s already exists in 'Dhcp server configs'."),
-            params={value},
+            _("Network interface '%s' already exists in 'Hotspot configs'."),
+            params=(value),
         )
-    elif HotspotConfig.objects.filter(interface = value).count() != 0:
+    elif DhcpServerConfig.objects.filter(interface = value).count() != 0:
         raise ValidationError(
-            _("Network interface %s already exists in 'Hotspot configs'."),
-            params={value},
+            _("Network interface '%s' already exists in 'Dhcp server configs'."),
+            params=(value),
         )
+    
 
 class WlanConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[WlanConfig_validate_interface])
@@ -70,8 +71,8 @@ class WlanConfig(models.Model):
 def HotspotConfig_validate_interface(value):
     if WlanConfig.objects.filter(interface = value).count() != 0:
         raise ValidationError(
-            _("Network interface %s already exists in 'Wlan configs'."),
-            params={value},
+            _("Network interface '%s' already exists in 'Wlan configs'."),
+            params=(value),
         )
 
 class HotspotConfig(models.Model):
@@ -96,16 +97,17 @@ class HotspotConfig(models.Model):
     channel = models.CharField(max_length=8, choices=Channel.choices, default=Channel._6)
 
 def DhcpServerConfig_validate_interface(value):
-    if WlanConfig.objects.filter(interface = value).count() != 0:
+    if LanConfig.objects.filter(interface = value).count() != 0:
         raise ValidationError(
-            _("Network interface %s already exists in 'Wlan configs'."),
-            params={value},
+            _("Network interface '%s' already exists in 'Lan configs'."),
+            params=(value),
         )
-    elif LanConfig.objects.filter(interface = value).count() != 0:
+    elif WlanConfig.objects.filter(interface = value).count() != 0:
         raise ValidationError(
-            _("Network interface %s already exists in 'Lan configs'."),
-            params={value},
+            _("Network interface '%s' already exists in 'Wlan configs'."),
+            params=(value),
         )
+    
 
 class DhcpServerConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[DhcpServerConfig_validate_interface])
