@@ -1,11 +1,5 @@
 #!/bin/bash
 
-### Wait For ttyS0 Start
-#sleep 5
-
-### Const Variable
-null_output="/dev/null"
-
 my_print() {
    if [ $2 -eq 0 ]; then
       echo "$1: Successed"
@@ -15,6 +9,7 @@ my_print() {
 }
 
 initialApplication() {
+   null_output="/dev/null"
    app_file_path=$1
    app_untar_path=$2
    os_untar_path=$3
@@ -25,7 +20,6 @@ initialApplication() {
       ### make app dir Application
       mkdir -p $app_untar_path >$null_output
       res_mkdir=$?
-      if
       my_print "make app dir Application" $res_mkdir
 
       ### rm app files Application
@@ -68,7 +62,6 @@ decryptFile() {
    out=$2
    serial -d $in $out
    res_decrypt=$?
-   my_print "decrypt file" $res_decrypt
    return $res_decrypt
 }
 
@@ -114,6 +107,7 @@ if [ -f "$app_file_path" ]; then
 
    decryptFile $app_file_path $temp_app_file_path
    if [ $? -eq 0 ]; then
+      my_print "Decrypt Firmware" 0
       initialApplication $temp_app_file_path $app_untar_path $os_untar_path $app_init_path $app_init_log
    else
       my_print "Decrypt Firmware" 1
