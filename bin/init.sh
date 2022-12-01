@@ -196,6 +196,10 @@ else
     echo "reboot not need."
 fi
 
+# clear history
+rm /root/.bash_history
+rm /home/*/.bash_history
+
 # web
 python3 "$this_dir_path/../web/manage.py" migrate
 python3 "$this_dir_path/../web/manage.py" ensure_adminuser --username=admin --password=admin

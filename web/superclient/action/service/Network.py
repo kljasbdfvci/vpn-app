@@ -177,7 +177,7 @@ class Network:
         
     def ApplyDns(self):
         # dns
-        if self.setting.dns == self.setting.DnsMode._2 and self.setting.dns != "":
+        if self.setting.dns_Mode == self.setting.DnsMode._2 and self.setting.dns != "":
             up_file = self.list["dns"]["up_file"]
             dns_server = "--dns_server '{}'".format(self.setting.dns)
             c = Execte("{} {}".format(\
