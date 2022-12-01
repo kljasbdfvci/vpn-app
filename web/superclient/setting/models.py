@@ -17,8 +17,15 @@ class Setting(models.Model):
         self.dns = "".join(self.dns.split())
         super(Setting, self).save(*args, **kwargs)
 
+def Network_validate_interface(value):
+    if DhcpServerConfig.objects.filter(interface = value).count() != 0:
+        raise ValidationError(
+        _('Network with this Interface already exists.'),
+        params={},
+    )
+
 class Network(models.Model):
-    interface = models.CharField(max_length=16, unique=True)
+    interface = models.CharField(max_length=16, unique=True, validators=[Network_validate_interface])
 
 class LanConfig(Network):
     dhcp = models.BooleanField(default=True)
@@ -70,14 +77,17 @@ class HotspotConfig(Network):
     channel = models.CharField(max_length=8, choices=Channel.choices, default=Channel._6)
 
 def validate_interface(value):
-    if WlanConfig.objects.filter(interface = value).count() != 0 or LanConfig.objects.filter(interface = value).count() != 0 :
+    pass
+
+def DhcpServerConfig_validate_interface(value):
+    if WlanConfig.objects.filter(interface = value).count() != 0 or LanConfig.objects.filter(interface = value).count() != 0:
         raise ValidationError(
         _('Network with this Interface already exists.'),
         params={},
     )
 
 class DhcpServerConfig(models.Model):
-    interface = models.CharField(max_length=16, unique=True, validators=[validate_interface])
+    interface = models.CharField(max_length=16, unique=True, validators=[DhcpServerConfig_validate_interface])
     ip_address = models.CharField(max_length=16, default='192.168.10.1')
     subnet_mask = models.CharField(max_length=16, default='255.255.255.0')
     dhcp_ip_address_from = models.CharField(max_length=16, default='192.168.10.10')
