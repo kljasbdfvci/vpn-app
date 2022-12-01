@@ -7,7 +7,7 @@ After=network.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=-/bin/bash -c "/etc/system/mount.sh 1>/tmp/system-mount.log 2>/tmp/system-mount.log.error"
+ExecStart=-/bin/bash -c "/etc/system/mount.sh &>/tmp/system-mount.log"
 
 [Install]
 WantedBy=multi-user.target

@@ -5,7 +5,7 @@ After=system-mount system-swap
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=-/bin/bash -c "/etc/system/startup.sh 1>/tmp/system-startup.log 2>/tmp/system-startup.log.error"
+ExecStart=-/bin/bash -c "/etc/system/startup.sh &>/tmp/system-startup.log"
 
 [Install]
 WantedBy=multi-user.target

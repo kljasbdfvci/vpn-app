@@ -8,11 +8,9 @@ null_output="/dev/null"
 
 my_print() {
    if [ $2 -eq 0 ]; then
-      >&2 echo "$1: OK"
-      echo -n "."
+      echo "$1: Successed"
    else
-      >&2 echo "$1: FAIL"
-      echo -n "?"
+      echo "$1: Failed"
    fi
 }
 
@@ -22,12 +20,12 @@ initialApplication() {
    os_untar_path=$3
    app_init_path=$4
    app_init_log=$5
-   app_init_log_error=$6
    if [ -f "$app_file_path" ]; then
 
       ### make app dir Application
       mkdir -p $app_untar_path >$null_output
       res_mkdir=$?
+      if
       my_print "make app dir Application" $res_mkdir
 
       ### rm app files Application
@@ -48,7 +46,7 @@ initialApplication() {
       ### run init Application
       res_init=1
       if [ $res_tar_app = 0 ] && [ $res_tar_os = 0 ]; then
-         $app_init_path 1>$app_init_log 2>$app_init_log_error
+         $app_init_path &>$app_init_log &
          res_init=$?
       fi
       my_print "run init Application" $res_init
@@ -74,17 +72,29 @@ decryptFile() {
    return $res_decrypt
 }
 
+### Var
+this_file_path=$(eval "realpath $0")
+this_dir_path=$(eval "dirname $this_file_path")
+disk_path="/disk"
+memory_path="/memory"
+logo_path="$this_dir_path/logo"
+app_file_path=$(find $disk_path/firmware -type f -name '*-app*' | sort | tail -n 1)
+app_untar_path="$memory_path"
+os_untar_path="/tmp"
+app_init_path="$app_untar_path/bin/init.sh"
+app_init_log="/tmp/app-init.log"
+
 ### Move Cursor Down And Print Logo
-printf "\n\n\n\n\n\n"
-cat /etc/system/logo
-printf "\n"
+echo -e "\n\n\n\n\n\n"
+cat $logo_path
+echo -e "\n"
 
 ### Wait For Mount /memory
-echo -n "Initial Storage"
+echo "Initial Storage... Started"
 for i in {1..300}
 do
    ### check memory storage Mount
-   mountpoint -q "/memory"
+   mountpoint -q $memory_path
    res=$?
    my_print "check memory storage Mount try($i)" $res
    if [ $res -eq 0 ]; then
@@ -94,43 +104,23 @@ do
    ### sleep Mount
    sleep 1
 done
-
-mountpoint -q "/memory"
-if [ $? -eq 0 ]; then
-   echo " OK"
-else
-   echo " ERROR"
-fi
-
-### System
-disk_path="/disk"
-app_file_path=$(find $disk_path/firmware -type f -name '*-app*' | sort | tail -n 1)
-app_untar_path="/memory"
-os_untar_path="/tmp"
-app_init_path="/memory/bin/init.sh"
-app_init_log="/tmp/app-init.log"
-app_init_log_error="/tmp/app-init.log.error"
+echo "Initial Storage... End"
 
 ### Application
-echo -n "Initial Application"
+echo "Initial Application... Start"
 if [ -f "$app_file_path" ]; then
 
    temp_app_file_path="/tmp/app.tgz"
    decryptFile $app_file_path $temp_app_file_path
    if [ $? -eq 0 ]; then
-      initialApplication $temp_app_file_path $app_untar_path $os_untar_path $app_init_path $app_init_log $app_init_log_error
-      if [ $? -eq 0 ]; then
-         echo " OK"
-      else
-         echo " ERROR"
-      fi
+      initialApplication $temp_app_file_path $app_untar_path $os_untar_path $app_init_path $app_init_log
    else
-      echo " ERROR"
+      my_print "Decrypt Firmware" 1
    fi
    rm -f $temp_app_file_path
 else
    my_print "No Firmware" 1
-   echo " ERROR"
 fi
+echo "Initial Application... End"
 
 exit 0

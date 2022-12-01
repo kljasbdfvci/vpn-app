@@ -13,8 +13,6 @@ class Execte:
     def do(self):
         if self.isBackground:
             self.returncode = os.system(self.command)
-            self.stdout = ""
-            self.stderr = ""
         else:
             popen = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True, close_fds=False)
             popen.wait()
@@ -34,20 +32,22 @@ class Execte:
 
     def getSTD(self, max_line = None):
         out = ""
-        stdout = self.stdout.strip()
-        stderr = self.stderr.strip()
-        if stdout != "":
-            if max_line != None and len(stdout.splitlines()) > max_line:
-                out = out + "stdout: '{}'.".format('\n'.join(stdout.splitlines()[-max_line:]).strip())
-            else:
-                out = out + "stdout: '{}'.".format(stdout.strip())
-        if stderr != "":
-            if out != "":
-                out = out + "\n"
-            if max_line != None and len(stderr.splitlines()) > max_line:
-                out = out + "stderr: '{}'.".format('\n'.join(stderr.splitlines()[-max_line:]).strip())
-            else:
-                out = out + "stderr: '{}'.".format(stderr.strip())
+        if stdout != None:
+            stdout = self.stdout.strip()
+            if stdout != "":
+                if max_line != None and len(stdout.splitlines()) > max_line:
+                    out = out + "stdout: '{}'.".format('\n'.join(stdout.splitlines()[-max_line:]).strip())
+                else:
+                    out = out + "stdout: '{}'.".format(stdout.strip())
+        if stderr != None:
+            stderr = self.stderr.strip()
+            if stderr != "":
+                if out != "":
+                    out = out + "\n"
+                if max_line != None and len(stderr.splitlines()) > max_line:
+                    out = out + "stderr: '{}'.".format('\n'.join(stderr.splitlines()[-max_line:]).strip())
+                else:
+                    out = out + "stderr: '{}'.".format(stderr.strip())
         return out
 
     def isSuccess(self):
