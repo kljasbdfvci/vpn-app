@@ -42,6 +42,7 @@ class Router:
             log_file = "--log_file {}".format(self.VpnList["openconnect"]["log_file"])
             timeout = "--timeout {}".format(timeout_arg)
             try_count = "--try_count {}".format(try_count_arg)
+            
             protocol = "--protocol {}".format(openconnect.protocol)
             gateway = "--gateway {}".format(openconnect.host + ":" + str(openconnect.port))
             username = "--username {}".format(openconnect.username)
@@ -70,6 +71,7 @@ class Router:
             log_file = "--log_file {}".format(self.VpnList["v2ray"]["log_file"])
             timeout = "--timeout {}".format(timeout_arg)
             try_count = "--try_count {}".format(try_count_arg)
+
             # write config file
             config_file = self.VpnList["v2ray"]["config_file"]
             config_json = v2ray.config_json
@@ -91,10 +93,7 @@ class Router:
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, pid_file, log_file, timeout, try_count,\
                 config,\
-                vpn_interface,\
-                v2ray_inbounds_port, v2ray_outbounds_ip,\
-                badvpn_tun2socks_log_file,\
-                dns_server, dns_log)
+                vpn_interface, v2ray_inbounds_port, v2ray_outbounds_ip, badvpn_tun2socks_log_file, dns_server, dns_log)
             )
             c.do()
             c.print()
