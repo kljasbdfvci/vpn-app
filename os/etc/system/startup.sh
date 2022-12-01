@@ -77,12 +77,14 @@ this_file_path=$(eval "realpath $0")
 this_dir_path=$(eval "dirname $this_file_path")
 disk_path="/disk"
 memory_path="/memory"
+tmp_path="/tmp"
 logo_path="$this_dir_path/logo"
 app_file_path=$(find $disk_path/firmware -type f -name '*-app*' | sort | tail -n 1)
+temp_app_file_path="$tmp_path/app.tgz"
 app_untar_path="$memory_path"
-os_untar_path="/tmp"
+os_untar_path="$tmp_path"
 app_init_path="$app_untar_path/bin/init.sh"
-app_init_log="/tmp/app-init.log"
+app_init_log="$tmp_path/app-init.log"
 
 ### Move Cursor Down And Print Logo
 echo -e "\n\n\n\n\n\n"
@@ -110,7 +112,6 @@ echo "Initial Storage... End"
 echo "Initial Application... Start"
 if [ -f "$app_file_path" ]; then
 
-   temp_app_file_path="/tmp/app.tgz"
    decryptFile $app_file_path $temp_app_file_path
    if [ $? -eq 0 ]; then
       initialApplication $temp_app_file_path $app_untar_path $os_untar_path $app_init_path $app_init_log
