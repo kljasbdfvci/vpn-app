@@ -203,25 +203,25 @@ rm /home/*/.bash_history
 # web
 python3 "$this_dir_path/../web/manage.py" migrate
 python3 "$this_dir_path/../web/manage.py" ensure_adminuser --username=admin --password=admin
-ensure_setting_path="/disk/ensure_setting_path"
-if [[ ! -f $ensure_setting_path ]]; then
-    python3 "$this_dir_path/../web/manage.py" ensure_setting
-    touch $ensure_setting_path
-    echo "create $ensure_setting_path successful."
+ensure_general_path="/disk/ensure_general"
+if [[ ! -f $ensure_general_path ]]; then
+    python3 "$this_dir_path/../web/manage.py" ensure_general
+    touch $ensure_general_path
+    echo "create $ensure_general_path successful."
 fi
-ensure_lan_path="/disk/ensure_lan_path"
+ensure_lan_path="/disk/ensure_lan"
 if [[ ! -f $ensure_lan_path ]]; then
     python3 "$this_dir_path/../web/manage.py" ensure_lan
     touch $ensure_lan_path
     echo "create $ensure_lan_path successful."
 fi
-ensure_hotspot_path="/disk/ensure_hotspot_path"
+ensure_hotspot_path="/disk/ensure_hotspot"
 if [[ ! -f $ensure_hotspot_path ]]; then
     python3 "$this_dir_path/../web/manage.py" ensure_hotspot
     touch $ensure_hotspot_path
     echo "create $ensure_hotspot_path successful."
 fi
-ensure_dhcpserver_path="/disk/ensure_dhcpserver_path"
+ensure_dhcpserver_path="/disk/ensure_dhcpserver"
 if [[ ! -f $ensure_dhcpserver_path ]]; then
     python3 "$this_dir_path/../web/manage.py" ensure_dhcpserver
     touch $ensure_dhcpserver_path

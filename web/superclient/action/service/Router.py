@@ -5,7 +5,7 @@ import json
 # local
 from .Execte import *
 from ...vpn.models import *
-from ...setting.models import Setting
+from ...setting.models import *
 
 class Router:
     def __init__(self, vpn : Configuration):
@@ -29,7 +29,7 @@ class Router:
             },
         }
         self.vpn = vpn
-        self.setting = Setting.objects.first()
+        self.general = General.objects.first()
 
     def ConnectVPN(self, timeout_arg, try_count_arg):
         res = -1
@@ -42,7 +42,7 @@ class Router:
             log_file = "--log_file {}".format(self.VpnList["openconnect"]["log_file"])
             timeout = "--timeout {}".format(timeout_arg)
             try_count = "--try_count {}".format(try_count_arg)
-            
+
             protocol = "--protocol {}".format(openconnect.protocol)
             gateway = "--gateway {}".format(openconnect.host + ":" + str(openconnect.port))
             username = "--username {}".format(openconnect.username)
@@ -87,8 +87,8 @@ class Router:
             v2ray_inbounds_port = "--v2ray_inbounds_port {}".format(js["inbounds"][0]["port"])
             v2ray_outbounds_ip = "--v2ray_outbounds_ip {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
             badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
-            dns_server = "--dns_server {}".format(self.setting.dns.split(",")[0]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
-            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
+            dns_server = "--dns_server {}".format(self.general.dns.split(",")[0]) if self.general.dns_Mode == self.general.DnsMode._4 and self.general.dns != "" else ""
+            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._4 and self.general.dns != "" else ""
 
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, pid_file, log_file, timeout, try_count,\
@@ -133,7 +133,7 @@ class Router:
             js = json.loads(config_json)
             v2ray_outbounds_ip = "--v2ray_outbounds_ip {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
             badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
-            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.setting.dns_Mode == self.setting.DnsMode._4 and self.setting.dns != "" else ""
+            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._4 and self.general.dns != "" else ""
 
             c = Execte("{} {} {} {} {} {} {}".format(down_file, pid_file, log_file, vpn_interface, v2ray_outbounds_ip, badvpn_tun2socks_log_file, dns_log))
             c.do()

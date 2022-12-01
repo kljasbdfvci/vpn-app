@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
-class Setting(models.Model):
+class General(models.Model):
     
     class DnsMode(models.TextChoices):
         _1 = "_1", "Do Nothing"
@@ -15,7 +15,7 @@ class Setting(models.Model):
 
     def save(self, *args, **kwargs):
         self.dns = "".join(self.dns.split())
-        super(Setting, self).save(*args, **kwargs)
+        super(General, self).save(*args, **kwargs)
 
 def LanConfig_validate_interface(value):
     if DhcpServerConfig.objects.filter(interface = value).count() != 0:

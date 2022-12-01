@@ -49,7 +49,7 @@ class Network:
         self.wlanConfig = WlanConfig.objects.all()
         self.hotspotConfig = HotspotConfig.objects.first()
         self.dhcpServerConfig = DhcpServerConfig.objects.all()
-        self.setting = Setting.objects.first()
+        self.general = General.objects.first()
 
     def Apply(self):
 
@@ -156,8 +156,8 @@ class Network:
                 dhcp_ip_address_from = "--dhcp_ip_address_from '{}'".format(dhcpServer.dhcp_ip_address_from)
                 dhcp_ip_address_to = "--dhcp_ip_address_to '{}'".format(dhcpServer.dhcp_ip_address_to)
                 dns_server = ""
-                if self.setting.dns_Mode == self.setting.DnsMode._3 and self.setting.dns != "":
-                    dns_list = self.setting.dns.split(",")
+                if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "":
+                    dns_list = self.general.dns.split(",")
                     for i in range(len(dns_list)):
                         dns_list[i] = "/#/" + dns_list[i]
                     dns_server = "--dns_server '{}'".format(",".join(dns_list))
@@ -177,9 +177,9 @@ class Network:
         
     def ApplyDns(self):
         # dns
-        if self.setting.dns_Mode == self.setting.DnsMode._2 and self.setting.dns != "":
+        if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "":
             up_file = self.list["dns"]["up_file"]
-            dns_server = "--dns_server '{}'".format(self.setting.dns)
+            dns_server = "--dns_server '{}'".format(self.general.dns)
             c = Execte("{} {}".format(\
                 up_file, dns_server)
             )

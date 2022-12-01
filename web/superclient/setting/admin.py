@@ -3,24 +3,24 @@ from django import forms
 from .models import *
 from ..action.service.Network_Util import *
 
-@admin.register(Setting)
-class SettingAdmin(admin.ModelAdmin):
+@admin.register(General)
+class GeneralAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
-        base_add_permission = super(SettingAdmin, self).has_add_permission(request)
+        base_add_permission = super(GeneralAdmin, self).has_add_permission(request)
         if base_add_permission:
-            count = Setting.objects.all().count()
+            count = General.objects.all().count()
             if count == 0:
                 return True
             else:
                 return False
 
     def has_delete_permission(self, request, obj = None):
-        base_delete_permission = super(SettingAdmin, self).has_delete_permission(request, obj)
+        base_delete_permission = super(GeneralAdmin, self).has_delete_permission(request, obj)
         if base_delete_permission:
             return False
 
     class Meta:
-        model = Setting
+        model = General
         fields = '__all__'
 
 class LanConfigAdminForm(forms.ModelForm):
