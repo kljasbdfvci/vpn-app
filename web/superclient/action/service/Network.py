@@ -39,6 +39,7 @@ class Network:
             },
             "dns": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/dns_up.sh",
+                "manage_up" : "python3 {} network_apply_dns".format(Path(__file__).resolve().parent.parent.parent.parent / "manage.py")
             },
             "iptables": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/iptables_up.sh",
@@ -68,6 +69,7 @@ class Network:
                 up_file = self.list["lanconfig"]["up_file"]
                 interface = "--interface '{}'".format(lan.interface) if lan.interface != "" else ""
                 dhcp = "--dhcp" if lan.dhcp else ""
+                dns_manage_up = "--dns_manage_up '{}'".format(self.list["dns"]["manage_up"])
                 ip_address_1 = "--ip_address_1 '{}'".format(lan.ip_address_1) if lan.ip_address_1 != "" else ""
                 subnet_mask_1 = "--subnet_mask_1 '{}'".format(lan.subnet_mask_1) if lan.subnet_mask_1 != "" else ""
                 ip_address_2 = "--ip_address_2 '{}'".format(lan.ip_address_2) if lan.ip_address_2 != "" else ""
@@ -77,8 +79,8 @@ class Network:
                 ip_address_4 = "--ip_address_4 '{}'".format(lan.ip_address_4) if lan.ip_address_4 != "" else ""
                 subnet_mask_4 = "--subnet_mask_4 '{}'".format(lan.subnet_mask_4) if lan.subnet_mask_4 != "" else ""
 
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
-                    up_file, interface, dhcp,\
+                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                    up_file, interface, dhcp, dns_manage_up,
                     ip_address_1, subnet_mask_1,\
                     ip_address_2, subnet_mask_2,\
                     ip_address_3, subnet_mask_3,\
@@ -102,6 +104,7 @@ class Network:
                 wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"])
                 wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"])
                 dhcp = "--dhcp" if wlan.dhcp else ""
+                dns_manage_up = "--dns_manage_up '{}'".format(self.list["dns"]["manage_up"])
                 ip_address_1 = "--ip_address_1 '{}'".format(wlan.ip_address_1) if wlan.ip_address_1 != "" else ""
                 subnet_mask_1 = "--subnet_mask_1 '{}'".format(wlan.subnet_mask_1) if wlan.subnet_mask_1 != "" else ""
                 ip_address_2 = "--ip_address_2 '{}'".format(wlan.ip_address_2) if wlan.ip_address_2 != "" else ""
@@ -110,10 +113,10 @@ class Network:
                 subnet_mask_3 = "--subnet_mask_3 '{}'".format(wlan.subnet_mask_3) if wlan.subnet_mask_3 != "" else ""
                 ip_address_4 = "--ip_address_4 '{}'".format(wlan.ip_address_4) if wlan.ip_address_4 != "" else ""
                 subnet_mask_4 = "--subnet_mask_4 '{}'".format(wlan.subnet_mask_4) if wlan.subnet_mask_4 != "" else ""
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface, ssid, wpa_passphrase, driver,\
                     wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file,\
-                    dhcp,\
+                    dhcp, dns_manage_up,\
                     ip_address_1, subnet_mask_1,\
                     ip_address_2, subnet_mask_2,\
                     ip_address_3, subnet_mask_3,\

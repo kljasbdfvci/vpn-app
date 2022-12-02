@@ -12,6 +12,11 @@ while [[ $# -gt 0 ]]; do
             dhcp="yes"
             shift # past argument
             ;;
+        -D|--dns_manage_up)
+            dns_manage_up="$2"
+            shift # past argument
+            shift # past value
+            ;;
         -ip1|--ip_address_1)
             ip_address_1="$2"
             shift # past argument
@@ -78,6 +83,7 @@ if [ $dhcp == "yes" ]; then
         timeout 30 dhclient -v $interface
         dhcp_res=$?
         if [ $dhcp_res == 0 ]; then
+            $dns_manage_up
             break
         fi
         n=$((n+1)) 
