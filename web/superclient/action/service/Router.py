@@ -23,7 +23,7 @@ class Router:
                 "pid_file" : "/tmp/v2ray.pid",
                 "log_file" : "/tmp/v2ray.log",
                 "interface" : "tun0",
-                "config_file" : Path(__file__).resolve().parent / "v2ray.config",
+                "config_file" : "/tmp/v2ray.config",
                 "badvpn-tun2socks_log_file" : "/tmp/badvpn-tun2socks.log",
                 "dns2socks_log_file" : "/tmp/dns2socks.log",
             },

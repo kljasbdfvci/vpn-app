@@ -1,52 +1,5 @@
-/tmp/app-web.log {
-    size 10M
-    copytruncate
-    missingok
-    rotate 1
-    nocompress
-}
-
-/tmp/dnsmasq.log {
-    size 1M
-    copytruncate
-    missingok
-    rotate 1
-    nocompress
-}
-
-/tmp/openconnect.log {
-    size 1M
-    copytruncate
-    missingok
-    rotate 1
-    nocompress
-}
-
-/tmp/v2ray.log {
-    size 1M
-    copytruncate
-    missingok
-    rotate 1
-    nocompress
-}
-
-/tmp/badvpn-tun2socks.log {
-    size 1M
-    copytruncate
-    missingok
-    rotate 1
-    nocompress
-}
-
-/tmp/redsocks.log {
-    size 1M
-    copytruncate
-    missingok
-    rotate 1
-    nocompress
-}
-
-/tmp/dns2socks.log {
+/tmp/*.log {
+    su root root
     size 1M
     copytruncate
     missingok

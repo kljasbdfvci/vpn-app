@@ -1,3 +1,3 @@
 #!/bin/bash
 
-logrotate --skip-state-lock --force /etc/logrotate.d/app
+logrotate --skip-state-lock /etc/logrotate.d/app
