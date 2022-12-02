@@ -9,9 +9,6 @@ from ...setting.models import *
 class Network:
     def __init__(self):
         self.list = {
-            "all" : {
-                "down_file" : Path(__file__).resolve().parent / "template_network/all_down.sh",
-            },
             "lanconfig": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/lanconfig_up.sh",
                 "down_file" : Path(__file__).resolve().parent / "template_network/lanconfig_down.sh",
@@ -39,10 +36,12 @@ class Network:
             },
             "dns": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/dns_up.sh",
+                "down_file" : Path(__file__).resolve().parent / "template_network/dns_down.sh",
                 "manage_up" : "python3 {} network_apply_dns".format(Path(__file__).resolve().parent.parent.parent.parent / "manage.py")
             },
             "iptables": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/iptables_up.sh",
+                "down_file" : Path(__file__).resolve().parent / "template_network/iptables_down.sh",
             },
         }
         
@@ -53,8 +52,6 @@ class Network:
         self.general = General.objects.first()
 
     def Apply(self):
-
-        self.Reset()
         self.ApplyLanConfig()
         self.ApplyWlanConfig()
         self.ApplyHotspotConfig()
@@ -62,8 +59,39 @@ class Network:
         self.ApplyDns()
         self.ApplyIptables()
 
+    def Down(self):
+        self.DownLanConfig()
+        self.DownWlanConfig()
+        self.DownHotspotConfig()
+        self.DownDhcpServerConfig()
+        self.DownDns()
+        self.DownIptables()
+
+    def Up(self):
+        self.UpLanConfig()
+        self.UpWlanConfig()
+        self.UpHotspotConfig()
+        self.UpDhcpServerConfig()
+        self.UpDns()
+        self.UpIptables()
+
     def ApplyLanConfig(self):
-        # lanConfig
+        self.DownLanConfig()
+        self.UpLanConfig()
+
+    def DownLanConfig(self):
+        # lanConfig down
+        down_file = self.list["lanconfig"]["down_file"]
+        c = Execte("{}".format(\
+            down_file)
+        )
+        c.do()
+        c.print()
+        res = c.returncode
+        output = c.getSTD()
+
+    def UpLanConfig(self):
+        # lanConfig up
         for lan in self.lanConfig:
             if Network_Util().is_lan_interface(lan.interface):
                 up_file = self.list["lanconfig"]["up_file"]
@@ -92,7 +120,26 @@ class Network:
                 output = c.getSTD()
 
     def ApplyWlanConfig(self):
-        # wlanConfig
+        self.DownWlanConfig()
+        self.UpWlanConfig()
+
+    def DownWlanConfig(self):
+        # wlanConfig down
+        down_file = self.list["wlanconfig"]["down_file"]
+        wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"])
+        wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"])
+        wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"])
+        c = Execte("{} {} {} {}".format(\
+            down_file,
+            wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file)
+        )
+        c.do()
+        c.print()
+        res = c.returncode
+        output = c.getSTD()
+
+    def UpWlanConfig(self):
+        # wlanConfig up
         for wlan in self.wlanConfig:
             if Network_Util().is_wlan_interface(wlan.interface):
                 up_file = self.list["wlanconfig"]["up_file"]
@@ -128,7 +175,26 @@ class Network:
                 output = c.getSTD()
 
     def ApplyHotspotConfig(self):
-        # hotspotConfig
+        self.DownHotspotConfig()
+        self.UpHotspotConfig()
+
+    def DownHotspotConfig(self):
+        # hotspotConfig down
+        down_file = self.list["hotspotconfig"]["down_file"]
+        hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
+        hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
+        hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
+        c = Execte("{} {} {} {}".format(\
+            down_file,\
+            hostapd_config_file, hostapd_pid_file, hostapd_log_file)
+        )
+        c.do()
+        c.print()
+        res = c.returncode
+        output = c.getSTD()
+
+    def UpHotspotConfig(self):
+        # hotspotConfig up
         hotspot = self.hotspotConfig
         if hotspot != None and Network_Util().is_wlan_interface(hotspot.interface):
             up_file = self.list["hotspotconfig"]["up_file"]
@@ -149,7 +215,26 @@ class Network:
             output = c.getSTD()
 
     def ApplyDhcpServerConfig(self):
-        # dhcpServerConfig
+        self.DownDhcpServerConfig()
+        self.UpDhcpServerConfig()
+
+    def DownDhcpServerConfig(self):
+        # dhcpServerConfig down
+        down_file = self.list["dhcpserverconfig"]["down_file"]
+        dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"].format("*"))
+        dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format("*"))
+        dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format("*"))
+        c = Execte("{} {} {} {}".format(\
+            down_file,
+            dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file)
+        )
+        c.do()
+        c.print()
+        res = c.returncode
+        output = c.getSTD()
+
+    def UpDhcpServerConfig(self):
+        # dhcpServerConfig up
         for dhcpServer in self.dhcpServerConfig:
             if Network_Util().is_interface(dhcpServer.interface):
                 up_file = self.list["dhcpserverconfig"]["up_file"]
@@ -179,7 +264,23 @@ class Network:
                 output = c.getSTD()
         
     def ApplyDns(self):
-        # dns
+        self.DownDns()
+        self.UpDns()
+
+    def DownDns(self):
+        # dns down
+        down_file = self.list["dns"]["down_file"]
+        c = Execte("{}".format(\
+            down_file)
+        )
+        c.do()
+        c.print()
+        res = c.returncode
+        output = c.getSTD()
+
+
+    def UpDns(self):
+        # dns up
         if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "":
             up_file = self.list["dns"]["up_file"]
             dns_server = "--dns_server '{}'".format(self.general.dns)
@@ -192,33 +293,25 @@ class Network:
             output = c.getSTD()
 
     def ApplyIptables(self):
-        # iptables
-        up_file = self.list["iptables"]["up_file"]
-        c = Execte("{}".format(
-            up_file)
+        self.DownIptables()
+        self.UpIptables()
+
+    def DownIptables(self):
+        # iptables down
+        down_file = self.list["iptables"]["down_file"]
+        c = Execte("{}".format(\
+            down_file)
         )
         c.do()
         c.print()
         res = c.returncode
         output = c.getSTD()
 
-    def Reset(self):
-        # all_down
-        down_file = self.list["all"]["down_file"]
-        wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"])
-        wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"])
-        wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"])
-        hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
-        hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
-        hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
-        dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"].format("*"))
-        dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format("*"))
-        dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format("*"))
-        c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
-            down_file,
-            wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file,\
-            hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
-            dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file)
+    def UpIptables(self):
+        # iptables up
+        up_file = self.list["iptables"]["up_file"]
+        c = Execte("{}".format(
+            up_file)
         )
         c.do()
         c.print()
