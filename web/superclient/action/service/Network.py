@@ -218,9 +218,16 @@ class Network:
         dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"].format("*"))
         dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format("*"))
         dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format("*"))
-        c = Execte("{} {} {} {}".format(\
+        dhcpd_config_file = self.list["dhcpserverconfig"]["dhcpd_config_file"]
+        dhcpd_pid_file = self.list["dhcpserverconfig"]["dhcpd_pid_file"]
+        dhcpd_log_file = self.list["dhcpserverconfig"]["dhcpd_log_file"]
+        dhcpd_lease_file = self.list["dhcpserverconfig"]["dhcpd_lease_file"]
+        named_config_file = self.list["dhcpserverconfig"]["named_config_file"]
+        c = Execte("{} {} {} {} {} {} {} {} {}".format(\
             down_file,
-            dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file)
+            dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file,\
+            dhcpd_config_file, dhcpd_pid_file, dhcpd_log_file, dhcpd_lease_file,\
+            named_config_file)
         )
         c.do()
         c.print()
