@@ -3,7 +3,7 @@
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -dP|--dnsmasq_pid_file)
+        --dnsmasq_pid_file)
             dnsmasq_pid_file="$2"
             shift # past argument
             shift # past value
