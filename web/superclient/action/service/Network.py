@@ -257,13 +257,14 @@ class Network:
                 c.print()
             elif Network_Util().is_interface(dhcpServer.interface) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dhcpd:
                 dhcpd_write_file = self.list["dhcpserverconfig"]["dhcpd_write_file"]
+                interface = "--interface '{}'".format(dhcpServer.interface)
                 ip_address = "--ip_address '{}'".format(dhcpServer.ip_address)
                 subnet_mask = "--subnet_mask '{}'".format(dhcpServer.subnet_mask)
                 dhcp_ip_address_from = "--dhcp_ip_address_from '{}'".format(dhcpServer.dhcp_ip_address_from)
                 dhcp_ip_address_to = "--dhcp_ip_address_to '{}'".format(dhcpServer.dhcp_ip_address_to)
                 dhcpd_config_file = "--dhcpd_config_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_config_file"])
-                c = Execte("{} {} {} {} {} {}".format(\
-                    dhcpd_write_file,\
+                c = Execte("{} {} {} {} {} {} {}".format(\
+                    dhcpd_write_file, interface,\
                     ip_address, subnet_mask,\
                     dhcp_ip_address_from, dhcp_ip_address_to,\
                     dhcpd_config_file)
