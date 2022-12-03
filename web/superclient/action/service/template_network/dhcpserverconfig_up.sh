@@ -121,11 +121,13 @@ if [ $dhcp_module == "dnsmasq" ]; then
     
 elif [ $dhcp_module == "isc-dhcp-server" ]; then
 
+    touch $dhcpd_lease_file
+    
     dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $interface_dhcpd
 
     str=""
     for item in ${dns_server//,/ } ; do
-        str=$str"        $item;\n"
+        str=$str"        $item;"$'\n'
     done
 
     cat > $named_config_file << EOF
@@ -139,6 +141,8 @@ options {
     allow-query { any; };
 };
 EOF
+
+named -c $named_config_file
 
 fi
 
