@@ -6,10 +6,9 @@ from django.utils.translation import gettext_lazy as _
 class General(models.Model):
     
     class DnsMode(models.TextChoices):
-        _1 = "_1", "Do Nothing"
-        _2 = "_2", "Handle in system"
-        _3 = "_3", "Handle in hotspot"
-        _4 = "_4", "Handle with socks (only for v2ray)"        
+        _1 = "1", "Do Nothing"
+        _2 = "2", "Handle in system"
+        _3 = "3", "Handle with socks (only for v2ray)"        
     dns_Mode = models.CharField(max_length=8, choices=DnsMode.choices, default=DnsMode._2)
     dns = models.CharField(max_length=128, default='1.1.1.1,8.8.8.8,208.67.222.222', blank=True)
 
@@ -110,6 +109,10 @@ def DhcpServerConfig_validate_interface(value):
     
 
 class DhcpServerConfig(models.Model):
+    class DhcpModule(models.TextChoices):
+        dnsmasq = "dnsmasq", "dnsmasq"
+        dhcpd = "isc-dhcp-server", "isc-dhcp-server"
+    dhcp_module = models.CharField(max_length=32, choices=DhcpModule.choices, default=DhcpModule.dhcpd)
     interface = models.CharField(max_length=16, unique=True, validators=[DhcpServerConfig_validate_interface])
     ip_address = models.CharField(max_length=16, default='192.168.10.1')
     subnet_mask = models.CharField(max_length=16, default='255.255.255.0')

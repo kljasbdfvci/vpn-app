@@ -45,7 +45,7 @@ else
 fi
 
 # install list of apt packages
-packages=("python3" "python3-dev" "python3-pip" "net-tools" "hostapd" "dnsmasq" "jq" "openconnect" "openssl")
+packages=("python3" "python3-dev" "python3-pip" "net-tools" "hostapd" "dnsmasq" "jq" "openconnect" "openssl" "isc-dhcp-server" "bind9")
 for package in ${packages[@]}
 do
     if [ -z "$(dpkg -l | grep -w $package)" ]
@@ -154,6 +154,16 @@ else
     echo "copy os files failed."
 fi
 
+# disable hostapd
+service="hostapd.service"
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
+    systemctl stop $service
+    systemctl disable $service
+    echo "$service is disabled."
+else
+    echo "$service is already disable."
+fi
+
 # disable dnsmasq
 service="dnsmasq.service"
 if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
@@ -164,8 +174,18 @@ else
     echo "$service is already disable."
 fi
 
-# disable hostapd
-service="hostapd.service"
+# disable isc-dhcp-server
+service="isc-dhcp-server"
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
+    systemctl stop $service
+    systemctl disable $service
+    echo "$service is disabled."
+else
+    echo "$service is already disable."
+fi
+
+# disable named.service
+service="named.service"
 if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
     systemctl stop $service
     systemctl disable $service
