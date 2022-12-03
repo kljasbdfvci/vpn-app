@@ -27,11 +27,11 @@ if [[ "$now_time - $last_update_time" -gt 604800 ]]; then
         rm /var/lib/dpkg/lock
     fi
     echo "start apt update"
-    apt update --fix-missing
+    DEBIAN_FRONTEND=noninteractive apt update --fix-missing
     res_update=$?
     sleep 1
     echo "start apt upgrade"
-    apt upgrade --fix-broken --fix-missing -y
+    DEBIAN_FRONTEND=noninteractive apt-get upgrade --fix-broken --fix-missing --assume-yes -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
     res_upgrade=$?
     sleep 1
     if [[ $res_update == 0 ]] && [[ $res_upgrade == 0 ]]; then
