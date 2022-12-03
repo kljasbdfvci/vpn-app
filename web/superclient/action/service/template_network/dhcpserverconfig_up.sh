@@ -78,6 +78,11 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --named_config_file)
+            named_config_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
         -*|--*)
             echo "Unknown option $1"
             exit 1
@@ -123,7 +128,7 @@ elif [ $dhcp_module == "isc-dhcp-server" ]; then
         str=$str"        $item;\n"
     done
 
-    cat > $dhcpd_config_file << EOF
+    cat > $named_config_file << EOF
 options {
     directory "/var/cache/bind";
 

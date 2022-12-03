@@ -285,7 +285,7 @@ class Network:
             dns_server = "--dns_server {}".format(self.general.dns) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
             if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "":
                 pass
-            c = Execte("{} {} {} {} {} {} {}".format(\
+            c = Execte("{} {} {} {} {} {} {} {} {}".format(\
                 up_file, dhcp_module,\
                 interface_dhcpd,\
                 dhcpd_config_file, dhcpd_pid_file, dhcpd_log_file, dhcpd_lease_file,\
