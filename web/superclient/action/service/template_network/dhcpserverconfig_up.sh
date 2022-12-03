@@ -53,11 +53,6 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        --interface_dhcpd)
-            interface_dhcpd="$2"
-            shift # past argument
-            shift # past value
-            ;;
         --dhcpd_config_file)
             dhcpd_config_file="$2"
             shift # past argument
@@ -121,9 +116,44 @@ if [ $dhcp_module == "dnsmasq" ]; then
     
 elif [ $dhcp_module == "isc-dhcp-server" ]; then
 
+    list_interface=(`echo $interface | sed 's/,/\n/g'`)
+    list_ip_address=(`echo $ip_address | sed 's/,/\n/g'`)
+    list_subnet_mask=(`echo $subnet_mask | sed 's/,/\n/g'`)
+    list_dhcp_ip_address_from=(`echo $dhcp_ip_address_from | sed 's/,/\n/g'`)
+    list_dhcp_ip_address_to=(`echo $dhcp_ip_address_to | sed 's/,/\n/g'`)
+
+    str_interface=""
+
+    cat > $dhcpd_config_file << EOF
+authoritative;
+EOF
+
+    for i in "${!list_interface[@]}"; do
+        temp_interface=${list_interface[$i]}
+        temp_ip_address=${list_ip_address[$i]}
+        temp_subnet_mask=${list_subnet_mask[$i]}
+        temp_dhcp_ip_address_from=${list_dhcp_ip_address_from[$i]}
+        temp_dhcp_ip_address_to=${list_dhcp_ip_address_to[$i]}
+
+        ifconfig $temp_interface $temp_ip_address netmask $temp_subnet_mask up
+
+        network_range=$(echo -n $temp_ip_address | sed 's/\([[:digit:]]\{1,3\}\(\.[[:digit:]]\{1,3\}\)\{2\}\.\)\([[:digit:]]\{1,3\}\)/\1/g')"0"
+    
+        cat >> $dhcpd_config_file << EOF
+subnet $network_range netmask $temp_subnet_mask {
+  range $temp_dhcp_ip_address_from $temp_dhcp_ip_address_to;
+  option domain-name-servers $temp_ip_address;
+  option routers $temp_ip_address;
+  default-lease-time 3600;
+  max-lease-time 86400;
+}
+EOF
+    str_interface=$str_interface" "$temp_interface
+    done
+
     touch $dhcpd_lease_file
     
-    dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $interface_dhcpd
+    dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $str_interface
 
     str=""
     for item in ${dns_server//,/ } ; do
