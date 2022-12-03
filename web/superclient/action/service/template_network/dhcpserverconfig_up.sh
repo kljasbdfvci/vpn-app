@@ -135,7 +135,7 @@ options {
     directory "/var/cache/bind";
 
     forwarders {
-        $str
+$str
     };
 
     allow-query { any; };
