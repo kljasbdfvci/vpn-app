@@ -113,10 +113,21 @@ accept_mac_file=$hostapd_accept_file
 deny_mac_file=$hostapd_deny_file
 auth_algs=1
 ignore_broadcast_ssid=0
+
+ap_max_inactivity=300
+skip_inactivity_poll=1
+disassoc_low_ack=1
+
+ieee80211n=1
+wme_enabled=1
+wmm_enabled=1
+
+eapol_version=1
 EOF
 
 if [[ $wpa_passphrase != "" ]]; then
     cat >> $hostapd_config_file << EOF
+
 wpa=2
 wpa_passphrase=$wpa_passphrase
 wpa_key_mgmt=WPA-PSK

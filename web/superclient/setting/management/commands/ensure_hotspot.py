@@ -10,5 +10,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if HotspotConfig.objects.count() == 0:
-            s = HotspotConfig(interface = Network_Util().get_first_wlan_interface(), ssid = "Power Freenet", wpa_passphrase = "12345678")
+            s = HotspotConfig(interface = Network_Util().get_first_wlan_interface(), ssid = "Power Freenet")
             s.save()
