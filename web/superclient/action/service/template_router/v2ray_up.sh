@@ -157,7 +157,7 @@ if [ "$exit_code" == 0 ]; then
     for item in $list
     do
         if [[ "$item" == *"rp_filter"* ]]; then
-            sysctl -w $item=2
+            sysctl -w $item=0
         fi
     done
 

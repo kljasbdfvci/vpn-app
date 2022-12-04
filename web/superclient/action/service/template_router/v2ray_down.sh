@@ -88,7 +88,7 @@ list=$(sysctl -a | grep "\.rp_filter")
 for item in $list
 do
 	if [[ "$item" == *"rp_filter"* ]]; then
-		sysctl -w $item=0
+		sysctl -w $item=2
 	fi
 done
 
