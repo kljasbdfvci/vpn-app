@@ -83,10 +83,18 @@ if [[ $mac_address_filter_mode == "disable" ]]; then
 elif [[ $mac_address_filter_mode == "block" ]]; then
     macaddr_acl=0
     touch $hostapd_accept_file
-    echo -e > $hostapd_deny_file
+    str=""
+    for item in ${mac_address_filter_list//,/ } ; do
+        str=$str"$item\n"
+    done
+    echo -e $str > $hostapd_deny_file
 elif [[ $mac_address_filter_mode == "accept" ]]; then
     macaddr_acl=1
-    echo -e > $hostapd_accept_file
+    str=""
+    for item in ${mac_address_filter_list//,/ } ; do
+        str=$str"$item\n"
+    done
+    echo -e $str > $hostapd_accept_file
     touch $hostapd_deny_file
 fi
 

@@ -220,7 +220,7 @@ class Network:
             hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
             hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
             mac_address_filter_mode = "--mac_address_filter_mode '{}'".format(hotspot.mac_address_filter_mode)
-            mac_address_filter_list = "--mac_address_filter_list '{}'".format(hotspot.mac_address_filter_list)
+            mac_address_filter_list = "--mac_address_filter_list '{}'".format(",".join(hotspot.mac_address_filter_list.split()))
             hostapd_accept_file = "--hostapd_accept_file '{}'".format(self.list["hotspotconfig"]["hostapd_accept_file"])
             hostapd_deny_file = "--hostapd_deny_file '{}'".format(self.list["hotspotconfig"]["hostapd_deny_file"])
             log = "--log" if self.general.log else ""
