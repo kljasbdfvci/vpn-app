@@ -87,6 +87,10 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --log)
+            log="yes"
+            shift # past argument
+            ;;
         -*|--*)
             echo "Unknown option $1"
             exit 1
@@ -106,7 +110,11 @@ wpa_passphrase "$ssid" "$wpa_passphrase" | tee $wpa_supplicant_config_file
 
 # wpa_supplicant
 ifconfig $interface up
-wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -f $wpa_supplicant_log_file -i $interface
+if [ $log == "yes" ]; then
+    wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -f $wpa_supplicant_log_file -i $interface
+else
+    wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -i $interface &> /dev/null
+fi
 sleep 10
 
 # dhcp

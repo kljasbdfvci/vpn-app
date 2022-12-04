@@ -78,6 +78,10 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --log)
+            log="yes"
+            shift # past argument
+            ;;
         -*|--*)
             echo "Unknown option $1"
             exit 1
@@ -97,18 +101,26 @@ if [ $dhcp_module == "dnsmasq" ]; then
     ifconfig $interface $ip_address netmask $subnet_mask up
     ip_res=$?
 
-    dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
-    --bind-interfaces --except-interface=lo \
-    --interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,$subnet_mask,24h \
-    --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file
-    dnsmasq_res=$?
+    dnsmasq_res=1
+    if [ $log == "yes" ]; then
+        dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
+        --bind-interfaces --except-interface=lo \
+        --interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,$subnet_mask,24h \
+        --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file
+        dnsmasq_res=$?
+    else
+        dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
+        --bind-interfaces --except-interface=lo \
+        --interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,$subnet_mask,24h \
+        --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file &> /dev/null
+        dnsmasq_res=$?
+    fi
 
     if [[ $ip_res == 0 ]] && [[ $dnsmasq_res == 0 ]]; then
         exit_code=0
     else
         exit_code=1
     fi
-
     
 elif [ $dhcp_module == "isc-dhcp-server" ]; then
 
@@ -149,7 +161,14 @@ EOF
 
     touch $dhcpd_lease_file
     
-    dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $str_interface
+    dhcpd_res=1
+    if [ $log == "yes" ]; then
+        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $str_interface
+        dhcpd_res=$?
+    else
+        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -lf $dhcpd_lease_file $str_interface &> /dev/null
+        dhcpd_res=$?
+    fi
 
     str=""
     for item in ${dns_server//,/ } ; do
@@ -168,7 +187,20 @@ $str
 };
 EOF
 
-named -c $named_config_file
+    named_res=1
+    if [ $log == "yes" ]; then
+        named -c $named_config_file
+        named_res=$?
+    else
+        named -c $named_config_file &> /dev/null
+        named_res=$?
+    fi
+
+    if [[ $dhcpd_res == 0 ]] && [[ $named_res == 0 ]]; then
+        exit_code=0
+    else
+        exit_code=1
+    fi
 
 fi
 

@@ -11,6 +11,7 @@ class General(models.Model):
         _3 = "3", "Handle with socks (only for v2ray)"        
     dns_Mode = models.CharField(max_length=8, choices=DnsMode.choices, default=DnsMode._2)
     dns = models.CharField(max_length=128, default='1.1.1.1,8.8.8.8,208.67.222.222', blank=True)
+    log = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         self.dns = "".join(self.dns.split())

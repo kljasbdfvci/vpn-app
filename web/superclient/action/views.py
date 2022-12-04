@@ -59,7 +59,7 @@ def update(request):
 
     #
     can_update = False
-    if current_app_version != available_app_version:
+    if available_app_version != "" and current_app_version != available_app_version:
         can_update = True
 
     #

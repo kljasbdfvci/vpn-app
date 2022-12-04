@@ -38,6 +38,10 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --log)
+            log="yes"
+            shift # past argument
+            ;;
         -*|--*)
             echo "Unknown option $1"
             exit 1
@@ -69,8 +73,14 @@ config=$config"rsn_pairwise=CCMP\n"
 
 echo -e $config > $hostapd_config_file
 
-hostapd -B $hostapd_config_file -P $hostapd_pid_file -t -d &> $hostapd_log_file
-hostapd_res=$?
+hostapd_res=1
+if [ $log == "yes" ]; then
+    hostapd -B $hostapd_config_file -P $hostapd_pid_file -t -d &> $hostapd_log_file
+    hostapd_res=$?
+else
+    hostapd -B $hostapd_config_file -P $hostapd_pid_file -t -d &> /dev/null
+    hostapd_res=$?
+fi
 
 if [[ $hostapd_res == 0 ]]; then
     exit_code=0

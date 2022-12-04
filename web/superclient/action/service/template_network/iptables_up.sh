@@ -3,6 +3,10 @@
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --log)
+            log="yes"
+            shift # past argument
+            ;;
         -*|--*)
             echo "Unknown option $1"
             exit 1

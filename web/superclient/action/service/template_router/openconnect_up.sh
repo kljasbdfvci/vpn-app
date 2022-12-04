@@ -68,6 +68,10 @@ while [[ $# -gt 0 ]]; do
             no_http_keepalive="yes"
             shift # past argument
             ;;
+        --log)
+            log="yes"
+            shift # past argument
+            ;;
         -*|--*)
             echo "Unknown option $1"
             exit 1
@@ -129,10 +133,17 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
     until [ "$n" -ge $try_count ]
     do
         echo -e "\n\nTry($n)\n\n"
-        timeout $timeout echo $password | \
-        openconnect --reconnect-timeout=30 --background --passwd-on-stdin \
-        $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
-        --protocol=$protocol --interface=$interface --pid-file=$pid_file  $gateway --user=$username  --servercert $servercert &>$log_file
+        if [ $log == "yes" ]; then
+            timeout $timeout echo $password | \
+            openconnect --reconnect-timeout=30 --background --passwd-on-stdin \
+            $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
+            --protocol=$protocol --interface=$interface --pid-file=$pid_file  $gateway --user=$username  --servercert $servercert &> $log_file
+        else
+            timeout $timeout echo $password | \
+            openconnect --reconnect-timeout=30 --background --passwd-on-stdin \
+            $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \
+            --protocol=$protocol --interface=$interface --pid-file=$pid_file  $gateway --user=$username  --servercert $servercert &> /dev/null
+        fi
         exit_code=$?
         if [ $exit_code == 0 ]; then
             break

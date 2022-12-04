@@ -63,6 +63,10 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --log)
+            log="yes"
+            shift # past argument
+            ;;
         -*|--*)
             echo "Unknown option $1"
             exit 1
@@ -77,9 +81,15 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=1
 
-v2ray -config $config &>$log_file &
-pid=$!
-exit_code=$?
+if [ $log == "yes" ]; then
+    v2ray -config $config &> $log_file &
+    pid=$!
+    exit_code=$?
+elif
+    v2ray -config $config &> /dev/null &
+    pid=$!
+    exit_code=$?
+fi
 
 if [ "$exit_code" == 0 ]; then
 
@@ -100,8 +110,13 @@ if [ "$exit_code" == 0 ]; then
     ########################################################################
 
     if [ -n "$dns_server" ] && [ -n "$dns_log" ]; then
-        #
-        DNS2SOCKS $v2ray_inbounds_ip:$v2ray_inbounds_port $dns_server 127.0.0.1:5300 /l:$dns_log &>/dev/null &
+
+        # DNS2SOCKS
+        if [ $log == "yes" ]; then
+            DNS2SOCKS $v2ray_inbounds_ip:$v2ray_inbounds_port $dns_server 127.0.0.1:5300 /l:$dns_log &> /dev/null &
+        else
+            DNS2SOCKS $v2ray_inbounds_ip:$v2ray_inbounds_port $dns_server 127.0.0.1:5300 &> /dev/null &
+        fi
 
         # iptables
         iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
@@ -125,7 +140,13 @@ if [ "$exit_code" == 0 ]; then
     # start badvpn-tun2socks
     ########################################################################
 
-    badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 3 --socks5-udp &>$badvpn_tun2socks_log_file &>/dev/null &
+    if [ $log == "yes" ]; then
+        badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr \
+        $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 3 --socks5-udp &> $badvpn_tun2socks_log_file &> /dev/null &
+    else
+        badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr \
+        $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 3 --socks5-udp &> /dev/null &
+    fi
 
     ########################################################################
     # start iptables
