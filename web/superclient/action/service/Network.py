@@ -251,7 +251,7 @@ class Network:
                 dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"].format(dhcpServer.interface))
                 dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format(dhcpServer.interface))
                 dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format(dhcpServer.interface))
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
+                c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, dhcp_module, interface, ip_address, subnet_mask,\
                     dhcp_ip_address_from, dhcp_ip_address_to,\
                     dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file)
