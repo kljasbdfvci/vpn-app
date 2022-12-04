@@ -87,8 +87,11 @@ class Network:
     def DownLanConfig(self):
         # lanConfig down
         down_file = self.list["lanconfig"]["down_file"]
-        c = Execte("{}".format(\
-            down_file)
+        log = "--log" if self.general.log else ""
+
+        c = Execte("{} {}".format(\
+            down_file,\
+            log)
         )
         c.do()
         c.print()
@@ -109,13 +112,15 @@ class Network:
                 subnet_mask_3 = "--subnet_mask_3 '{}'".format(lan.subnet_mask_3) if lan.subnet_mask_3 != "" else ""
                 ip_address_4 = "--ip_address_4 '{}'".format(lan.ip_address_4) if lan.ip_address_4 != "" else ""
                 subnet_mask_4 = "--subnet_mask_4 '{}'".format(lan.subnet_mask_4) if lan.subnet_mask_4 != "" else ""
+                log = "--log" if self.general.log else ""
 
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface, dhcp, dns_manage_up,
                     ip_address_1, subnet_mask_1,\
                     ip_address_2, subnet_mask_2,\
                     ip_address_3, subnet_mask_3,\
-                    ip_address_4, subnet_mask_4), True
+                    ip_address_4, subnet_mask_4,\
+                    log), True
                 )
                 c.do()
                 c.print()
@@ -130,9 +135,12 @@ class Network:
         wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"])
         wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"])
         wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"])
-        c = Execte("{} {} {} {}".format(\
-            down_file,
-            wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file)
+        log = "--log" if self.general.log else ""
+
+        c = Execte("{} {} {} {} {}".format(\
+            down_file,\
+            wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file,\
+            log)
         )
         c.do()
         c.print()
@@ -160,6 +168,7 @@ class Network:
                 ip_address_4 = "--ip_address_4 '{}'".format(wlan.ip_address_4) if wlan.ip_address_4 != "" else ""
                 subnet_mask_4 = "--subnet_mask_4 '{}'".format(wlan.subnet_mask_4) if wlan.subnet_mask_4 != "" else ""
                 log = "--log" if self.general.log else ""
+
                 c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface, ssid, wpa_passphrase, driver,\
                     wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file,\
@@ -183,9 +192,12 @@ class Network:
         hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
         hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
         hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
-        c = Execte("{} {} {} {}".format(\
+        log = "--log" if self.general.log else ""
+
+        c = Execte("{} {} {} {} {}".format(\
             down_file,\
-            hostapd_config_file, hostapd_pid_file, hostapd_log_file)
+            hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
+            log)
         )
         c.do()
         c.print()
@@ -203,6 +215,7 @@ class Network:
             hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
             hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
             log = "--log" if self.general.log else ""
+
             c = Execte("{} {} {} {} {} {} {} {} {}".format(\
                 up_file, interface, channel, ssid, wpa_passphrase,\
                 hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
@@ -226,11 +239,14 @@ class Network:
         dhcpd_log_file = "--dhcpd_log_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_log_file"])
         dhcpd_lease_file = "--dhcpd_lease_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_lease_file"])
         named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
-        c = Execte("{} {} {} {} {} {} {} {} {}".format(\
+        log = "--log" if self.general.log else ""
+
+        c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
             down_file,
             dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file,\
             dhcpd_config_file, dhcpd_pid_file, dhcpd_log_file, dhcpd_lease_file,\
-            named_config_file)
+            named_config_file,\
+            log)
         )
         c.do()
         c.print()
@@ -256,6 +272,7 @@ class Network:
                 dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format(dhcpServer.interface))
                 dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format(dhcpServer.interface))
                 log = "--log" if self.general.log else ""
+
                 c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, dhcp_module, interface, ip_address, subnet_mask,\
                     dhcp_ip_address_from, dhcp_ip_address_to,\
@@ -287,6 +304,7 @@ class Network:
             named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
             dns_server = "--dns_server {}".format(self.general.dns) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
+
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, dhcp_module,\
                 dhcpd_interface, dhcpd_ip_address, dhcpd_subnet_mask, dhcpd_dhcp_ip_address_from, dhcpd_dhcp_ip_address_to,\
@@ -304,8 +322,11 @@ class Network:
     def DownDns(self):
         # dns down
         down_file = self.list["dns"]["down_file"]
-        c = Execte("{}".format(\
-            down_file)
+        log = "--log" if self.general.log else ""
+
+        c = Execte("{} {}".format(\
+            down_file,\
+            log)
         )
         c.do()
         c.print()
@@ -316,13 +337,14 @@ class Network:
         if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "":
             up_file = self.list["dns"]["up_file"]
             dns_server = "--dns_server '{}'".format(self.general.dns)
-            c = Execte("{} {}".format(\
-                up_file, dns_server)
+            log = "--log" if self.general.log else ""
+
+            c = Execte("{} {} {}".format(\
+                up_file, dns_server,\
+                log)
             )
             c.do()
             c.print()
-            res = c.returncode
-            output = c.getSTD()
 
     def ApplyIptables(self):
         self.DownIptables()
@@ -331,8 +353,11 @@ class Network:
     def DownIptables(self):
         # iptables down
         down_file = self.list["iptables"]["down_file"]
-        c = Execte("{}".format(\
-            down_file)
+        log = "--log" if self.general.log else ""
+
+        c = Execte("{} {}".format(\
+            down_file,\
+            log)
         )
         c.do()
         c.print()
@@ -340,8 +365,11 @@ class Network:
     def UpIptables(self):
         # iptables up
         up_file = self.list["iptables"]["up_file"]
-        c = Execte("{}".format(
-            up_file)
+        log = "--log" if self.general.log else ""
+        
+        c = Execte("{} {}".format(
+            up_file,\
+            log)
         )
         c.do()
         c.print()
