@@ -53,6 +53,9 @@ class HotspotConfigAdminForm(forms.ModelForm):
 
     class Meta:
         model = HotspotConfig
+        widgets = {
+            'mac_address_filter_list': forms.Textarea,
+        }
         fields = '__all__'
 
 

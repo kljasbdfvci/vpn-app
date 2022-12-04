@@ -18,6 +18,16 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --hostapd_accept_file)
+            hostapd_accept_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --hostapd_deny_file)
+            hostapd_deny_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --log)
             log="yes"
             shift # past argument
@@ -45,5 +55,7 @@ fi
 rm $hostapd_config_file
 rm $hostapd_pid_file
 rm $hostapd_log_file
+rm $hostapd_accept_file
+rm $hostapd_deny_file
 
 exit $exit_code

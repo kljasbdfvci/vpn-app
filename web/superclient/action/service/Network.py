@@ -26,6 +26,8 @@ class Network:
                 "hostapd_config_file" : "/tmp/hostapd.conf",
                 "hostapd_pid_file" : "/tmp/hostapd.pid",
                 "hostapd_log_file" : "/tmp/hostapd.log",
+                "hostapd_accept_file" : "/tmp/hostapd.accept",
+                "hostapd_deny_file" : "/tmp/hostapd.deny",
             },
             "dhcpserverconfig": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/dhcpserverconfig_up.sh",
@@ -192,11 +194,14 @@ class Network:
         hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
         hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
         hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
+        hostapd_accept_file = "--hostapd_accept_file '{}'".format(self.list["hotspotconfig"]["hostapd_accept_file"])
+        hostapd_deny_file = "--hostapd_deny_file '{}'".format(self.list["hotspotconfig"]["hostapd_deny_file"])
         log = "--log" if self.general.log else ""
 
-        c = Execte("{} {} {} {} {}".format(\
+        c = Execte("{} {} {} {} {} {} {}".format(\
             down_file,\
             hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
+            hostapd_accept_file, hostapd_deny_file,\
             log)
         )
         c.do()
@@ -209,16 +214,21 @@ class Network:
             up_file = self.list["hotspotconfig"]["up_file"]
             interface = "--interface '{}'".format(hotspot.interface)
             channel = "--channel '{}'".format(hotspot.channel)
-            ssid = "--ssid '{}'".format(hotspot.ssid)
+            ssid = "--ssid '{}'".format(hotspot.ssid) if hotspot.ssid != "" else ""
             wpa_passphrase = "--wpa_passphrase '{}'".format(hotspot.wpa_passphrase)
             hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
             hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
             hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
+            mac_address_filter_mode = "--mac_address_filter_mode '{}'".format(hotspot.mac_address_filter_mode)
+            mac_address_filter_list = "--mac_address_filter_list '{}'".format(hotspot.mac_address_filter_list)
+            hostapd_accept_file = "--hostapd_accept_file '{}'".format(self.list["hotspotconfig"]["hostapd_accept_file"])
+            hostapd_deny_file = "--hostapd_deny_file '{}'".format(self.list["hotspotconfig"]["hostapd_deny_file"])
             log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {} {} {} {} {} {} {}".format(\
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, interface, channel, ssid, wpa_passphrase,\
                 hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
+                mac_address_filter_mode, mac_address_filter_list, hostapd_accept_file, hostapd_deny_file,\
                 log)
             )
             c.do()

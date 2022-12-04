@@ -78,7 +78,7 @@ def HotspotConfig_validate_interface(value):
 class HotspotConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[HotspotConfig_validate_interface])
     ssid = models.CharField(max_length=128)
-    wpa_passphrase = models.CharField(max_length=128)
+    wpa_passphrase = models.CharField(max_length=128, blank=True)
     class Channel(models.TextChoices):
         _1 = "1", "1"
         _2 = "2", "2"
@@ -95,6 +95,13 @@ class HotspotConfig(models.Model):
         _13 = "13", "13"
         _14 = "14", "14"
     channel = models.CharField(max_length=8, choices=Channel.choices, default=Channel._6)
+    class MAC_Address_Filter_Mode(models.TextChoices):
+        disable = "disable", "Disable"
+        block = "block", "Block"
+        allow = "accept", "Allow"
+    mac_address_filter_mode = models.CharField(max_length=32, choices=MAC_Address_Filter_Mode.choices, default=MAC_Address_Filter_Mode.disable)
+    mac_address_filter_list = models.CharField(max_length=4098, blank=True)
+    
 
 def DhcpServerConfig_validate_interface(value):
     if LanConfig.objects.filter(interface = value).count() != 0:
