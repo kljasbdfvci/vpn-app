@@ -85,7 +85,7 @@ if [[ $log == "yes" ]]; then
     v2ray -config $config &> $log_file &
     pid=$!
     exit_code=$?
-elif
+else
     v2ray -config $config &> /dev/null &
     pid=$!
     exit_code=$?
