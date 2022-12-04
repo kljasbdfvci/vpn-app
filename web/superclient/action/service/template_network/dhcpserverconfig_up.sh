@@ -102,7 +102,7 @@ if [ $dhcp_module == "dnsmasq" ]; then
     ip_res=$?
 
     dnsmasq_res=1
-    if [ $log == "yes" ]; then
+    if [[ $log == "yes" ]]; then
         dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
         --bind-interfaces --except-interface=lo \
         --interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,$subnet_mask,24h \
@@ -162,7 +162,7 @@ EOF
     touch $dhcpd_lease_file
     
     dhcpd_res=1
-    if [ $log == "yes" ]; then
+    if [[ $log == "yes" ]]; then
         dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $str_interface
         dhcpd_res=$?
     else
@@ -188,7 +188,7 @@ $str
 EOF
 
     named_res=1
-    if [ $log == "yes" ]; then
+    if [[ $log == "yes" ]]; then
         named -c $named_config_file
         named_res=$?
     else

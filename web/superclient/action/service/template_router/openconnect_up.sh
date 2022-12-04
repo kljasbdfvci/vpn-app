@@ -133,7 +133,7 @@ if [ $res1 == 0 ] && [ $res2 == 0 ]; then
     until [ "$n" -ge $try_count ]
     do
         echo -e "\n\nTry($n)\n\n"
-        if [ $log == "yes" ]; then
+        if [[ $log == "yes" ]]; then
             timeout $timeout echo $password | \
             openconnect --reconnect-timeout=30 --background --passwd-on-stdin \
             $no_dtls $passtos $no_deflate $deflate $no_http_keepalive \

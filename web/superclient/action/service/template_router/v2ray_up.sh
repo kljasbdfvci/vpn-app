@@ -81,7 +81,7 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=1
 
-if [ $log == "yes" ]; then
+if [[ $log == "yes" ]]; then
     v2ray -config $config &> $log_file &
     pid=$!
     exit_code=$?
@@ -112,7 +112,7 @@ if [ "$exit_code" == 0 ]; then
     if [ -n "$dns_server" ] && [ -n "$dns_log" ]; then
 
         # DNS2SOCKS
-        if [ $log == "yes" ]; then
+        if [[ $log == "yes" ]]; then
             DNS2SOCKS $v2ray_inbounds_ip:$v2ray_inbounds_port $dns_server 127.0.0.1:5300 /l:$dns_log &> /dev/null &
         else
             DNS2SOCKS $v2ray_inbounds_ip:$v2ray_inbounds_port $dns_server 127.0.0.1:5300 &> /dev/null &
@@ -140,7 +140,7 @@ if [ "$exit_code" == 0 ]; then
     # start badvpn-tun2socks
     ########################################################################
 
-    if [ $log == "yes" ]; then
+    if [[ $log == "yes" ]]; then
         badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr \
         $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 3 --socks5-udp &> $badvpn_tun2socks_log_file &> /dev/null &
     else

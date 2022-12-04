@@ -110,7 +110,7 @@ wpa_passphrase "$ssid" "$wpa_passphrase" | tee $wpa_supplicant_config_file
 
 # wpa_supplicant
 ifconfig $interface up
-if [ $log == "yes" ]; then
+if [[ $log == "yes" ]]; then
     wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -f $wpa_supplicant_log_file -i $interface
 else
     wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -i $interface &> /dev/null
@@ -119,7 +119,7 @@ sleep 10
 
 # dhcp
 dhcp_res=0
-if [ $dhcp == "yes" ]; then
+if [[ $dhcp == "yes" ]]; then
     ifconfig $interface up
     n=0
     try=2

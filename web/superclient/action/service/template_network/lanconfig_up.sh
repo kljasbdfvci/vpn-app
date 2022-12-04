@@ -77,7 +77,7 @@ exit_code=0
 
 # dhcp
 dhcp_res=0
-if [ $dhcp == "yes" ]; then
+if [[ $dhcp == "yes" ]]; then
     ifconfig $interface up
     n=0
     try=2

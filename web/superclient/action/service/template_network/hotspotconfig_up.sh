@@ -74,7 +74,7 @@ config=$config"rsn_pairwise=CCMP\n"
 echo -e $config > $hostapd_config_file
 
 hostapd_res=1
-if [ $log == "yes" ]; then
+if [[ $log == "yes" ]]; then
     hostapd -B $hostapd_config_file -P $hostapd_pid_file -t -d &> $hostapd_log_file
     hostapd_res=$?
 else
