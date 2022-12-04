@@ -248,34 +248,27 @@ class Network:
                 subnet_mask = "--subnet_mask '{}'".format(dhcpServer.subnet_mask)
                 dhcp_ip_address_from = "--dhcp_ip_address_from '{}'".format(dhcpServer.dhcp_ip_address_from)
                 dhcp_ip_address_to = "--dhcp_ip_address_to '{}'".format(dhcpServer.dhcp_ip_address_to)
-                dns_server = ""
-                #if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "":
-                #    dns_list = self.general.dns.split(",")
-                #    for i in range(len(dns_list)):
-                #        dns_list[i] = "/#/" + dns_list[i]
-                #    dns_server = "--dns_server '{}'".format(",".join(dns_list))
                 dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"].format(dhcpServer.interface))
                 dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format(dhcpServer.interface))
                 dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format(dhcpServer.interface))
                 c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, dhcp_module, interface, ip_address, subnet_mask,\
                     dhcp_ip_address_from, dhcp_ip_address_to,\
-                    dns_server,\
                     dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file)
                 )
                 c.do()
                 c.print()
             elif Network_Util().is_interface(dhcpServer.interface) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dhcpd:
                 dhcpd_flag = 1
-                dhcpd_interface = dhcpd_interface + "," + dhcpServer.interface
-                dhcpd_ip_address = dhcpd_ip_address + "," + dhcpServer.ip_address
-                dhcpd_subnet_mask = dhcpd_subnet_mask + "," + dhcpServer.subnet_mask
-                dhcpd_dhcp_ip_address_from = dhcpd_dhcp_ip_address_from + "," + dhcpServer.dhcp_ip_address_from
-                dhcpd_dhcp_ip_address_to = dhcpd_dhcp_ip_address_to + "," + dhcpServer.dhcp_ip_address_to
+                dhcpd_interface = dhcpd_interface + "," + dhcpServer.interface if dhcpd_interface != "" else dhcpServer.interface
+                dhcpd_ip_address = dhcpd_ip_address + "," + dhcpServer.ip_address if dhcpd_ip_address != "" else dhcpServer.ip_address
+                dhcpd_subnet_mask = dhcpd_subnet_mask + "," + dhcpServer.subnet_mask if dhcpd_subnet_mask != "" else dhcpServer.subnet_mask
+                dhcpd_dhcp_ip_address_from = dhcpd_dhcp_ip_address_from + "," + dhcpServer.dhcp_ip_address_from if dhcpd_dhcp_ip_address_from != "" else dhcpServer.dhcp_ip_address_from
+                dhcpd_dhcp_ip_address_to = dhcpd_dhcp_ip_address_to + "," + dhcpServer.dhcp_ip_address_to if dhcpd_dhcp_ip_address_to != "" else dhcpServer.dhcp_ip_address_to
 
         if dhcpd_flag == 1:
             up_file = self.list["dhcpserverconfig"]["up_file"]
-            dhcp_module = "--dhcp_module '{}'".format("isc-dhcp-server")
+            dhcp_module = "--dhcp_module '{}'".format(DhcpServerConfig.DhcpModule.dhcpd)
             dhcpd_interface = "--interface '{}'".format(dhcpd_interface)
             dhcpd_ip_address = "--ip_address '{}'".format(dhcpd_ip_address)
             dhcpd_subnet_mask = "--subnet_mask '{}'".format(dhcpd_subnet_mask)
