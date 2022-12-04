@@ -78,12 +78,16 @@ exit_code=0
 
 if [[ $mac_address_filter_mode == "disable" ]]; then
     macaddr_acl=0
+    touch $hostapd_accept_file
+    touch $hostapd_deny_file
 elif [[ $mac_address_filter_mode == "block" ]]; then
     macaddr_acl=0
+    touch $hostapd_accept_file
     echo -e > $hostapd_deny_file
 elif [[ $mac_address_filter_mode == "accept" ]]; then
     macaddr_acl=1
     echo -e > $hostapd_accept_file
+    touch $hostapd_deny_file
 fi
 
 
@@ -91,7 +95,7 @@ cat > $hostapd_config_file << EOF
 interface=$interface
 driver=nl80211
 
-ssid2=$ssid
+ssid2="$ssid"
 utf8_ssid=1
 hw_mode=g
 channel=$channel
