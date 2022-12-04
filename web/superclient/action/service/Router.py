@@ -38,16 +38,16 @@ class Router:
             openconnect = self.vpn.subclass
 
             up_file = self.VpnList["openconnect"]["up_file"]
-            pid_file = "--pid_file {}".format(self.VpnList["openconnect"]["pid_file"])
-            log_file = "--log_file {}".format(self.VpnList["openconnect"]["log_file"])
-            timeout = "--timeout {}".format(timeout_arg)
-            try_count = "--try_count {}".format(try_count_arg)
+            pid_file = "--pid_file '{}'".format(self.VpnList["openconnect"]["pid_file"])
+            log_file = "--log_file '{}'".format(self.VpnList["openconnect"]["log_file"])
+            timeout = "--timeout '{}'".format(timeout_arg)
+            try_count = "--try_count '{}'".format(try_count_arg)
 
-            protocol = "--protocol {}".format(openconnect.protocol)
-            gateway = "--gateway {}".format(openconnect.host + ":" + str(openconnect.port))
-            username = "--username {}".format(openconnect.username)
-            password = "--password {}".format(openconnect.password)
-            interface = "--interface {}".format(self.VpnList["openconnect"]["interface"])
+            protocol = "--protocol '{}'".format(openconnect.protocol)
+            gateway = "--gateway '{}'".format(openconnect.host + ":" + str(openconnect.port))
+            username = "--username '{}'".format(openconnect.username)
+            password = "--password '{}'".format(openconnect.password)
+            interface = "--interface '{}'".format(self.VpnList["openconnect"]["interface"])
             no_dtls = "--no_dtls" if openconnect.no_dtls else ""
             passtos = "--passtos" if openconnect.passtos else ""
             no_deflate = "--no_deflate" if openconnect.no_deflate else ""
@@ -69,10 +69,10 @@ class Router:
             v2ray = self.vpn.subclass
             
             up_file = self.VpnList["v2ray"]["up_file"]
-            pid_file = "--pid_file {}".format(self.VpnList["v2ray"]["pid_file"])
-            log_file = "--log_file {}".format(self.VpnList["v2ray"]["log_file"])
-            timeout = "--timeout {}".format(timeout_arg)
-            try_count = "--try_count {}".format(try_count_arg)
+            pid_file = "--pid_file '{}'".format(self.VpnList["v2ray"]["pid_file"])
+            log_file = "--log_file '{}'".format(self.VpnList["v2ray"]["log_file"])
+            timeout = "--timeout '{}'".format(timeout_arg)
+            try_count = "--try_count '{}'".format(try_count_arg)
 
             # write config file
             config_file = self.VpnList["v2ray"]["config_file"]
@@ -81,16 +81,16 @@ class Router:
             f.write(config_json)
             f.close()
             #
-            config = "--config {}".format(config_file)
+            config = "--config '{}'".format(config_file)
             
-            vpn_interface = "--vpn_interface {}".format(self.VpnList["v2ray"]["interface"])
+            vpn_interface = "--vpn_interface '{}'".format(self.VpnList["v2ray"]["interface"])
             config_json = v2ray.config_json
             js = json.loads(config_json)
-            v2ray_inbounds_port = "--v2ray_inbounds_port {}".format(js["inbounds"][0]["port"])
-            v2ray_outbounds_ip = "--v2ray_outbounds_ip {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
-            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
-            dns_server = "--dns_server {}".format(self.general.dns.split(",")[0]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
-            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
+            v2ray_inbounds_port = "--v2ray_inbounds_port '{}'".format(js["inbounds"][0]["port"])
+            v2ray_outbounds_ip = "--v2ray_outbounds_ip '{}'".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
+            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
+            dns_server = "--dns_server '{}'".format(self.general.dns.split(",")[0]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
+            dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
@@ -117,8 +117,8 @@ class Router:
             openconnect = self.vpn.subclass
 
             down_file = self.VpnList["openconnect"]["down_file"]
-            pid_file = "--pid_file {}".format(self.VpnList["openconnect"]["pid_file"])
-            log_file = "--log_file {}".format(self.VpnList["openconnect"]["log_file"])
+            pid_file = "--pid_file '{}'".format(self.VpnList["openconnect"]["pid_file"])
+            log_file = "--log_file '{}'".format(self.VpnList["openconnect"]["log_file"])
             log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {} {}".format(down_file, pid_file, log_file, log))
@@ -131,14 +131,14 @@ class Router:
             v2ray = self.vpn.subclass
 
             down_file = self.VpnList["v2ray"]["down_file"]
-            pid_file = "--pid_file {}".format(self.VpnList["v2ray"]["pid_file"])
-            log_file = "--log_file {}".format(self.VpnList["v2ray"]["log_file"])
-            vpn_interface = "--vpn_interface {}".format(self.VpnList["v2ray"]["interface"])
+            pid_file = "--pid_file '{}'".format(self.VpnList["v2ray"]["pid_file"])
+            log_file = "--log_file '{}'".format(self.VpnList["v2ray"]["log_file"])
+            vpn_interface = "--vpn_interface '{}'".format(self.VpnList["v2ray"]["interface"])
             config_json = v2ray.config_json
             js = json.loads(config_json)
-            v2ray_outbounds_ip = "--v2ray_outbounds_ip {}".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
-            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file {}".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
-            dns_log = "--dns_log {}".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
+            v2ray_outbounds_ip = "--v2ray_outbounds_ip '{}'".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
+            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
+            dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {} {} {} {} {} {}".format(down_file, pid_file, log_file, vpn_interface, v2ray_outbounds_ip, badvpn_tun2socks_log_file, dns_log, log))
