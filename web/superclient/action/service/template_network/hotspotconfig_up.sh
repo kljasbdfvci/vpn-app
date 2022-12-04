@@ -103,7 +103,7 @@ auth_algs=1
 ignore_broadcast_ssid=0
 EOF
 
-if [[ $wpa_passphrase == "" ]]; then
+if [[ $wpa_passphrase != "" ]]; then
     cat >> $hostapd_config_file << EOF
 wpa=2
 wpa_passphrase=$wpa_passphrase
