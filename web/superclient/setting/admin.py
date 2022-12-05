@@ -16,7 +16,7 @@ class GeneralAdminForm(forms.ModelForm):
 @admin.register(General)
 class GeneralAdmin(admin.ModelAdmin):
     form = GeneralAdminForm
-    list_display = ('dns_Mode', 'dns', 'log', 'subnet_mask_1')
+    list_display = ('dns_Mode', 'dns', 'log')
 
     def has_add_permission(self, request):
         base_add_permission = super(GeneralAdmin, self).has_add_permission(request)
