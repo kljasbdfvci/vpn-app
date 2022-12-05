@@ -2,6 +2,7 @@ from django.contrib import admin
 from django import forms
 from .models import *
 from ..action.service.Network_Util import *
+from .service.country_code import *
 
 @admin.register(General)
 class GeneralAdmin(admin.ModelAdmin):
@@ -50,6 +51,7 @@ class WLanConfigAdmin(admin.ModelAdmin):
 
 class HotspotConfigAdminForm(forms.ModelForm):
     interface = forms.ChoiceField(choices=tuple((key, key) for key in Network_Util().get_wlan_interfaces()))
+    country_code = forms.ChoiceField(choices=tuple((key ,country_code()[key]) for key in country_code()))
 
     class Meta:
         model = HotspotConfig

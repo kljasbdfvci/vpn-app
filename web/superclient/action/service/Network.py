@@ -213,9 +213,10 @@ class Network:
         if hotspot != None and Network_Util().is_wlan_interface(hotspot.interface):
             up_file = self.list["hotspotconfig"]["up_file"]
             interface = "--interface '{}'".format(hotspot.interface)
-            channel = "--channel '{}'".format(hotspot.channel)
             ssid = "--ssid '{}'".format(hotspot.ssid) if hotspot.ssid != "" else ""
             wpa_passphrase = "--wpa_passphrase '{}'".format(hotspot.wpa_passphrase)
+            channel = "--channel '{}'".format(hotspot.channel)
+            country_code = "--country_code '{}'".format(hotspot.country_code)
             hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
             hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
             hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
@@ -225,8 +226,8 @@ class Network:
             hostapd_deny_file = "--hostapd_deny_file '{}'".format(self.list["hotspotconfig"]["hostapd_deny_file"])
             log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
-                up_file, interface, channel, ssid, wpa_passphrase,\
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                up_file, interface, ssid, wpa_passphrase, channel, country_code,\
                 hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
                 mac_address_filter_mode, mac_address_filter_list, hostapd_accept_file, hostapd_deny_file,\
                 log)

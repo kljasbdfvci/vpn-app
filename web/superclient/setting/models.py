@@ -95,6 +95,7 @@ class HotspotConfig(models.Model):
         _13 = "13", "13"
         _14 = "14", "14"
     channel = models.CharField(max_length=8, choices=Channel.choices, default=Channel._6)
+    country_code = models.CharField(max_length=8, default="IR")
     class MAC_Address_Filter_Mode(models.TextChoices):
         disable = "disable", "Disable"
         block = "block", "Block"

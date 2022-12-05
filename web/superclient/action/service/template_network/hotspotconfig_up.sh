@@ -8,11 +8,6 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        -c|--channel)
-            channel="$2"
-            shift # past argument
-            shift # past value
-            ;;
         -s|--ssid)
             ssid="$2"
             shift # past argument
@@ -20,6 +15,16 @@ while [[ $# -gt 0 ]]; do
             ;;
         -p|--wpa_passphrase)
             wpa_passphrase="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -c|--channel)
+            channel="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -cc|--country_code)
+            country_code="$2"
             shift # past argument
             shift # past value
             ;;
@@ -105,7 +110,7 @@ driver=nl80211
 
 ssid2="$ssid"
 utf8_ssid=1
-country_code=IR
+country_code=$country_code
 hw_mode=g
 channel=$channel
 
