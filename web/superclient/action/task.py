@@ -45,7 +45,7 @@ def start_services(status: ServiceStatus):
     if not get_active_router():
         start_vpn_service(status)
     elif get_active_router() and not get_active_router().is_running():
-        start_vpn_service(status)
+        stop_vpn_service(status)
         start_vpn_service(status)
     else: logging.info('[NO-CHANGE] vpn service already started...')
 
