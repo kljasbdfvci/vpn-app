@@ -35,7 +35,7 @@ class Router:
     def ConnectVPN(self, timeout_arg, try_count_arg):
         res = -1
         output = ""
-        if isinstance(self.vpn.subclass, OpenconnectConfig):
+        if isinstance(self.vpn.subclass, OpenconnectConfig) and not self.is_running():
             openconnect = self.vpn.subclass
 
             up_file = self.VpnList["openconnect"]["up_file"]
@@ -66,7 +66,7 @@ class Router:
             res = c.returncode
             output = c.getSTD()
 
-        elif isinstance(self.vpn.subclass, V2rayConfig):
+        elif isinstance(self.vpn.subclass, V2rayConfig) and not self.is_running():
             v2ray = self.vpn.subclass
             
             up_file = self.VpnList["v2ray"]["up_file"]
