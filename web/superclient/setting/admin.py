@@ -4,8 +4,20 @@ from .models import *
 from ..action.service.Network_Util import *
 from .service.country_code import *
 
+class GeneralAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = General
+        widgets = {
+            'check_vpn_curl_domain_list': forms.Textarea,
+        }
+        fields = '__all__'
+
 @admin.register(General)
 class GeneralAdmin(admin.ModelAdmin):
+    form = GeneralAdminForm
+    list_display = ('dns_Mode', 'dns', 'log', 'subnet_mask_1')
+
     def has_add_permission(self, request):
         base_add_permission = super(GeneralAdmin, self).has_add_permission(request)
         if base_add_permission:
