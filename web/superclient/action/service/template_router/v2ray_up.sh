@@ -104,6 +104,13 @@ if [ "$exit_code" == 0 ]; then
 
     default_gateway=$(route -n | grep 'UG' | awk {'print $2'} | head -n 1 | tr -d '\n')
     v2ray_inbounds_ip="127.0.0.1"
+    _v2ray_outbounds_ip=""
+    if [[ $v2ray_outbounds_ip =~ $reg ]]; then
+        _v2ray_outbounds_ip=$v2ray_outbounds_ip
+    else
+        echo "hi"
+        _v2ray_outbounds_ip=$(dig +short $v2ray_outbounds_ip)
+    fi
 
     ########################################################################
     # start dns
@@ -132,15 +139,7 @@ if [ "$exit_code" == 0 ]; then
     ip link set dev $vpn_interface up
 
     route add -net 0.0.0.0 netmask 0.0.0.0 dev $vpn_interface
-
-    ip=""
-    reg="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
-    if [[ $v2ray_outbounds_ip =~ $reg ]]; then
-        ip=$v2ray_outbounds_ip
-    else
-        ip=$(dig +short $v2ray_outbounds_ip)
-    fi
-    ip route add $ip via $default_gateway
+    ip route add $_v2ray_outbounds_ip via $default_gateway
 
     sleep 1
 
