@@ -105,6 +105,7 @@ driver=nl80211
 
 ssid2="$ssid"
 utf8_ssid=1
+country_code=IR
 hw_mode=g
 channel=$channel
 
@@ -116,13 +117,13 @@ ignore_broadcast_ssid=0
 
 ap_max_inactivity=300
 skip_inactivity_poll=1
-disassoc_low_ack=1
+disassoc_low_ack=0
 
-ieee80211n=1
-wme_enabled=1
-wmm_enabled=1
+#ieee80211n=1
+#wme_enabled=1
+#wmm_enabled=1
 
-eapol_version=1
+#eapol_version=1
 EOF
 
 if [[ $wpa_passphrase != "" ]]; then

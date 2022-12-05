@@ -154,10 +154,15 @@ class Router:
 
         pid = self.read_pid_file()
         if pid != 0:
-            c = Execte("kill -0 {}".format(pid))
-            c.do()
-            c.print()
-            if c.isSuccess:
+            c1 = Execte("kill -0 {}".format(pid))
+            c1.do()
+            c1.print()
+
+            c2 = Execte("curl 'https://api.ipify.org?format=json' --connect-timeout 5 --retry 3 --retry-delay 1")
+            c2.do()
+            c2.print()
+
+            if c1.isSuccess and c2.isSuccess:
                 res = True
 
         return res
