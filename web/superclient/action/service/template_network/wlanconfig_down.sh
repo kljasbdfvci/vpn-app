@@ -48,9 +48,15 @@ if pgrep -f 'wpa_supplicant'; then
     sleep 1
 fi
 
-rm $wpa_supplicant_config_file
-rm $wpa_supplicant_pid_file
-rm $wpa_supplicant_log_file
+if [ -f $wpa_supplicant_config_file ]; then
+    rm $wpa_supplicant_config_file
+fi
+if [ -f $wpa_supplicant_pid_file ]; then
+    rm $wpa_supplicant_pid_file
+fi
+if [ -f $wpa_supplicant_log_file ]; then
+    rm $wpa_supplicant_log_file
+fi
 
 for dev in $($this_dir_path/interface_list.sh wlan); do
     ifconfig $dev down

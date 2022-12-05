@@ -81,7 +81,14 @@ if [ -n "$(ip link show | grep $vpn_interface)" ]; then
     ifconfig $vpn_interface down &>/dev/null
     ip link set $vpn_interface down &>/dev/null
     ip link delete $vpn_interface &>/dev/null
-    ip route del $v2ray_outbounds_ip &>/dev/null
+    ip=""
+    reg="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+    if [[ $v2ray_outbounds_ip =~ $reg ]]; then
+        ip=$v2ray_outbounds_ip
+    else
+        ip=$(dig +short $v2ray_outbounds_ip)
+    fi
+    ip route del $ip &>/dev/null
 fi
 
 list=$(sysctl -a | grep "\.rp_filter")

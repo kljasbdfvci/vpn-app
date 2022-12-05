@@ -67,19 +67,33 @@ if pgrep -f 'dnsmasq'; then
     sleep 1
 fi
 
-rm $dnsmasq_pid_file
-rm $dnsmasq_log_file
-rm $dnsmasq_lease_file
+if [ -f $dnsmasq_pid_file ]; then
+    rm $dnsmasq_pid_file
+fi
+if [ -f $dnsmasq_log_file ]; then
+    rm $dnsmasq_log_file
+fi
+if [ -f $dnsmasq_lease_file ]; then
+    rm $dnsmasq_lease_file
+fi
 
 if pgrep -f 'dhcpd'; then
     killall 'dhcpd' &>/dev/null
     sleep 1
 fi
 
-rm $dhcpd_config_file
-rm $dhcpd_pid_file
-rm $dhcpd_log_file
-rm $dhcpd_lease_file
+if [ -f "$dhcpd_config_file" ]; then
+    rm $dhcpd_config_file
+fi
+if [ -f "$dhcpd_pid_file" ]; then
+    rm $dhcpd_pid_file
+fi
+if [ -f "$dhcpd_log_file" ]; then
+    rm $dhcpd_log_file
+fi
+if [ -f "$dhcpd_lease_file" ]; then
+    rm $dhcpd_lease_file
+fi
 
 if pgrep -f 'named'; then
     killall 'named' &>/dev/null

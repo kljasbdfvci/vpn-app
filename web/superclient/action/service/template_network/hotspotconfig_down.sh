@@ -52,10 +52,20 @@ if pgrep -f 'hostapd'; then
     sleep 1
 fi
 
-rm $hostapd_config_file
-rm $hostapd_pid_file
-rm $hostapd_log_file
-rm $hostapd_accept_file
-rm $hostapd_deny_file
+if [ -f "$hostapd_config_file" ]; then
+    rm $hostapd_config_file
+fi
+if [ -f "$hostapd_pid_file" ]; then
+    rm $hostapd_pid_file
+fi
+if [ -f "$hostapd_log_file" ]; then
+    rm $hostapd_log_file
+fi
+if [ -f "$hostapd_accept_file" ]; then
+    rm $hostapd_accept_file
+fi
+if [ -f "$hostapd_deny_file" ]; then
+    rm $hostapd_deny_file
+fi
 
 exit $exit_code

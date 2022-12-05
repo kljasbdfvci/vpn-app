@@ -16,9 +16,9 @@ class Network:
             "wlanconfig": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/wlanconfig_up.sh",
                 "down_file" : Path(__file__).resolve().parent / "template_network/wlanconfig_down.sh",
-                "wpa_supplicant_config_file" : "/tmp/wpa_supplicant.conf",
-                "wpa_supplicant_pid_file" : "/tmp/wpa_supplicant.pid",
-                "wpa_supplicant_log_file" : "/tmp/wpa_supplicant.log",
+                "wpa_supplicant_config_file" : "/tmp/wpa_supplicant_{}.conf",
+                "wpa_supplicant_pid_file" : "/tmp/wpa_supplicant_{}.pid",
+                "wpa_supplicant_log_file" : "/tmp/wpa_supplicant_{}.log",
             },
             "hotspotconfig": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/hotspotconfig_up.sh",
@@ -134,9 +134,9 @@ class Network:
     def DownWlanConfig(self):
         # wlanConfig down
         down_file = self.list["wlanconfig"]["down_file"]
-        wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"])
-        wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"])
-        wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"])
+        wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"].format("*"))
+        wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"].format("*"))
+        wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"].format("*"))
         log = "--log" if self.general.log else ""
 
         c = Execte("{} {} {} {} {}".format(\
@@ -156,9 +156,9 @@ class Network:
                 ssid = "--ssid '{}'".format(wlan.ssid)
                 wpa_passphrase = "--wpa_passphrase '{}'".format(wlan.wpa_passphrase)
                 driver = "--driver '{}'".format(wlan.driver)
-                wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"])
-                wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"])
-                wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"])
+                wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"].format(wlan.interface))
+                wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"].format(wlan.interface))
+                wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"].format(wlan.interface))
                 dhcp = "--dhcp" if wlan.dhcp else ""
                 dns_manage_up = "--dns_manage_up '{}'".format(self.list["dns"]["manage_up"])
                 ip_address_1 = "--ip_address_1 '{}'".format(wlan.ip_address_1) if wlan.ip_address_1 != "" else ""

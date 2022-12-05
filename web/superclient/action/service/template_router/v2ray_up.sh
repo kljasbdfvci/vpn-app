@@ -132,7 +132,15 @@ if [ "$exit_code" == 0 ]; then
     ip link set dev $vpn_interface up
 
     route add -net 0.0.0.0 netmask 0.0.0.0 dev $vpn_interface
-    ip route add $v2ray_outbounds_ip via $default_gateway
+
+    ip=""
+    reg="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+    if [[ $v2ray_outbounds_ip =~ $reg ]]; then
+        ip=$v2ray_outbounds_ip
+    else
+        ip=$(dig +short $v2ray_outbounds_ip)
+    fi
+    ip route add $ip via $default_gateway
 
     sleep 1
 
