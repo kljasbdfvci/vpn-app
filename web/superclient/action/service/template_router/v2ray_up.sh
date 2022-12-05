@@ -109,8 +109,8 @@ if [ "$exit_code" == 0 ]; then
     if [[ $v2ray_outbounds_ip =~ $reg ]]; then
         _v2ray_outbounds_ip=$v2ray_outbounds_ip
     else
-        echo "hi"
         _v2ray_outbounds_ip=$(dig +short $v2ray_outbounds_ip)
+        echo $v2ray_inbounds_ip" "$_v2ray_outbounds_ip >> /etc/hosts
     fi
 
     ########################################################################

@@ -81,14 +81,13 @@ if [ -n "$(ip link show | grep $vpn_interface)" ]; then
     ifconfig $vpn_interface down &>/dev/null
     ip link set $vpn_interface down &>/dev/null
     ip link delete $vpn_interface &>/dev/null
-    ip=""
-    reg="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
-    if [[ $v2ray_outbounds_ip =~ $reg ]]; then
-        ip=$v2ray_outbounds_ip
+    _v2ray_outbounds_ip=$(cat /etc/hosts | grep $v2ray_outbounds_ip | awk '{print $1}')
+    if [[ $_v2ray_outbounds_ip == "" ]]; then
+        ip route del $v2ray_inbounds_ip &>/dev/null
     else
-        ip=$(dig +short $v2ray_outbounds_ip)
+        ip route del $_v2ray_outbounds_ip &>/dev/null
+        sed -i "/$v2ray_outbounds_ip/d" /etc/hosts
     fi
-    ip route del $ip &>/dev/null
 fi
 
 list=$(sysctl -a | grep "\.rp_filter")
