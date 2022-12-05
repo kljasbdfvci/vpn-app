@@ -168,8 +168,8 @@ class Router:
                         _domain = "--domain '{}'".format(domain)
                         timeout = "--timeout '{}'".format(self.general.check_vpn_curl_timeout)
                         retry = "--retry '{}'".format(self.general.check_vpn_curl_retry)
-                        c = Execte("check_vpn_curl {} {} {}".format(
-                            _domain, timeout, retry)
+                        c = Execte("{} {} {} {}".format(
+                            check_vpn_curl, _domain, timeout, retry)
                         )
                         c.do()
                         c.print()
