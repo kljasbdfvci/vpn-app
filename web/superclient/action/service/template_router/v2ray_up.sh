@@ -112,7 +112,7 @@ if [ "$exit_code" == 0 ]; then
     else
         v2ray_outbounds_host=$v2ray_outbounds_address
         v2ray_outbounds_ip=$(dig +short $v2ray_outbounds_host)
-        echo $v2ray_inbounds_ip" "$v2ray_outbounds_host >> /etc/hosts
+        echo $v2ray_outbounds_ip" "$v2ray_outbounds_host >> /etc/hosts
     fi
 
     ########################################################################
