@@ -27,6 +27,7 @@ class Router:
                 "badvpn-tun2socks_log_file" : "/tmp/badvpn-tun2socks.log",
                 "dns2socks_log_file" : "/tmp/dns2socks.log",
             },
+            "check_vpn_curl" : Path(__file__).resolve().parent / "template_router/check_vpn_curl.sh",
         }
         self.vpn = vpn
         self.general = General.objects.first()
@@ -163,8 +164,12 @@ class Router:
                 check_vpn_curl = True
                 for domain in self.general.check_vpn_curl_domain_list.split():
                     if domain != "":
-                        c = Execte("curl '{}' --connect-timeout {} --retry {} --retry-delay 1".format(
-                            domain, self.general.check_vpn_curl_timeout, self.general.check_vpn_curl_retry)
+                        check_vpn_curl = self.VpnList["check_vpn_curl"]
+                        _domain = "--domain '{}'".format(domain)
+                        timeout = "--timeout '{}'".format(self.general.check_vpn_curl_timeout)
+                        retry = "--retry '{}'".format(self.general.check_vpn_curl_retry)
+                        c = Execte("check_vpn_curl {} {} {}".format(
+                            _domain, timeout, retry)
                         )
                         c.do()
                         c.print()
