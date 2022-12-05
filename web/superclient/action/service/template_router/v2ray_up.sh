@@ -38,8 +38,8 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        --v2ray_outbounds_ip)
-            v2ray_outbounds_ip="$2"
+        --v2ray_outbounds_address)
+            v2ray_outbounds_address="$2"
             shift # past argument
             shift # past value
             ;;
@@ -104,13 +104,15 @@ if [ "$exit_code" == 0 ]; then
 
     default_gateway=$(route -n | grep 'UG' | awk {'print $2'} | head -n 1 | tr -d '\n')
     v2ray_inbounds_ip="127.0.0.1"
-    _v2ray_outbounds_ip=""
+    v2ray_outbounds_ip=""
+    v2ray_outbounds_host=""
     reg="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
-    if [[ $v2ray_outbounds_ip =~ $reg ]]; then
-        _v2ray_outbounds_ip=$v2ray_outbounds_ip
+    if [[ $v2ray_outbounds_address =~ $reg ]]; then
+        v2ray_outbounds_ip=$v2ray_outbounds_address
     else
-        _v2ray_outbounds_ip=$(dig +short $v2ray_outbounds_ip)
-        echo $v2ray_inbounds_ip" "$_v2ray_outbounds_ip >> /etc/hosts
+        v2ray_outbounds_host=$v2ray_outbounds_address
+        v2ray_outbounds_ip=$(dig +short $v2ray_outbounds_host)
+        echo $v2ray_inbounds_ip" "$v2ray_outbounds_host >> /etc/hosts
     fi
 
     ########################################################################
@@ -140,7 +142,7 @@ if [ "$exit_code" == 0 ]; then
     ip link set dev $vpn_interface up
 
     route add -net 0.0.0.0 netmask 0.0.0.0 dev $vpn_interface
-    ip route add $_v2ray_outbounds_ip via $default_gateway
+    ip route add $v2ray_outbounds_ip via $default_gateway
 
     sleep 1
 

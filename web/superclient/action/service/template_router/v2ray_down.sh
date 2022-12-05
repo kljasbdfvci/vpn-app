@@ -18,8 +18,8 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        --v2ray_outbounds_ip)
-            v2ray_outbounds_ip="$2"
+        --v2ray_outbounds_address)
+            v2ray_outbounds_address="$2"
             shift # past argument
             shift # past value
             ;;
@@ -81,13 +81,17 @@ if [ -n "$(ip link show | grep $vpn_interface)" ]; then
     ifconfig $vpn_interface down &>/dev/null
     ip link set $vpn_interface down &>/dev/null
     ip link delete $vpn_interface &>/dev/null
-    _v2ray_outbounds_ip=$(cat /etc/hosts | grep $v2ray_outbounds_ip | awk '{print $1}')
-    if [[ $_v2ray_outbounds_ip == "" ]]; then
-        ip route del $v2ray_inbounds_ip &>/dev/null
+    v2ray_outbounds_ip=""
+    v2ray_outbounds_host=""
+    reg="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+    if [[ $v2ray_outbounds_address =~ $reg ]]; then
+        v2ray_outbounds_ip=$v2ray_outbounds_address
     else
-        ip route del $_v2ray_outbounds_ip &>/dev/null
-        sed -i "/$v2ray_outbounds_ip/d" /etc/hosts
+        v2ray_outbounds_host=$v2ray_outbounds_address
+        v2ray_outbounds_ip=$(cat /etc/hosts | grep $v2ray_outbounds_host | awk '{print $1}')
+        sed -i "/$v2ray_outbounds_host/d" /etc/hosts
     fi
+    ip route del $v2ray_outbounds_ip &>/dev/null
 fi
 
 list=$(sysctl -a | grep "\.rp_filter")
