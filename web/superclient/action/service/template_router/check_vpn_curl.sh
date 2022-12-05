@@ -4,7 +4,7 @@ POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
         --domain)
-            pid_file="$2"
+            domain="$2"
             shift # past argument
             shift # past value
             ;;
