@@ -51,7 +51,7 @@ class Execte:
         return out
 
     def isSuccess(self):
-        if self.returncode != 0:
-            return False
-        else:
+        if self.returncode != None and self.returncode == 0:
             return True
+        else:
+            return False

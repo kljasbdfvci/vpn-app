@@ -154,15 +154,25 @@ class Router:
 
         pid = self.read_pid_file()
         if pid != 0:
-            c1 = Execte("kill -0 {}".format(pid))
-            c1.do()
-            c1.print()
+            c_proc = Execte("kill -0 {}".format(pid))
+            c_proc.do()
+            c_proc.print()
 
-            c2 = Execte("curl 'https://api.ipify.org?format=json' --connect-timeout 5 --retry 3 --retry-delay 1")
-            c2.do()
-            c2.print()
+            check_vpn_curl = False
+            if c_proc.isSuccess():
+                check_vpn_curl = True
+                for domain in self.general.check_vpn_curl_domain_list.split():
+                    if domain != "":
+                        c = Execte("curl '{}' --connect-timeout {} --retry {} --retry-delay 1".format(
+                            domain, self.general.check_vpn_curl_timeout, self.general.check_vpn_curl_retry)
+                        )
+                        c.do()
+                        c.print()
+                        if not c.isSuccess():
+                            check_vpn_curl = False
+                            break
 
-            if c1.isSuccess and c2.isSuccess:
+            if c_proc.isSuccess() and check_vpn_curl:
                 res = True
 
         return res

@@ -12,6 +12,9 @@ class General(models.Model):
     dns_Mode = models.CharField(max_length=8, choices=DnsMode.choices, default=DnsMode._2)
     dns = models.CharField(max_length=128, default='1.1.1.1,8.8.8.8,208.67.222.222', blank=True)
     log = models.BooleanField(default=False)
+    check_vpn_curl_domain_list = models.CharField(max_length=4098, default='https://api.ipify.org?format=json\n', blank=True)
+    check_vpn_curl_timeout = models.IntegerField(default=3)
+    check_vpn_curl_retry = models.IntegerField(default=3)
 
     def save(self, *args, **kwargs):
         self.dns = "".join(self.dns.split())
