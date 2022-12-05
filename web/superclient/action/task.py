@@ -39,19 +39,23 @@ def service_checker():
     else:
         stop_services(status)
 
-
 def start_services(status: ServiceStatus):
     logging.info('starting services...')
 
-    if not get_active_router() or not get_active_router().is_running():
-        logging.info('starting vpn...')
-        if not get_active_router():
-            get_active_router().DisconnectVPN()
+    if not get_active_router():
+        start_vpn_service(status)
+    elif get_active_router() and not get_active_router().is_running():
+        start_vpn_service(status)
         start_vpn_service(status)
     else: logging.info('[NO-CHANGE] vpn service already started...')
 
+def stop_services(status: ServiceStatus):
+    logging.info('stoping services...')
+    stop_vpn_service(status)
 
 def start_vpn_service(status: ServiceStatus):
+    logging.info('starting vpn...')
+
     vpns = Configuration.objects.filter(enable=True).count()
 
     if status.selected_vpn:
@@ -86,14 +90,15 @@ def start_vpn_service(status: ServiceStatus):
             logging.info(f'vpn not connect.')
             continue
 
-
-def stop_services(status: ServiceStatus):
-    logging.info('stoping services...')
-
+def stop_vpn_service(status: ServiceStatus):
+    logging.info('stoping vpn...')
     router = get_active_router()
-    if router and router.is_running():
-        logging.info('stoping vpn...')
-        router.DisconnectVPN()
+    if router:
+        res, output = router.DisconnectVPN()
+        if res == 0:
+            logging.info('vpn stoped...')
+        else:
+            logging.info('vpn stop failed...')
     else:
         logging.info('[NO-CHANGE] vpn service already stopped...')
 
