@@ -105,6 +105,7 @@ if [ "$exit_code" == 0 ]; then
     default_gateway=$(route -n | grep 'UG' | awk {'print $2'} | head -n 1 | tr -d '\n')
     v2ray_inbounds_ip="127.0.0.1"
     _v2ray_outbounds_ip=""
+    reg="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
     if [[ $v2ray_outbounds_ip =~ $reg ]]; then
         _v2ray_outbounds_ip=$v2ray_outbounds_ip
     else
