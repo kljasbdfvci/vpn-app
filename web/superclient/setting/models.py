@@ -10,7 +10,7 @@ class General(models.Model):
         _2 = "2", "Handle in system"
         _3 = "3", "Handle with socks (only for v2ray)"        
     dns_Mode = models.CharField(max_length=8, choices=DnsMode.choices, default=DnsMode._2)
-    dns = models.CharField(max_length=128, default='1.1.1.1,8.8.8.8,208.67.222.222', blank=True)
+    dns = models.CharField(max_length=128, default='1.1.1.1\n8.8.8.8\n208.67.222.222', blank=True)
     log = models.BooleanField(default=False)
     class CheckVpnMethod(models.TextChoices):
         disable = "disable", "Disable"

@@ -313,7 +313,7 @@ class Network:
             dhcpd_log_file = "--dhcpd_log_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_log_file"])
             dhcpd_lease_file = "--dhcpd_lease_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_lease_file"])
             named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
-            dns_server = "--dns_server '{}'".format(self.general.dns) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
+            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.split())) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
@@ -347,7 +347,7 @@ class Network:
         # dns up
         if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "":
             up_file = self.list["dns"]["up_file"]
-            dns_server = "--dns_server '{}'".format(self.general.dns)
+            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.split()))
             log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {}".format(\
