@@ -141,11 +141,12 @@ class Router:
             config_json = v2ray.config_json
             js = json.loads(config_json)
             v2ray_outbounds_address = "--v2ray_outbounds_address '{}'".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
-            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
+            tun2socks = "--tun2socks '{}'".format(self.VpnList["v2ray"]["tun2socks"])
+            tun2socks_log_file = "--tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["tun2socks_log_file"])
             dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {} {} {} {} {} {}".format(down_file, pid_file, log_file, vpn_interface, v2ray_outbounds_address, badvpn_tun2socks_log_file, dns_log, log))
+            c = Execte("{} {} {} {} {} {} {} {} {}".format(down_file, pid_file, log_file, vpn_interface, v2ray_outbounds_address, tun2socks, tun2socks_log_file, dns_log, log))
             c.do()
             c.print()
             res = c.returncode
