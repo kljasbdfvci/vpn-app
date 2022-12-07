@@ -36,7 +36,7 @@ class General(models.Model):
     v2ray_mode = models.CharField(max_length=64, choices=V2rayMode.choices, default=V2rayMode.tun2socks)
 
     def save(self, *args, **kwargs):
-        self.dns = "".join(self.dns.split())
+        #self.dns = "".join(self.dns.split())
         super(General, self).save(*args, **kwargs)
 
 def LanConfig_validate_interface(value):
