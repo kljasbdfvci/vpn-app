@@ -25,7 +25,8 @@ class Router:
                 "log_file" : "/tmp/v2ray.log",
                 "interface" : "tun0",
                 "config_file" : "/tmp/v2ray.config",
-                "badvpn-tun2socks_log_file" : "/tmp/badvpn-tun2socks.log",
+                "tun2socks" : "go-tun2socks",
+                "tun2socks_log_file" : "/tmp/tun2socks.log",
                 "dns2socks_log_file" : "/tmp/dns2socks.log",
             },
             "check_vpn" : Path(__file__).resolve().parent / "template_router/check_vpn.sh",
@@ -90,15 +91,16 @@ class Router:
             js = json.loads(config_json)
             v2ray_inbounds_port = "--v2ray_inbounds_port '{}'".format(js["inbounds"][0]["port"])
             v2ray_outbounds_address = "--v2ray_outbounds_address '{}'".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
-            badvpn_tun2socks_log_file = "--badvpn_tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["badvpn-tun2socks_log_file"])
+            tun2socks = "--tun2socks '{}'".format(self.VpnList["v2ray"]["tun2socks"])
+            tun2socks_log_file = "--tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["tun2socks_log_file"])
             dns_server = "--dns_server '{}'".format(self.general.dns.split(",")[0]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
             dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, pid_file, log_file, timeout, try_count,\
                 config,\
-                vpn_interface, v2ray_inbounds_port, v2ray_outbounds_address, badvpn_tun2socks_log_file, dns_server, dns_log,\
+                vpn_interface, v2ray_inbounds_port, v2ray_outbounds_address, tun2socks, tun2socks_log_file, dns_server, dns_log,\
                 log)
             )
             c.do()

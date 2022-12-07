@@ -23,8 +23,13 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        --badvpn_tun2socks_log_file)
-            badvpn_tun2socks_log_file="$2"
+        --tun2socks)
+            tun2socks="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --tun2socks_log_file)
+            tun2socks_log_file="$2"
             shift # past argument
             shift # past value
             ;;
@@ -61,12 +66,18 @@ if [ -f "$log_file" ]; then
     rm $log_file
 fi
 
-if pgrep -f 'badvpn-tun2socks'; then
-    killall 'badvpn-tun2socks' &>/dev/null
+if [[ $tun2socks == "badvpn-tun2socks" ]]; then
+    if pgrep -f 'badvpn-tun2socks'; then
+        killall 'badvpn-tun2socks' &>/dev/null
+    fi
+elif [[ $tun2socks == "go-tun2socks" ]]; then
+    if pgrep -f 'go-tun2socks'; then
+        killall 'go-tun2socks' &>/dev/null
+    fi
 fi
 
-if [ -f $badvpn_tun2socks_log_file ]; then
-    rm $badvpn_tun2socks_log_file
+if [ -f $tun2socks_log_file ]; then
+    rm $tun2socks_log_file
 fi
 
 if pgrep -f 'DNS2SOCKS'; then

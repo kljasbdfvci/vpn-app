@@ -43,8 +43,13 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        --badvpn_tun2socks_log_file)
-            badvpn_tun2socks_log_file="$2"
+        --tun2socks)
+            tun2socks="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --tun2socks_log_file)
+            tun2socks_log_file="$2"
             shift # past argument
             shift # past value
             ;;
@@ -147,15 +152,25 @@ if [ "$exit_code" == 0 ]; then
     sleep 1
 
     ########################################################################
-    # start badvpn-tun2socks
+    # start tun2socks
     ########################################################################
-
-    if [[ $log == "yes" ]]; then
-        badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr \
-        $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 3 --socks5-udp &> $badvpn_tun2socks_log_file &> /dev/null &
-    else
-        badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr \
-        $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 3 --socks5-udp &> /dev/null &
+    
+    if [[ $tun2socks == "badvpn-tun2socks" ]]; then
+        if [[ $log == "yes" ]]; then
+            badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr \
+            $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 4 --socks5-udp &> $tun2socks_log_file &> /dev/null &
+        else
+            badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr \
+            $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 3 --socks5-udp &> /dev/null &
+        fi
+    elif [[ $tun2socks == "go-tun2socks" ]]; then
+        if [[ $log == "yes" ]]; then
+            go-tun2socks -loglevel info -tunName $vpn_interface -proxyServer $v2ray_inbounds_ip:$v2ray_inbounds_port -proxyType socks \
+            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 &> $tun2socks_log_file &> /dev/null &
+        else
+            go-tun2socks -loglevel none -tunName $vpn_interface -proxyServer $v2ray_inbounds_ip:$v2ray_inbounds_port -proxyType socks \
+            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 &> /dev/null &
+        fi
     fi
 
     ########################################################################
