@@ -29,6 +29,10 @@ class General(models.Model):
     check_vpn_ping_list = models.CharField(max_length=4098, default='1.1.1.1\n8.8.8.8\n208.67.222.222', blank=True)
     check_vpn_ping_timeout = models.IntegerField(default=3)
     check_vpn_ping_retry = models.IntegerField(default=3)
+    class V2rayMode(models.TextChoices):
+        badvpn_tun2socks = "badvpn-tun2socks", "badvpn-tun2socks"
+        go_tun2socks = "go-tun2socks", "go-tun2socks"
+    v2ray_mode = models.CharField(max_length=64, choices=V2rayMode.choices, default=V2rayMode.badvpn_tun2socks)
 
     def save(self, *args, **kwargs):
         self.dns = "".join(self.dns.split())

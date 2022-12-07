@@ -166,10 +166,10 @@ if [ "$exit_code" == 0 ]; then
     elif [[ $tun2socks == "go-tun2socks" ]]; then
         if [[ $log == "yes" ]]; then
             go-tun2socks -loglevel info -tunName $vpn_interface -proxyServer $v2ray_inbounds_ip:$v2ray_inbounds_port -proxyType socks \
-            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 &> $tun2socks_log_file &> /dev/null &
+            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 -tunPersist &> $tun2socks_log_file &
         else
             go-tun2socks -loglevel none -tunName $vpn_interface -proxyServer $v2ray_inbounds_ip:$v2ray_inbounds_port -proxyType socks \
-            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 &> /dev/null &
+            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 -tunPersist &> /dev/null &
         fi
     fi
 

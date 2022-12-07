@@ -77,14 +77,12 @@ if [ -f "$log_file" ]; then
     rm $log_file
 fi
 
-if [[ $tun2socks == "badvpn-tun2socks" ]]; then
-    if pgrep -f 'badvpn-tun2socks'; then
-        killall 'badvpn-tun2socks' &>/dev/null
-    fi
-elif [[ $tun2socks == "go-tun2socks" ]]; then
-    if pgrep -f 'go-tun2socks'; then
-        killall 'go-tun2socks' &>/dev/null
-    fi
+if pgrep -f 'badvpn-tun2socks'; then
+    killall 'badvpn-tun2socks' &>/dev/null
+fi
+
+if pgrep -f 'go-tun2socks'; then
+    killall 'go-tun2socks' &>/dev/null
 fi
 
 if [ -f $tun2socks_log_file ]; then
