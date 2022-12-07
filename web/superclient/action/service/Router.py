@@ -92,7 +92,7 @@ class Router:
             v2ray_outbounds_address = "--v2ray_outbounds_address '{}'".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
             tun2socks = "--tun2socks '{}'".format(self.general.v2ray_mode)
             tun2socks_log_file = "--tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["tun2socks_log_file"])
-            dns_server = "--dns_server '{}'".format(self.general.dns.split()[0]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
+            dns_server = "--dns_server '{}'".format(self.general.dns.strip().split()[0]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
             dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 

@@ -221,7 +221,7 @@ class Network:
             hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
             hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
             mac_address_filter_mode = "--mac_address_filter_mode '{}'".format(hotspot.mac_address_filter_mode)
-            mac_address_filter_list = "--mac_address_filter_list '{}'".format(",".join(hotspot.mac_address_filter_list.split()))
+            mac_address_filter_list = "--mac_address_filter_list '{}'".format(",".join(hotspot.mac_address_filter_list.strip().split()))
             hostapd_accept_file = "--hostapd_accept_file '{}'".format(self.list["hotspotconfig"]["hostapd_accept_file"])
             hostapd_deny_file = "--hostapd_deny_file '{}'".format(self.list["hotspotconfig"]["hostapd_deny_file"])
             log = "--log" if self.general.log else ""
@@ -313,7 +313,7 @@ class Network:
             dhcpd_log_file = "--dhcpd_log_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_log_file"])
             dhcpd_lease_file = "--dhcpd_lease_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_lease_file"])
             named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
-            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.split())) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
+            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split())) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
@@ -347,7 +347,7 @@ class Network:
         # dns up
         if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "":
             up_file = self.list["dns"]["up_file"]
-            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.split()))
+            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split()))
             log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {}".format(\
