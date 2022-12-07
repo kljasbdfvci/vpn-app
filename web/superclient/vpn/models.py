@@ -8,7 +8,7 @@ from urllib.parse import urlparse, parse_qs, quote_plus
 
 class Configuration(models.Model):
 
-    name = models.CharField(max_length=256)  
+    name = models.CharField(max_length=256, unique=True)  
     description = models.CharField(max_length=1028, blank=True)
     enable = models.BooleanField(default=True)
     priority = models.IntegerField(default=0)
