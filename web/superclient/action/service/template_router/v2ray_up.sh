@@ -173,9 +173,9 @@ if [ "$exit_code" == 0 ]; then
         fi
     elif [[ $tun2socks == "tun2socks" ]]; then
         if [[ $log == "yes" ]]; then
-            tun2socks -loglevel info -device tun://$vpn_interface -proxy socks5://$v2ray_inbounds_ip:$v2ray_inbounds_port -udp-timeout 300s &> $tun2socks_log_file &
+            tun2socks -loglevel info -device tun://$vpn_interface -proxy socks5://$v2ray_inbounds_ip:$v2ray_inbounds_port -udp-timeout 300s -tcp-auto-tuning &> $tun2socks_log_file &
         else
-            tun2socks -loglevel silent -device tun://$vpn_interface -proxy socks5://$v2ray_inbounds_ip:$v2ray_inbounds_port -udp-timeout 300s &> /dev/null &
+            tun2socks -loglevel silent -device tun://$vpn_interface -proxy socks5://$v2ray_inbounds_ip:$v2ray_inbounds_port -udp-timeout 300s -tcp-auto-tuning &> /dev/null &
         fi
     fi
 
