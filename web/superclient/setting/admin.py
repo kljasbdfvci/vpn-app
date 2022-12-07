@@ -9,7 +9,8 @@ class GeneralAdminForm(forms.ModelForm):
     class Meta:
         model = General
         widgets = {
-            'check_vpn_curl_domain_list': forms.Textarea,
+            'check_vpn_curl_list': forms.Textarea,
+            'check_vpn_ping_list': forms.Textarea,
         }
         fields = '__all__'
 
