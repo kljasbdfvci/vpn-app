@@ -161,7 +161,7 @@ if [ "$exit_code" == 0 ]; then
             $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 4 --socks5-udp &> $tun2socks_log_file &> /dev/null &
         else
             badvpn-tun2socks --tundev $vpn_interface --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 --socks-server-addr \
-            $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 3 --socks5-udp &> /dev/null &
+            $v2ray_inbounds_ip:$v2ray_inbounds_port --loglevel 0 --socks5-udp &> /dev/null &
         fi
     elif [[ $tun2socks == "go-tun2socks" ]]; then
         if [[ $log == "yes" ]]; then
