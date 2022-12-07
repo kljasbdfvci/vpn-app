@@ -169,7 +169,7 @@ class Router:
                 else:
                     method = self.general.check_vpn_method
                     if method == self.general.CheckVpnMethod.random:
-                        method = self.general.CheckVpnMethod.curl if random.randint(1, 2) == 1 else self.general.CheckVpnMethod.ping
+                        method = self.general.CheckVpnMethod.curl if random.randint(1, 2) == 1 or self.general.v2ray_mode == self.general.V2rayMode.badvpn_tun2socks else self.general.CheckVpnMethod.ping
                     list_method = self.general.check_vpn_list_method
 
                     list = ()
