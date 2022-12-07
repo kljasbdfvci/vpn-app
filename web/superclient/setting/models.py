@@ -32,6 +32,7 @@ class General(models.Model):
     class V2rayMode(models.TextChoices):
         badvpn_tun2socks = "badvpn-tun2socks", "badvpn-tun2socks"
         go_tun2socks = "go-tun2socks", "go-tun2socks"
+        tun2socks = "tun2socks", "tun2socks"
     v2ray_mode = models.CharField(max_length=64, choices=V2rayMode.choices, default=V2rayMode.badvpn_tun2socks)
 
     def save(self, *args, **kwargs):

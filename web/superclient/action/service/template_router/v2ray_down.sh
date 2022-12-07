@@ -85,6 +85,10 @@ if pgrep -f 'go-tun2socks'; then
     killall 'go-tun2socks' &>/dev/null
 fi
 
+if pgrep -f 'tun2socks'; then
+    killall 'tun2socks' &>/dev/null
+fi
+
 if [ -f $tun2socks_log_file ]; then
     rm $tun2socks_log_file
 fi
