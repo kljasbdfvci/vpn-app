@@ -166,16 +166,16 @@ if [ "$exit_code" == 0 ]; then
     elif [[ $tun2socks == "go-tun2socks" ]]; then
         if [[ $log == "yes" ]]; then
             go-tun2socks -loglevel info -tunName $vpn_interface -proxyServer $v2ray_inbounds_ip:$v2ray_inbounds_port -proxyType socks \
-            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 -tunPersist -udpTimeout 30000ms &> $tun2socks_log_file &
+            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 -tunPersist -udpTimeout 300000ms &> $tun2socks_log_file &
         else
             go-tun2socks -loglevel none -tunName $vpn_interface -proxyServer $v2ray_inbounds_ip:$v2ray_inbounds_port -proxyType socks \
-            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 -tunPersist -udpTimeout 30000ms &> /dev/null &
+            -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -tunMask 255.255.255.0 -tunPersist -udpTimeout 300000ms &> /dev/null &
         fi
     elif [[ $tun2socks == "tun2socks" ]]; then
         if [[ $log == "yes" ]]; then
-            tun2socks -loglevel info -device tun://$vpn_interface -proxy socks5://$v2ray_inbounds_ip:$v2ray_inbounds_port -udp-timeout 30s &> $tun2socks_log_file &
+            tun2socks -loglevel info -device tun://$vpn_interface -proxy socks5://$v2ray_inbounds_ip:$v2ray_inbounds_port -udp-timeout 300s &> $tun2socks_log_file &
         else
-            tun2socks -loglevel silent -device tun://$vpn_interface -proxy socks5://$v2ray_inbounds_ip:$v2ray_inbounds_port -udp-timeout 30s &> /dev/null &
+            tun2socks -loglevel silent -device tun://$vpn_interface -proxy socks5://$v2ray_inbounds_ip:$v2ray_inbounds_port -udp-timeout 300s &> /dev/null &
         fi
     fi
 
