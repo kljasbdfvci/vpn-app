@@ -56,6 +56,17 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=0
 
+v2ray_outbounds_ip=""
+v2ray_outbounds_host=""
+reg="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+if [[ $v2ray_outbounds_address =~ $reg ]]; then
+    v2ray_outbounds_ip=$v2ray_outbounds_address
+else
+    v2ray_outbounds_host=$v2ray_outbounds_address
+    v2ray_outbounds_ip=$(cat /etc/hosts | grep $v2ray_outbounds_host | awk '{print $1}')
+    sed -i "/$v2ray_outbounds_host/d" /etc/hosts
+fi
+
 if [ -f "$pid_file" ]; then
     pid=$(cat $pid_file | xargs)
     kill -2 $pid || kill -9 $pid
@@ -92,16 +103,9 @@ if [ -n "$(ip link show | grep $vpn_interface)" ]; then
     ifconfig $vpn_interface down &>/dev/null
     ip link set $vpn_interface down &>/dev/null
     ip link delete $vpn_interface &>/dev/null
-    v2ray_outbounds_ip=""
-    v2ray_outbounds_host=""
-    reg="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
-    if [[ $v2ray_outbounds_address =~ $reg ]]; then
-        v2ray_outbounds_ip=$v2ray_outbounds_address
-    else
-        v2ray_outbounds_host=$v2ray_outbounds_address
-        v2ray_outbounds_ip=$(cat /etc/hosts | grep $v2ray_outbounds_host | awk '{print $1}')
-        sed -i "/$v2ray_outbounds_host/d" /etc/hosts
-    fi
+fi
+
+if [ -n "$(ip route list | grep $v2ray_outbounds_ip)" ]; then
     ip route del $v2ray_outbounds_ip &>/dev/null
 fi
 
