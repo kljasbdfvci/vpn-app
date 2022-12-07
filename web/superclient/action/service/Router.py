@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import json
+import random
 
 # local
 from .Execte import *
@@ -27,7 +28,7 @@ class Router:
                 "badvpn-tun2socks_log_file" : "/tmp/badvpn-tun2socks.log",
                 "dns2socks_log_file" : "/tmp/dns2socks.log",
             },
-            "check_vpn_curl" : Path(__file__).resolve().parent / "template_router/check_vpn_curl.sh",
+            "check_vpn" : Path(__file__).resolve().parent / "template_router/check_vpn.sh",
         }
         self.vpn = vpn
         self.general = General.objects.first()
@@ -159,25 +160,85 @@ class Router:
             c_proc.do()
             c_proc.print()
 
-            check_vpn_curl = False
+            check_vpn_res = False
             if c_proc.isSuccess():
-                check_vpn_curl = True
-                for domain in self.general.check_vpn_curl_domain_list.split():
-                    if domain != "":
-                        check_vpn_curl = self.VpnList["check_vpn_curl"]
-                        _domain = "--domain '{}'".format(domain)
-                        timeout = "--timeout '{}'".format(self.general.check_vpn_curl_timeout)
-                        retry = "--retry '{}'".format(self.general.check_vpn_curl_retry)
-                        c = Execte("{} {} {} {}".format(
-                            check_vpn_curl, _domain, timeout, retry)
-                        )
-                        c.do()
-                        c.print()
-                        if not c.isSuccess():
-                            check_vpn_curl = False
-                            break
+                if self.general.check_vpn_method == self.general.CheckVpnMethod.disable:
+                    check_vpn_res = True
+                else:
+                    method = self.general.check_vpn_method
+                    if method == self.general.CheckVpnMethod.random:
+                        method = self.general.CheckVpnMethod.curl if random.randint(1, 2) == 1 else self.general.CheckVpnMethod.ping
+                    list_method = self.general.check_vpn_list_method
 
-            if c_proc.isSuccess() and check_vpn_curl:
+                    list = ()
+                    timeout = None
+                    retry = None
+                    if method == self.general.CheckVpnMethod.curl:
+                        list = self.general.check_vpn_curl_list.split()
+                        timeout = self.general.check_vpn_curl_timeout
+                        retry = self.general.check_vpn_curl_retry
+                    elif method == self.general.CheckVpnMethod.ping:
+                        list = self.general.check_vpn_ping_list.split()
+                        timeout = self.general.check_vpn_ping_timeout
+                        retry = self.general.check_vpn_ping_retry
+
+                    if len(list) == 0:
+                        check_vpn_res = False
+
+                    elif list_method == self.general.CheckVpnListMethod.once:
+                        check_vpn_res = False
+                        for domain in list:
+                            if domain != "":
+                                check_vpn = self.VpnList["check_vpn"]
+                                _method =  "--method '{}'".format(method)
+                                _domain = "--domain '{}'".format(domain)
+                                _timeout = "--timeout '{}'".format(timeout)
+                                _retry = "--retry '{}'".format(retry)
+                                c = Execte("{} {} {} {} {}".format(
+                                    check_vpn, _method, _domain, _timeout, _retry)
+                                )
+                                c.do()
+                                c.print()
+                                if c.isSuccess():
+                                    check_vpn_res = True
+                                    break
+
+                    elif list_method == self.general.CheckVpnListMethod.all:
+                        check_vpn_res = True
+                        for domain in list:
+                            if domain != "":
+                                check_vpn = self.VpnList["check_vpn"]
+                                _method =  "--method '{}'".format(method)
+                                _domain = "--domain '{}'".format(domain)
+                                _timeout = "--timeout '{}'".format(timeout)
+                                _retry = "--retry '{}'".format(retry)
+                                c = Execte("{} {} {} {} {}".format(
+                                    check_vpn, _method, _domain, _timeout, _retry)
+                                )
+                                c.do()
+                                c.print()
+                                if not c.isSuccess():
+                                    check_vpn_res = False
+                                    break
+
+                    elif list_method == self.general.CheckVpnListMethod.random:
+                        check_vpn_res = False
+                        domain = list[random.randint(0, len(list) - 1)]
+                        if domain != "":
+                            check_vpn = self.VpnList["check_vpn"]
+                            _method =  "--method '{}'".format(method)
+                            _domain = "--domain '{}'".format(domain)
+                            _timeout = "--timeout '{}'".format(timeout)
+                            _retry = "--retry '{}'".format(retry)
+                            c = Execte("{} {} {} {} {}".format(
+                                check_vpn, _method, _domain, _timeout, _retry)
+                            )
+                            c.do()
+                            c.print()
+                            if c.isSuccess():
+                                check_vpn_res = True
+
+            if c_proc.isSuccess() and check_vpn_res:
                 res = True
 
         return res

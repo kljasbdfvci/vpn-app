@@ -12,9 +12,23 @@ class General(models.Model):
     dns_Mode = models.CharField(max_length=8, choices=DnsMode.choices, default=DnsMode._2)
     dns = models.CharField(max_length=128, default='1.1.1.1,8.8.8.8,208.67.222.222', blank=True)
     log = models.BooleanField(default=False)
-    check_vpn_curl_domain_list = models.CharField(max_length=4098, default='https://api.ipify.org?format=json\n', blank=True)
+    class CheckVpnMethod(models.TextChoices):
+        disable = "disable", "Disable"
+        curl = "curl", "Curl"
+        ping = "ping", "Ping"
+        random = "random", "Curl or Ping randomly"
+    check_vpn_method = models.CharField(max_length=64, choices=CheckVpnMethod.choices, default=CheckVpnMethod.random)
+    class CheckVpnListMethod(models.TextChoices):
+        once = "once", "Once from all list successful"
+        all = "all", "All from list successful"
+        random = "random", "Once randomly successful from list"
+    check_vpn_list_method = models.CharField(max_length=64, choices=CheckVpnListMethod.choices, default=CheckVpnListMethod.random)
+    check_vpn_curl_list = models.CharField(max_length=4098, default='https://api.ipify.org?format=json\nhttps://checkip.amazonaws.com\nhttps://icanhazip.com\nhttps://jsonip.com', blank=True)
     check_vpn_curl_timeout = models.IntegerField(default=3)
     check_vpn_curl_retry = models.IntegerField(default=3)
+    check_vpn_ping_list = models.CharField(max_length=4098, default='1.1.1.1\n8.8.8.8\n208.67.222.222', blank=True)
+    check_vpn_ping_timeout = models.IntegerField(default=3)
+    check_vpn_ping_retry = models.IntegerField(default=3)
 
     def save(self, *args, **kwargs):
         self.dns = "".join(self.dns.split())

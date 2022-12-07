@@ -3,6 +3,11 @@
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --method)
+            method="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --domain)
             domain="$2"
             shift # past argument
@@ -35,18 +40,33 @@ done
 set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=0
+if [[ $method == "curl" ]]; then
+    n=0
+    until [ "$n" -ge $retry ]
+    do
+        echo "Try($n)"
+        timeout $timeout curl $domain --connect-timeout $timeout --max-time $timeout
+        exit_code=$?
+        if [ $exit_code == 0 ]; then
+            break
+        fi
+        n=$((n+1)) 
+        sleep 1
+    done
 
-n=0
-until [ "$n" -ge $retry ]
-do
-    echo "Try($n)"
-    timeout $timeout curl $domain --connect-timeout $timeout --max-time $timeout
-    exit_code=$?
-    if [ $exit_code == 0 ]; then
-        break
-    fi
-    n=$((n+1)) 
-    sleep 1
-done
+elif [[ $method == "ping" ]]; then
+    n=0
+    until [ "$n" -ge $retry ]
+    do
+        echo "Try($n)"
+        ping -c 1 -W $timeout $domain
+        exit_code=$?
+        if [ $exit_code == 0 ]; then
+            break
+        fi
+        n=$((n+1)) 
+        sleep 1
+    done
+fi
 
 exit $exit_code
