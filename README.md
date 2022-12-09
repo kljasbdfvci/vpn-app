@@ -22,3 +22,4 @@
   - add turn on hotspot button
   - remove user and group section
   - better UI
+  - better logic
