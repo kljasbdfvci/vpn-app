@@ -111,8 +111,8 @@ class Router:
             res = -1
             output = "Not Implimnet Yet"
 
-        if res == 0:
-            res = self.check_vpn(self.general.CheckVpnMethod.curl, self.general.CheckVpnListMethod.once)
+        if res == 0 and not self.check_vpn(self.general.CheckVpnMethod.curl, self.general.CheckVpnListMethod.once):
+            res = -1
 
         if res != 0:
             self.DisconnectVPN()
