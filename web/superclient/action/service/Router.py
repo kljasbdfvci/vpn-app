@@ -111,6 +111,12 @@ class Router:
             res = -1
             output = "Not Implimnet Yet"
 
+        if res == 0:
+            res = self.check_vpn(self.general.CheckVpnMethod.curl, self.general.CheckVpnListMethod.once)
+
+        if res != 0:
+            self.DisconnectVPN()
+
         return res, output
 
     def DisconnectVPN(self):
@@ -153,98 +159,6 @@ class Router:
 
         return res, output
 
-    def is_running(self):
-        res = False
-
-        pid = self.read_pid_file()
-        if pid != 0:
-            c_proc = Execte("kill -0 {}".format(pid))
-            c_proc.do()
-            c_proc.print()
-
-            check_vpn_res = False
-            if c_proc.isSuccess():
-                if self.general.check_vpn_method == self.general.CheckVpnMethod.disable:
-                    check_vpn_res = True
-                else:
-                    method = self.general.check_vpn_method
-                    if method == self.general.CheckVpnMethod.random:
-                        method = self.general.CheckVpnMethod.curl if random.randint(1, 2) == 1 or self.general.v2ray_mode == self.general.V2rayMode.badvpn_tun2socks else self.general.CheckVpnMethod.ping
-                    list_method = self.general.check_vpn_list_method
-
-                    list = ()
-                    timeout = None
-                    retry = None
-                    if method == self.general.CheckVpnMethod.curl:
-                        list = self.general.check_vpn_curl_list.split()
-                        timeout = self.general.check_vpn_curl_timeout
-                        retry = self.general.check_vpn_curl_retry
-                    elif method == self.general.CheckVpnMethod.ping:
-                        list = self.general.check_vpn_ping_list.split()
-                        timeout = self.general.check_vpn_ping_timeout
-                        retry = self.general.check_vpn_ping_retry
-
-                    if len(list) == 0:
-                        check_vpn_res = False
-
-                    elif list_method == self.general.CheckVpnListMethod.once:
-                        check_vpn_res = False
-                        for domain in list:
-                            if domain != "":
-                                check_vpn = self.VpnList["check_vpn"]
-                                _method =  "--method '{}'".format(method)
-                                _domain = "--domain '{}'".format(domain)
-                                _timeout = "--timeout '{}'".format(timeout)
-                                _retry = "--retry '{}'".format(retry)
-                                c = Execte("{} {} {} {} {}".format(
-                                    check_vpn, _method, _domain, _timeout, _retry)
-                                )
-                                c.do()
-                                c.print()
-                                if c.isSuccess():
-                                    check_vpn_res = True
-                                    break
-
-                    elif list_method == self.general.CheckVpnListMethod.all:
-                        check_vpn_res = True
-                        for domain in list:
-                            if domain != "":
-                                check_vpn = self.VpnList["check_vpn"]
-                                _method =  "--method '{}'".format(method)
-                                _domain = "--domain '{}'".format(domain)
-                                _timeout = "--timeout '{}'".format(timeout)
-                                _retry = "--retry '{}'".format(retry)
-                                c = Execte("{} {} {} {} {}".format(
-                                    check_vpn, _method, _domain, _timeout, _retry)
-                                )
-                                c.do()
-                                c.print()
-                                if not c.isSuccess():
-                                    check_vpn_res = False
-                                    break
-
-                    elif list_method == self.general.CheckVpnListMethod.random:
-                        check_vpn_res = False
-                        domain = list[random.randint(0, len(list) - 1)]
-                        if domain != "":
-                            check_vpn = self.VpnList["check_vpn"]
-                            _method =  "--method '{}'".format(method)
-                            _domain = "--domain '{}'".format(domain)
-                            _timeout = "--timeout '{}'".format(timeout)
-                            _retry = "--retry '{}'".format(retry)
-                            c = Execte("{} {} {} {} {}".format(
-                                check_vpn, _method, _domain, _timeout, _retry)
-                            )
-                            c.do()
-                            c.print()
-                            if c.isSuccess():
-                                check_vpn_res = True
-
-            if c_proc.isSuccess() and check_vpn_res:
-                res = True
-
-        return res
-
     def read_pid_file(self):
         pid = 0
         pid_file = ""
@@ -260,3 +174,85 @@ class Router:
             pid = file.read().strip()
 
         return pid
+
+    def is_running(self):
+        res = False
+
+        pid = self.read_pid_file()
+        if pid != 0:
+            c_proc = Execte("kill -0 {}".format(pid))
+            c_proc.do()
+            c_proc.print()
+
+            check_vpn_res = False
+            if c_proc.isSuccess():
+                if self.general.check_vpn_method == self.general.CheckVpnMethod.disable:
+                    check_vpn_res = True
+                else:
+                    check_vpn_res = self.check_vpn()
+                    
+            if c_proc.isSuccess() and check_vpn_res:
+                res = True
+
+        return res
+
+    def check_vpn(self, method = None, list_method = None):
+        method = self.general.check_vpn_method if method == None else method
+        list_method = self.general.check_vpn_list_method if list_method == None else list_method
+
+        res = False
+        list = ()
+        timeout = None
+        retry = None
+        if method == self.general.CheckVpnMethod.random:
+            method = self.general.CheckVpnMethod.curl if random.randint(1, 2) == 1 or self.general.v2ray_mode == self.general.V2rayMode.badvpn_tun2socks else self.general.CheckVpnMethod.ping
+        if method == self.general.CheckVpnMethod.curl:
+            list = self.general.check_vpn_curl_list.split()
+            timeout = self.general.check_vpn_curl_timeout
+            retry = self.general.check_vpn_curl_retry
+        elif method == self.general.CheckVpnMethod.ping:
+            list = self.general.check_vpn_ping_list.split()
+            timeout = self.general.check_vpn_ping_timeout
+            retry = self.general.check_vpn_ping_retry
+
+        if len(list) == 0:
+            res = False
+
+        elif list_method == self.general.CheckVpnListMethod.once:
+            res = False
+            random.shuffle(list)
+            for domain in list:
+                if domain != "":
+                    if self._check_vpn(method, domain, timeout, retry):
+                        res = True
+                        break
+
+        elif list_method == self.general.CheckVpnListMethod.all:
+            res = True
+            for domain in list:
+                if domain != "":
+                    if not self._check_vpn(method, domain, timeout, retry):
+                        res = False
+                        break
+
+        elif list_method == self.general.CheckVpnListMethod.random:
+            res = False
+            domain = list[random.randint(0, len(list) - 1)]
+            if domain != "":
+                if self._check_vpn(method, domain, timeout, retry):
+                    res = True
+        
+        return res
+
+    def _check_vpn(self, method, domain, timeout, retry):
+        check_vpn = self.VpnList["check_vpn"]
+        _method =  "--method '{}'".format(method)
+        _domain = "--domain '{}'".format(domain)
+        _timeout = "--timeout '{}'".format(timeout)
+        _retry = "--retry '{}'".format(retry)
+        c = Execte("{} {} {} {} {}".format(
+            check_vpn, _method, _domain, _timeout, _retry)
+        )
+        c.do()
+        c.print()
+        return c.isSuccess()
