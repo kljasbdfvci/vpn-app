@@ -48,7 +48,7 @@ def index(request):
 def update(request):
     
     #
-    app_version_path= Path(__file__).resolve().parent.parent.parent.parent / "version"
+    app_version_path= Path(__file__).resolve().parent.parent.parent.parent / "releases"
     file = open(app_version_path, "r")
     current_app_version = file.read().strip()
     
