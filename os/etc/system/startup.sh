@@ -71,13 +71,14 @@ this_dir_path=$(eval "dirname $this_file_path")
 disk_path="/disk"
 memory_path="/memory"
 tmp_path="/tmp"
+firmware_path="$disk_path/firmware"
 logo_path="$this_dir_path/logo"
-app_file_path=$(find $disk_path/firmware -type f -name '*-app*' | sort | tail -n 1)
 temp_app_file_path="$tmp_path/app.tgz"
 app_untar_path="$memory_path"
 os_untar_path="$tmp_path"
 app_init_path="$app_untar_path/bin/init.sh"
 app_init_log="$tmp_path/app-init.log"
+app_file_path=$(find $firmware_path -type f -name '*-app*' | sort | tail -n 1)
 
 ### Move Cursor Down And Print Logo
 echo -e "\n\n\n\n\n\n"

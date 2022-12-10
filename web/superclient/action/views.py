@@ -53,7 +53,7 @@ def update(request):
     current_app_version = file.read().strip()
     
     #
-    c = Execte("serial -r /disk/username /disk/name")
+    c = Execte("serial -rv /disk/username /disk/name")
     c.do()
     available_app_version = c.stdout.strip()
 
@@ -65,7 +65,7 @@ def update(request):
     #
     updating = 0
     if request.method == 'POST':
-        c = Execte("serial -u /disk/username /disk/name /disk/firmware /memory/version /tmp", False)
+        c = Execte("serial -ru /disk/username /disk/name /disk/firmware /memory/releases /tmp", False)
         c.do()
         if c.returncode == 0:
             c1 = Execte("sleep 5 && reboot &", True)
