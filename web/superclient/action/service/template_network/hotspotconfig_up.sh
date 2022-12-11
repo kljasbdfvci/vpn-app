@@ -144,7 +144,7 @@ fi
 
 hostapd_res=1
 if [[ $log == "yes" ]]; then
-    hostapd -B $hostapd_config_file -P $hostapd_pid_file -t -dd &> $hostapd_log_file
+    hostapd $hostapd_config_file -P $hostapd_pid_file -t -dd &> $hostapd_log_file &
     hostapd_res=$?
 else
     hostapd -B $hostapd_config_file -P $hostapd_pid_file &> /dev/null
