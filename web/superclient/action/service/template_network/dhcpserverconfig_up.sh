@@ -152,7 +152,7 @@ subnet $network_range netmask $temp_subnet_mask {
   range $temp_dhcp_ip_address_from $temp_dhcp_ip_address_to;
   option domain-name-servers $temp_ip_address;
   option routers $temp_ip_address;
-  default-lease-time 3600;
+  default-lease-time 86400;
   max-lease-time 86400;
 }
 EOF

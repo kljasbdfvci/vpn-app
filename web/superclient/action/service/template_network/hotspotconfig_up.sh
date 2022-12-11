@@ -120,7 +120,7 @@ deny_mac_file=$hostapd_deny_file
 auth_algs=1
 ignore_broadcast_ssid=0
 
-ap_max_inactivity=300
+ap_max_inactivity=86400
 skip_inactivity_poll=1
 disassoc_low_ack=0
 
