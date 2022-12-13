@@ -25,14 +25,6 @@ class OpenconnectConfigAdmin(admin.ModelAdmin):
             fields.insert(i, configuration_list[i])
         return fields
 
-    def has_delete_permission(self, request, obj = None):
-        base_delete_permission = super(OpenconnectConfigAdmin, self).has_delete_permission(request, obj)
-        if base_delete_permission:
-            if ServiceStatus.get().selected_vpn == obj or ServiceStatus.get().active_vpn == obj:
-                return False
-            else:
-                return True
-
 #@admin.register(OpenVpnConfig)
 #class OpenVpnConfigAdmin(admin.ModelAdmin):
 #    list_display = ('name', 'enable', 'priority', 'success', 'failed')
@@ -69,14 +61,6 @@ class V2rayConfigAdmin(admin.ModelAdmin):
             fields.insert(i, configuration_list[i])
         return fields
 
-    def has_delete_permission(self, request, obj = None):
-        base_delete_permission = super(V2rayConfigAdmin, self).has_delete_permission(request, obj)
-        if base_delete_permission:
-            if ServiceStatus.get().selected_vpn == obj or ServiceStatus.get().active_vpn == obj:
-                return False
-            else:
-                return True
-
 class V2rayUrlConfigAdminForm(forms.ModelForm):
     class Meta:
         model = V2rayConfig
@@ -100,11 +84,3 @@ class V2rayUrlConfigAdmin(admin.ModelAdmin):
             fields.remove(configuration_list[i])
             fields.insert(i, configuration_list[i])
         return fields
-
-    def has_delete_permission(self, request, obj = None):
-        base_delete_permission = super(V2rayUrlConfigAdmin, self).has_delete_permission(request, obj)
-        if base_delete_permission:
-            if ServiceStatus.get().selected_vpn == obj or ServiceStatus.get().active_vpn == obj:
-                return False
-            else:
-                return True
