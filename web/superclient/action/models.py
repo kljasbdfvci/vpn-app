@@ -41,16 +41,16 @@ class ServiceStatus(models.Model):
     def change_active_vpn(self, vpn):
         self.previous_active_vpn = self.active_vpn
         self.active_vpn = vpn
-        self.save()
+        self.save(update_fields = ["previous_active_vpn", "active_vpn"])
 
     def change_selected_vpn(self, vpn):
         self.selected_vpn = vpn
-        self.save()
+        self.save(update_fields = ["selected_vpn"])
 
     def toggle_on(self):
         self.on = not self.on
-        self.save()
+        self.save(update_fields = ["on"])
 
     def toggle_apply(self):
         self.apply = not self.apply
-        self.save()
+        self.save(update_fields = ["apply"])
