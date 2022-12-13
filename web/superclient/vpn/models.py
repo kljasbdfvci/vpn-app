@@ -8,10 +8,6 @@ from urllib.parse import urlparse, parse_qs, quote_plus
 
 class Configuration(models.Model):
 
-    def __init__(self, *args, **kwargs):
-        super(Configuration, self).__init__(*args, **kwargs)
-        self.success_chance = 0 if (self.success + self.failed) == 0 else (self.success) / (self.success + self.failed)
-
     name = models.CharField(max_length=256, unique=True)  
     description = models.CharField(max_length=1028, blank=True)
     enable = models.BooleanField(default=True)
@@ -40,6 +36,10 @@ class Configuration(models.Model):
     @property
     def title(self):
         return f'{self.name} ({self.type})'
+
+    @property
+    def success_chance(self):
+        return 0 if (self.success + self.failed) == 0 else (self.success) / (self.success + self.failed)
 
     def increase_failed(self):
         self.failed = self.failed + 1
