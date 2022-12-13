@@ -46,7 +46,8 @@ def index(request):
         'vpns': vpns,
         'submitText': submitText,
         'selectedVpn': 'auto (smart)' if status.selected_vpn is None else status.selected_vpn.title,
-        'activeVpn': 'Connecting...' if status.active_vpn is None else status.active_vpn.title,
+        'activeVpn_on': 'Connecting...' if status.active_vpn is None else status.active_vpn.title,
+        'activeVpn_off': 'No Active VPN' if status.active_vpn is None else status.active_vpn.title,
     }
     
     return render(request, 'index.html', context)

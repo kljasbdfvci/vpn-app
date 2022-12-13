@@ -119,7 +119,7 @@
             <div id="main-form-items">
                 {% if isOn %}
                 <p for="submit-button">Selected VPN: {{selectedVpn}}</p>
-                <p for="submit-button">Active VPN: {{activeVpn}}</p>
+                <p for="submit-button">Active VPN: {{activeVpn_on}}</p>
                 {% else %}
                 <label for="select-vpn">Select Vpn Connection</label>
                 <select class="main-form-item" id="select-vpn" name="select_vpn" id="vpns">
@@ -127,6 +127,7 @@
                     <option value="{{vpn.id}}">{{vpn.title}}</option>
                     {% endfor %}
                 </select>
+                <p for="submit-button">Active VPN: {{activeVpn_off}}</p>
                 {% endif %}
                 <input type="hidden" name="vpn" value="true">
                 <input class="main-form-item" id="submit-button" type="submit" value="{{ submitText }}">
