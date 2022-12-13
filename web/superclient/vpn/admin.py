@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django import forms
 from .models import OpenVpnConfig, OpenconnectConfig, L2tpConfig, ShadowSocksConfig, V2rayConfig, V2rayUrlConfig
+from ..action.models import ServiceStatus
 
 class OpenconnectConfigAdminForm(forms.ModelForm):
     class Meta:
@@ -23,6 +24,12 @@ class OpenconnectConfigAdmin(admin.ModelAdmin):
             fields.remove(configuration_list[i])
             fields.insert(i, configuration_list[i])
         return fields
+
+    def has_delete_permission(self, request, obj = None):
+        base_delete_permission = super(OpenconnectConfigAdmin, self).has_delete_permission(request, obj)
+        if base_delete_permission:
+            if ServiceStatus.selected_vpn == obj or ServiceStatus.active_vpn == obj:
+                return False
 
 #@admin.register(OpenVpnConfig)
 #class OpenVpnConfigAdmin(admin.ModelAdmin):
@@ -60,6 +67,12 @@ class V2rayConfigAdmin(admin.ModelAdmin):
             fields.insert(i, configuration_list[i])
         return fields
 
+    def has_delete_permission(self, request, obj = None):
+        base_delete_permission = super(V2rayConfigAdmin, self).has_delete_permission(request, obj)
+        if base_delete_permission:
+            if ServiceStatus.selected_vpn == obj or ServiceStatus.active_vpn == obj:
+                return False
+
 class V2rayUrlConfigAdminForm(forms.ModelForm):
     class Meta:
         model = V2rayConfig
@@ -83,3 +96,9 @@ class V2rayUrlConfigAdmin(admin.ModelAdmin):
             fields.remove(configuration_list[i])
             fields.insert(i, configuration_list[i])
         return fields
+
+    def has_delete_permission(self, request, obj = None):
+        base_delete_permission = super(V2rayUrlConfigAdmin, self).has_delete_permission(request, obj)
+        if base_delete_permission:
+            if ServiceStatus.selected_vpn == obj or ServiceStatus.active_vpn == obj:
+                return False
