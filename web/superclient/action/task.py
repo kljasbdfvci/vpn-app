@@ -117,12 +117,11 @@ def stop_vpn_service(status: ServiceStatus):
         logging.info("try disconnect vpn configuration {}.".format(status.active_vpn.title))
         router = Router(status.active_vpn)
         res, output = router.DisconnectVPN()
+        status.change_active_vpn(None)
         if res == 0:
             logging.info('vpn disconnected.')
-            status.change_active_vpn(None)
         else:
             logging.error('vpn disconnected failed.')
-
 
 def success_chance(key):
     return key.success_chance
