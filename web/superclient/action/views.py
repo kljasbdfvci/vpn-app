@@ -13,7 +13,7 @@ def index(request):
     if request.method == 'POST':
         if 'apply' in request.POST.dict().keys():
             Network().Apply()
-            
+
             if not status.apply:
                 status.toggle_apply()
 
@@ -21,7 +21,7 @@ def index(request):
             status.toggle_on()
 
             if status.on:
-                selected_vpn = Configuration.objects.filter(id=request.POST.dict()['vpn']).first()
+                selected_vpn = Configuration.objects.filter(id=request.POST.dict()['select_vpn']).first()
                 status.change_selected_vpn(selected_vpn)
             else:
                 status.change_selected_vpn(None)

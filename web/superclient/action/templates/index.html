@@ -122,7 +122,7 @@
                 <p for="submit-button">Active VPN: {{activeVpn}}</p>
                 {% else %}
                 <label for="select-vpn">Select Vpn Connection</label>
-                <select class="main-form-item" id="select-vpn" name="vpn" id="vpns">
+                <select class="main-form-item" id="select-vpn" name="select_vpn" id="vpns">
                     {% for vpn in vpns %}
                     <option value="{{vpn.id}}">{{vpn.title}}</option>
                     {% endfor %}

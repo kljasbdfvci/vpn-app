@@ -77,12 +77,12 @@ def start_vpn_service(status: ServiceStatus):
         vpn_list = (status.selected_vpn)
 
     i = 0
-    str = "vpn list ["
+    vpn_str = "vpn list ["
     for vpn in vpn_list:
-        str = str + "({}) {} ".format(i, vpn.title()) 
+        vpn_str = vpn_str + "({}) {} ".format(i, vpn.title()) 
         i = i + 1
-    str = str + "]"
-    logging.info(str)
+    vpn_str = vpn_str + "]"
+    logging.info(vpn_str)
 
     if(len(vpn_list) == 0):
         logging.error('vpn not found.')
