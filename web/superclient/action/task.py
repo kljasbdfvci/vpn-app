@@ -37,29 +37,22 @@ def service_checker():
 
     if status.on:
         if status.active_vpn == None:
-            logging.info('Method A')
             start_vpn_service(status)
         elif status.active_vpn != None and not Router(status.active_vpn).is_running():
-            logging.info('Method B')
             stop_vpn_service(status)
         elif status.selected_vpn != None and status.selected_vpn != status.active_vpn:
-            logging.info('Method C')
             stop_vpn_service(status)
         elif status.active_vpn not in list(Configuration.objects.filter(enable=True).all()):
-            logging.info('Method D')
             stop_vpn_service(status)
         elif status.apply:
-            logging.info('Method E')
             stop_vpn_service(status)
             status.toggle_apply()
         else:
             logging.info('[NO-CHANGE] vpn service already started.')
     else:
         if status.active_vpn != None:
-            logging.info('Method F')
             stop_vpn_service(status)
         elif status.apply:
-            logging.info('Method G')
             status.toggle_apply()
         else:
             logging.info('[NO-CHANGE] vpn service already stoped.')
