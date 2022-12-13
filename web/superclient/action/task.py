@@ -65,7 +65,8 @@ def start_vpn_service(status: ServiceStatus):
     if status.selected_vpn == None:
         if general.vpn_smart_mode == general.VpnSmartMode.success_chance:
             logging.info('will use auto select vpn strategy in success chance mode.')
-            vpn_list = list(Configuration.objects.filter(enable=True).order_by('-success_chance').all())
+            vpn_list = list(Configuration.objects.filter(enable=True).all())
+            vpn_list.sort(reverse=True, key=success_chance)
         elif general.vpn_smart_mode == general.VpnSmartMode.priority:
             logging.info('will use auto select vpn strategy in priority mode...')
             vpn_list = list(Configuration.objects.filter(enable=True).order_by('-priority').all())
@@ -109,41 +110,6 @@ def start_vpn_service(status: ServiceStatus):
                 continue
     return
 
-
-    vpns = Configuration.objects.filter(enable=True).count()
-
-    if status.selected_vpn:
-        status.change_active_vpn(status.selected_vpn)
-        vpns = 1
-    else:
-        logging.info('will use auto select vpn strategy...')
-
-    for itr in range(vpns):
-        if not status.active_vpn:
-            logging.info('selecting best vpn configuration...')
-            auto_selected_vpn = Configuration.objects.filter(enable=True).order_by('failed', '-priority', '-success').first()
-            if auto_selected_vpn:
-                status.change_active_vpn(auto_selected_vpn)
-                logging.info(f'selected vpn configuration {auto_selected_vpn.title}')
-            else:
-                logging.info(f'no qualify vpn configuration found.')
-                break
-        else:
-            logging.info(f'[NO-CHANGE] use active vpn: {status.active_vpn.title}')
-
-        res, output = get_active_router().ConnectVPN(timeout_arg=30, try_count_arg=6)
-        status.active_vpn.add_log(output)
-        if res == 0:
-            status.active_vpn.increase_success()
-            logging.info(f'vpn connected.')
-            break
-        else:
-            #get_active_router().DisconnectVPN()
-            status.active_vpn.increase_failed()
-            status.change_active_vpn(None)
-            logging.info(f'vpn not connect.')
-            continue
-
 def stop_vpn_service(status: ServiceStatus):
     logging.info('stoping vpn...')
     if status.active_vpn != None:
@@ -157,6 +123,5 @@ def stop_vpn_service(status: ServiceStatus):
             logging.error('vpn disconnected failed.')
 
 
-def get_active_router():
-    status = ServiceStatus.get()
-    return Router(status.active_vpn) if status.active_vpn else None 
+def success_chance(key):
+    return key.success_chance
