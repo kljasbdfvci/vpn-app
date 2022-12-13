@@ -30,6 +30,8 @@ class OpenconnectConfigAdmin(admin.ModelAdmin):
         if base_delete_permission:
             if ServiceStatus.selected_vpn == obj or ServiceStatus.active_vpn == obj:
                 return False
+            else:
+                return True
 
 #@admin.register(OpenVpnConfig)
 #class OpenVpnConfigAdmin(admin.ModelAdmin):
@@ -72,6 +74,8 @@ class V2rayConfigAdmin(admin.ModelAdmin):
         if base_delete_permission:
             if ServiceStatus.selected_vpn == obj or ServiceStatus.active_vpn == obj:
                 return False
+            else:
+                return True
 
 class V2rayUrlConfigAdminForm(forms.ModelForm):
     class Meta:
@@ -102,3 +106,5 @@ class V2rayUrlConfigAdmin(admin.ModelAdmin):
         if base_delete_permission:
             if ServiceStatus.selected_vpn == obj or ServiceStatus.active_vpn == obj:
                 return False
+            else:
+                return True
