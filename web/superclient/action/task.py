@@ -42,6 +42,8 @@ def service_checker():
             stop_vpn_service(status)
         elif status.selected_vpn != None and status.selected_vpn != status.active_vpn:
             stop_vpn_service(status)
+        elif not status.selected_vpn in list(Configuration.objects.filter(enable=True).all()):
+            stop_vpn_service(status)
         elif status.apply:
             stop_vpn_service(status)
             status.toggle_apply()
