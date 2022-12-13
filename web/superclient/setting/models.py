@@ -29,8 +29,8 @@ class General(models.Model):
         random = "random", "Once randomly successful from list"
     check_vpn_list_method = models.CharField(max_length=64, choices=CheckVpnListMethod.choices, default=CheckVpnListMethod.once)
     check_vpn_curl_list = models.CharField(max_length=4098, default='https://api.ipify.org?format=json\nhttps://checkip.amazonaws.com\nhttps://icanhazip.com\nhttps://jsonip.com', blank=True)
-    check_vpn_curl_timeout = models.IntegerField(default=5)
-    check_vpn_curl_retry = models.IntegerField(default=3)
+    check_vpn_curl_timeout = models.IntegerField(default=8)
+    check_vpn_curl_retry = models.IntegerField(default=2)
     check_vpn_ping_list = models.CharField(max_length=4098, default='1.1.1.1\n8.8.8.8\n208.67.222.222', blank=True)
     check_vpn_ping_timeout = models.IntegerField(default=3)
     check_vpn_ping_retry = models.IntegerField(default=3)

@@ -72,6 +72,10 @@ def start_vpn_service(status: ServiceStatus):
         elif general.vpn_smart_mode == general.VpnSmartMode.circular:
             logging.info('will use auto select vpn strategy in circular mode.')
             vpn_list = Configuration.objects.filter(enable=True).order_by('id').all()
+        
+        if status.previous_active_vpn != None:
+            index = vpn_list.index(status.previous_active_vpn)
+            vpn_list = vpn_list[index + 1:] + vpn_list[:index] + vpn_list[index:index + 1]
     else:
         logging.info('will use static vpn strategy...')
         vpn_list.append(status.selected_vpn)
