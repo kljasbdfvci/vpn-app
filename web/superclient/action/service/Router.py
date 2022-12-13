@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 import json
 import random
+import time
 
 # local
 from .Execte import *
@@ -111,8 +112,10 @@ class Router:
             res = -1
             output = "Not Implimnet Yet"
 
-        if res == 0 and not self.check_vpn(self.general.CheckVpnMethod.curl, self.general.CheckVpnListMethod.once):
-            res = -1
+        if res == 0:
+            time.sleep(5)
+            if not self.check_vpn(self.general.CheckVpnMethod.curl, self.general.CheckVpnListMethod.once):
+                res = -1
 
         if res != 0:
             self.DisconnectVPN()
