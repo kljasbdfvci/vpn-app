@@ -7,6 +7,8 @@ class ServiceStatus(models.Model):
 
     on = models.BooleanField(default=False)
 
+    apply = models.BooleanField(default=False)
+
     selected_vpn = models.OneToOneField(
         Configuration,
         on_delete=models.SET_NULL,
@@ -39,4 +41,8 @@ class ServiceStatus(models.Model):
 
     def toggle_on(self):
         self.on = not self.on
+        self.save()
+
+    def toggle_apply(self):
+        self.apply = not self.apply
         self.save()

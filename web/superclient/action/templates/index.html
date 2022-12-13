@@ -109,8 +109,7 @@
 
         <div id="shortcuts">
             <div>Quick Add VPN</div>
-            <a class="shortcut" href="/settingsvpn/ciscoconfig/add/">Cisco ➕</a>
-            <a class="shortcut" href="/settingsvpn/openvpnconfig/add/">OpenVpn ➕</a>
+            <a class="shortcut" href="/settingsvpn/openconnectconfig/add/">Open Connect ➕</a>
             <a class="shortcut" href="/settingsvpn/v2rayconfig/add/">v2ray (manual) ➕</a>
             <a class="shortcut" href="/settingsvpn/v2rayurlconfig/add/">v2ray (config url) ➕</a>
         </div>
@@ -119,7 +118,8 @@
             {% csrf_token %}
             <div id="main-form-items">
                 {% if isOn %}
-                <p for="submit-button">VPN Connection: {{activeVpn}}</p>
+                <p for="submit-button">Selected VPN: {{selectedVpn}}</p>
+                <p for="submit-button">Active VPN: {{activeVpn}}</p>
                 {% else %}
                 <label for="select-vpn">Select Vpn Connection</label>
                 <select class="main-form-item" id="select-vpn" name="vpn" id="vpns">
@@ -128,16 +128,14 @@
                     {% endfor %}
                 </select>
                 {% endif %}
-        
+                <input type="hidden" name="vpn" value="true">
                 <input class="main-form-item" id="submit-button" type="submit" value="{{ submitText }}">
             </div>
         </form>
         <form id="apply-setting-form" action="/" method="post">
             {% csrf_token %}
             <div id="main-form-items">
-                <select class="main-form-item" id="apply-setting" name="apply" id="apply" hidden>
-                    <option value="true"></option>
-                </select>
+                <input type="hidden" name="apply" value="true">
                 <input class="main-form-item" id="apply-setting-submit-button" type="submit" value="Apply Setting">
             </div>
         </form>

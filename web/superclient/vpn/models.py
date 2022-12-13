@@ -8,6 +8,10 @@ from urllib.parse import urlparse, parse_qs, quote_plus
 
 class Configuration(models.Model):
 
+    def __init__(self, *args, **kwargs):
+        super(Configuration, self).__init__(*args, **kwargs)
+        self.success_chance = 0 if (self.success + self.failed) == 0 else (self.success) / (self.success + self.failed)
+
     name = models.CharField(max_length=256, unique=True)  
     description = models.CharField(max_length=1028, blank=True)
     enable = models.BooleanField(default=True)

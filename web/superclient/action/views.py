@@ -13,15 +13,21 @@ def index(request):
     if request.method == 'POST':
         if 'apply' in request.POST.dict().keys():
             Network().Apply()
-            if status.on:
-                Router(status.active_vpn).DisconnectVPN()
+            
+            if not status.apply:
+                status.toggle_apply()
 
-        else:
-            if not status.on:
+        elif 'vpn' in request.POST.dict().keys():
+            status.toggle_on()
+
+            if status.on:
                 selected_vpn = Configuration.objects.filter(id=request.POST.dict()['vpn']).first()
                 status.change_selected_vpn(selected_vpn)
+            else:
+                status.change_selected_vpn(None)
+
         
-            status.toggle_on()
+            
 
     submitText = 'Off' if status.on else 'On'
     vpn_configs = Configuration.objects.filter(enable=True).order_by('priority').all()
@@ -36,10 +42,11 @@ def index(request):
 
 
     context = {
-        'isOn': status.on, 
+        'isOn': status.on,
         'vpns': vpns,
-        'submitText': submitText, 
-        'activeVpn': 'auto (smart)' if status.active_vpn is None else status.active_vpn.title,
+        'submitText': submitText,
+        'selectedVpn': 'auto (smart)' if status.selected_vpn is None else status.selected_vpn.title,
+        'activeVpn': 'Connecting...' if status.active_vpn is None else status.active_vpn.title,
     }
     
     return render(request, 'index.html', context)

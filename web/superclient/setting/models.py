@@ -4,7 +4,12 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class General(models.Model):
-    
+
+    class VpnSmartMode(models.TextChoices):
+        success_chance = "success_chance", "Success Chance"
+        priority = "priority", "Priority"
+        circular = "circular", "Circular"        
+    vpn_smart_mode = models.CharField(max_length=64, choices=VpnSmartMode.choices, default=VpnSmartMode.success_chance)
     class DnsMode(models.TextChoices):
         _1 = "1", "Do Nothing"
         _2 = "2", "Handle in system"

@@ -1,6 +1,7 @@
 from superclient.action.models import ServiceStatus
 from superclient.vpn.models import Configuration
 from superclient.action.service.Router import Router
+from superclient.setting.models import General
 import time
 from threading import Thread
 import logging
@@ -35,26 +36,75 @@ def service_checker():
     status = ServiceStatus.get()    
 
     if status.on:
-        start_services(status)
+        if status.active_vpn == None:
+            start_vpn_service(status)
+        elif status.active_vpn != None and not Router(status.active_vpn).is_running():
+            stop_vpn_service(status)
+        elif status.selected_vpn != None and status.selected_vpn != status.active_vpn:
+            stop_vpn_service(status)
+        elif status.apply:
+            stop_vpn_service(status)
+            status.toggle_apply()
+        else:
+            logging.info('[NO-CHANGE] vpn service already started.')
     else:
-        stop_services(status)
-
-def start_services(status: ServiceStatus):
-    logging.info('starting services...')
-
-    if not get_active_router():
-        start_vpn_service(status)
-    elif get_active_router() and not get_active_router().is_running():
-        stop_vpn_service(status)
-        start_vpn_service(status)
-    else: logging.info('[NO-CHANGE] vpn service already started...')
-
-def stop_services(status: ServiceStatus):
-    logging.info('stoping services...')
-    stop_vpn_service(status)
+        if status.active_vpn != None:
+            stop_vpn_service(status)
+        elif status.apply:
+            status.toggle_apply()
+        else:
+            logging.info('[NO-CHANGE] vpn service already stoped.')
+        
+    
 
 def start_vpn_service(status: ServiceStatus):
     logging.info('starting vpn...')
+
+    general = General.objects.first()
+    vpn_list = ()
+    if status.selected_vpn == None:
+        if general.vpn_smart_mode == general.VpnSmartMode.success_chance:
+            logging.info('will use auto select vpn strategy in success chance mode.')
+            vpn_list = Configuration.objects.filter(enable=True).order_by('-success_chance').all()
+        elif general.vpn_smart_mode == general.VpnSmartMode.priority:
+            logging.info('will use auto select vpn strategy in priority mode...')
+            vpn_list = Configuration.objects.filter(enable=True).order_by('-priority').all()
+        elif general.vpn_smart_mode == general.VpnSmartMode.circular:
+            logging.info('will use auto select vpn strategy in circular mode.')
+            vpn_list = Configuration.objects.filter(enable=True).order_by('id').all()
+    else:
+        logging.info('will use static vpn strategy...')
+        vpn_list = (status.selected_vpn)
+
+    i = 0
+    str = "vpn list ["
+    for vpn in vpn_list:
+        str = str + "({}) {} ".format(i, vpn.title()) 
+        i = i + 1
+    str = str + "]"
+    logging.info(str)
+
+    if(len(vpn_list) == 0):
+        logging.error('vpn not found.')
+    else:
+        for vpn in vpn_list:
+            logging.info("try connect to vpn configuration {}.".format(vpn.title()))
+            router = Router(vpn)
+            res, output = router.ConnectVPN(timeout_arg=30, try_count_arg=6)
+            vpn.add_log(output)
+            if res == 0:
+                vpn.increase_success()
+                status.change_active_vpn(vpn)
+                logging.info('vpn connected.')
+                break
+            else:
+                router.DisconnectVPN()
+                vpn.increase_failed()
+                status.change_active_vpn(None)
+                logging.error('vpn connected failed.')
+                continue
+    return
+
 
     vpns = Configuration.objects.filter(enable=True).count()
 
@@ -92,18 +142,17 @@ def start_vpn_service(status: ServiceStatus):
 
 def stop_vpn_service(status: ServiceStatus):
     logging.info('stoping vpn...')
-    router = get_active_router()
-    if router:
+    if status.active_vpn != None:
+        logging.info("try disconnect vpn configuration {}.".format(status.active_vpn.title()))
+        router = Router(status.active_vpn)
         res, output = router.DisconnectVPN()
         if res == 0:
-            logging.info('vpn stoped...')
+            logging.info('vpn disconnected.')
+            status.change_active_vpn(None)
         else:
-            logging.info('vpn stop failed...')
-    else:
-        logging.info('[NO-CHANGE] vpn service already stopped...')
+            logging.error('vpn disconnected failed.')
 
 
 def get_active_router():
     status = ServiceStatus.get()
     return Router(status.active_vpn) if status.active_vpn else None 
-
