@@ -45,7 +45,7 @@ def service_checker():
         elif status.selected_vpn != None and status.selected_vpn != status.active_vpn:
             logging.info('Method C')
             stop_vpn_service(status)
-        elif list(Configuration.objects.filter(enable=True).all()).__contains__(status.selected_vpn):
+        elif status.active_vpn not in list(Configuration.objects.filter(enable=True).all()):
             logging.info('Method D')
             stop_vpn_service(status)
         elif status.apply:
