@@ -42,7 +42,7 @@ def service_checker():
             stop_vpn_service(status)
         elif status.selected_vpn != None and status.selected_vpn != status.active_vpn:
             stop_vpn_service(status)
-        elif not status.selected_vpn in list(Configuration.objects.filter(enable=True).all()):
+        elif status.selected_vpn not in list(Configuration.objects.filter(enable=True).all()):
             stop_vpn_service(status)
         elif status.apply:
             stop_vpn_service(status)
@@ -105,7 +105,6 @@ def start_vpn_service(status: ServiceStatus):
                 logging.info('vpn connected.')
                 break
             else:
-                router.DisconnectVPN()
                 vpn.increase_failed()
                 status.change_active_vpn(None)
                 logging.error('vpn connected failed.')
