@@ -28,7 +28,7 @@ class OpenconnectConfigAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj = None):
         base_delete_permission = super(OpenconnectConfigAdmin, self).has_delete_permission(request, obj)
         if base_delete_permission:
-            if ServiceStatus.selected_vpn == obj or ServiceStatus.active_vpn == obj:
+            if ServiceStatus.get().selected_vpn == obj or ServiceStatus.get().active_vpn == obj:
                 return False
             else:
                 return True
@@ -72,7 +72,7 @@ class V2rayConfigAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj = None):
         base_delete_permission = super(V2rayConfigAdmin, self).has_delete_permission(request, obj)
         if base_delete_permission:
-            if ServiceStatus.selected_vpn == obj or ServiceStatus.active_vpn == obj:
+            if ServiceStatus.get().selected_vpn == obj or ServiceStatus.get().active_vpn == obj:
                 return False
             else:
                 return True
@@ -104,7 +104,7 @@ class V2rayUrlConfigAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj = None):
         base_delete_permission = super(V2rayUrlConfigAdmin, self).has_delete_permission(request, obj)
         if base_delete_permission:
-            if ServiceStatus.selected_vpn == obj or ServiceStatus.active_vpn == obj:
+            if ServiceStatus.get().selected_vpn == obj or ServiceStatus.get().active_vpn == obj:
                 return False
             else:
                 return True
