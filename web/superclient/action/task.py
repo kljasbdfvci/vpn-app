@@ -65,13 +65,13 @@ def start_vpn_service(status: ServiceStatus):
     if status.selected_vpn == None:
         if general.vpn_smart_mode == general.VpnSmartMode.success_chance:
             logging.info('will use auto select vpn strategy in success chance mode.')
-            vpn_list = Configuration.objects.filter(enable=True).order_by('-success_chance').all()
+            vpn_list = list(Configuration.objects.filter(enable=True).order_by('-success_chance').all())
         elif general.vpn_smart_mode == general.VpnSmartMode.priority:
             logging.info('will use auto select vpn strategy in priority mode...')
-            vpn_list = Configuration.objects.filter(enable=True).order_by('-priority').all()
+            vpn_list = list(Configuration.objects.filter(enable=True).order_by('-priority').all())
         elif general.vpn_smart_mode == general.VpnSmartMode.circular:
             logging.info('will use auto select vpn strategy in circular mode.')
-            vpn_list = Configuration.objects.filter(enable=True).order_by('id').all()
+            vpn_list = list(Configuration.objects.filter(enable=True).order_by('id').all())
         
         if status.previous_active_vpn != None:
             index = vpn_list.index(status.previous_active_vpn)
