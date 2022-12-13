@@ -79,7 +79,7 @@ def start_vpn_service(status: ServiceStatus):
     i = 0
     vpn_str = "vpn list ["
     for vpn in vpn_list:
-        vpn_str = vpn_str + "({}) {} ".format(i, vpn.title()) 
+        vpn_str = vpn_str + "({}) {} ".format(i, vpn.title) 
         i = i + 1
     vpn_str = vpn_str + "]"
     logging.info(vpn_str)
@@ -88,7 +88,7 @@ def start_vpn_service(status: ServiceStatus):
         logging.error('vpn not found.')
     else:
         for vpn in vpn_list:
-            logging.info("try connect to vpn configuration {}.".format(vpn.title()))
+            logging.info("try connect to vpn configuration {}.".format(vpn.title))
             router = Router(vpn)
             res, output = router.ConnectVPN(timeout_arg=30, try_count_arg=6)
             vpn.add_log(output)
@@ -143,7 +143,7 @@ def start_vpn_service(status: ServiceStatus):
 def stop_vpn_service(status: ServiceStatus):
     logging.info('stoping vpn...')
     if status.active_vpn != None:
-        logging.info("try disconnect vpn configuration {}.".format(status.active_vpn.title()))
+        logging.info("try disconnect vpn configuration {}.".format(status.active_vpn.title))
         router = Router(status.active_vpn)
         res, output = router.DisconnectVPN()
         if res == 0:
