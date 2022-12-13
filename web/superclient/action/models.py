@@ -23,6 +23,13 @@ class ServiceStatus(models.Model):
         related_name='active_vpn',
     )
 
+    previous_active_vpn = models.OneToOneField(
+        Configuration,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='previous_active_vpn',
+    )
+
     @staticmethod
     def get():
         if ServiceStatus.objects.all().count() == 0:
@@ -32,6 +39,7 @@ class ServiceStatus(models.Model):
         return ServiceStatus.objects.first()
 
     def change_active_vpn(self, vpn):
+        self.previous_active_vpn = self.active_vpn
         self.active_vpn = vpn
         self.save()
 

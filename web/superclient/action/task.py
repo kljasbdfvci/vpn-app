@@ -61,7 +61,7 @@ def start_vpn_service(status: ServiceStatus):
     logging.info('starting vpn...')
 
     general = General.objects.first()
-    vpn_list = ()
+    vpn_list = []
     if status.selected_vpn == None:
         if general.vpn_smart_mode == general.VpnSmartMode.success_chance:
             logging.info('will use auto select vpn strategy in success chance mode.')
@@ -74,7 +74,7 @@ def start_vpn_service(status: ServiceStatus):
             vpn_list = Configuration.objects.filter(enable=True).order_by('id').all()
     else:
         logging.info('will use static vpn strategy...')
-        vpn_list = (status.selected_vpn)
+        vpn_list.append(status.selected_vpn)
 
     i = 0
     vpn_str = "vpn list ["
