@@ -296,6 +296,7 @@ sys_hostname=$(cat /etc/hostname | tr -d '\n')
 if [[ $my_hostname != $sys_hostname ]]; then
     echo $my_hostname > /etc/hostname
     sed -i "s/$sys_hostname/$my_hostname/g" /etc/hosts
+    sysctl -w kernel.hostname=$my_hostname
 fi
 
 # if anychange in os reboot
