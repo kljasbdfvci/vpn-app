@@ -8,13 +8,48 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        -s|--ssid)
-            ssid="$2"
+        -s1|--ssid1)
+            ssid1="$2"
             shift # past argument
             shift # past value
             ;;
-        -p|--wpa_passphrase)
-            wpa_passphrase="$2"
+        -p1|--wpa_passphrase1)
+            wpa_passphrase1="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -s2|--ssid2)
+            ssid2="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -p2|--wpa_passphrase2)
+            wpa_passphrase2="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -s3|--ssid3)
+            ssid3="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -p3|--wpa_passphrase3)
+            wpa_passphrase3="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -s4|--ssid4)
+            ssid4="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -p4|--wpa_passphrase4)
+            wpa_passphrase4="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -cc|--country_code)
+            country_code="$2"
             shift # past argument
             shift # past value
             ;;
@@ -105,13 +140,111 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=0
 
-# wpa_passphrase
-wpa_passphrase "$ssid" "$wpa_passphrase" | tee $wpa_supplicant_config_file
+cat > $wpa_supplicant_config_file << EOF
+update_config=1
+country=$country_code
+EOF
+
+if [[ -n $ssid1 ]] && [[ -n $wpa_passphrase1 ]]; then
+    cat >> $wpa_supplicant_config_file << EOF
+network={
+    scan_ssid=1
+    ssid="$ssid1"
+    proto=WPA2
+    psk="$wpa_passphrase1"
+    key_mgmt=WPA-PSK
+    pairwise=CCMP TKIP
+    group=CCMP TKIP
+    priority=4
+}
+EOF
+elif [[ -n $ssid1 ]]; then
+    cat >> $wpa_supplicant_config_file << EOF
+network={
+    scan_ssid=1
+    ssid="$ssid1"
+    key_mgmt=NONE
+    priority=4
+}
+EOF
+fi
+
+if [[ -n $ssid2 ]] && [[ -n $wpa_passphrase2 ]]; then
+    cat >> $wpa_supplicant_config_file << EOF
+network={
+    scan_ssid=1
+    ssid="$ssid2"
+    proto=WPA2
+    psk="$wpa_passphrase2"
+    key_mgmt=WPA-PSK
+    pairwise=CCMP TKIP
+    group=CCMP TKIP
+    priority=3
+}
+EOF
+elif [[ -n $ssid2 ]]; then
+    cat >> $wpa_supplicant_config_file << EOF
+network={
+    scan_ssid=1
+    ssid="$ssid2"
+    key_mgmt=NONE
+    priority=3
+}
+EOF
+fi
+
+if [[ -n $ssid3 ]] && [[ -n $wpa_passphrase3 ]]; then
+    cat >> $wpa_supplicant_config_file << EOF
+network={
+    scan_ssid=1
+    ssid="$ssid3"
+    proto=WPA2
+    psk="$wpa_passphrase3"
+    key_mgmt=WPA-PSK
+    pairwise=CCMP TKIP
+    group=CCMP TKIP
+    priority=2
+}
+EOF
+elif [[ -n $ssid3 ]]; then
+    cat >> $wpa_supplicant_config_file << EOF
+network={
+    scan_ssid=1
+    ssid="$ssid3"
+    key_mgmt=NONE
+    priority=2
+}
+EOF
+fi
+
+if [[ -n $ssid4 ]] && [[ -n $wpa_passphrase4 ]]; then
+    cat >> $wpa_supplicant_config_file << EOF
+network={
+    scan_ssid=1
+    ssid="$ssid4"
+    proto=WPA2
+    psk="$wpa_passphrase4"
+    key_mgmt=WPA-PSK
+    pairwise=CCMP TKIP
+    group=CCMP TKIP
+    priority=1
+}
+EOF
+elif [[ -n $ssid4 ]]; then
+    cat >> $wpa_supplicant_config_file << EOF
+network={
+    scan_ssid=1
+    ssid="$ssid4"
+    key_mgmt=NONE
+    priority=1
+}
+EOF
+fi
 
 # wpa_supplicant
 ifconfig $interface up
 if [[ $log == "yes" ]]; then
-    wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -f $wpa_supplicant_log_file -i $interface
+    wpa_supplicant -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -i $interface &> $wpa_supplicant_log_file &
 else
     wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -i $interface &> /dev/null
 fi

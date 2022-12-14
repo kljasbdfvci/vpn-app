@@ -53,6 +53,7 @@ class LanConfigAdmin(admin.ModelAdmin):
 
 class WlanConfigAdminForm(forms.ModelForm):
     interface = forms.ChoiceField(choices=tuple((key, key) for key in Network_Util().get_wlan_interfaces()))
+    country_code = forms.ChoiceField(choices=tuple((key ,country_code()[key]) for key in country_code()))
 
     class Meta:
         model = LanConfig
@@ -61,7 +62,7 @@ class WlanConfigAdminForm(forms.ModelForm):
 @admin.register(WlanConfig)
 class WLanConfigAdmin(admin.ModelAdmin):
     form = WlanConfigAdminForm
-    list_display = ('interface', 'ssid', 'dhcp', 'ip_address_1', 'subnet_mask_1')
+    list_display = ('interface', 'ssid1', 'dhcp', 'ip_address_1', 'subnet_mask_1')
 
 class HotspotConfigAdminForm(forms.ModelForm):
     interface = forms.ChoiceField(choices=tuple((key, key) for key in Network_Util().get_wlan_interfaces()))

@@ -78,8 +78,15 @@ def WlanConfig_validate_interface(value):
 
 class WlanConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[WlanConfig_validate_interface])
-    ssid = models.CharField(max_length=128)
-    wpa_passphrase = models.CharField(max_length=128)
+    ssid1 = models.CharField(max_length=128)
+    wpa_passphrase1 = models.CharField(max_length=128, blank=True)
+    ssid2 = models.CharField(max_length=128, blank=True)
+    wpa_passphrase2 = models.CharField(max_length=128, blank=True)
+    ssid3 = models.CharField(max_length=128, blank=True)
+    wpa_passphrase3 = models.CharField(max_length=128, blank=True)
+    ssid4 = models.CharField(max_length=128, blank=True)
+    wpa_passphrase4 = models.CharField(max_length=128, blank=True)
+    country_code = models.CharField(max_length=8, default="CN")
     class Driver(models.TextChoices):
         nl80211 = "nl80211", "nl80211"
         wext = "wext", "wext"
@@ -122,7 +129,7 @@ class HotspotConfig(models.Model):
         _13 = "13", "13"
         _14 = "14", "14"
     channel = models.CharField(max_length=8, choices=Channel.choices, default=Channel._6)
-    country_code = models.CharField(max_length=8, default="IR")
+    country_code = models.CharField(max_length=8, default="CN")
     class MAC_Address_Filter_Mode(models.TextChoices):
         disable = "disable", "Disable"
         block = "block", "Block"
