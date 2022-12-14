@@ -194,6 +194,46 @@ else
     echo "$service is already disable."
 fi
 
+# disable redsocks.service
+service="redsocks.service"
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
+    systemctl stop $service
+    systemctl disable $service
+    echo "$service is disabled."
+else
+    echo "$service is already disable."
+fi
+
+# disable serial-getty@ttyS0.service
+service="serial-getty@ttyS0.service"
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
+    systemctl stop $service
+    systemctl disable $service
+    echo "$service is disabled."
+else
+    echo "$service is already disable."
+fi
+
+# disable serial-getty@ttyGS0.service
+service="serial-getty@ttyGS0.service"
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
+    systemctl stop $service
+    systemctl disable $service
+    echo "$service is disabled."
+else
+    echo "$service is already disable."
+fi
+
+# disable getty@tty1.service
+service="getty@tty1.service"
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
+    systemctl stop $service
+    systemctl disable $service
+    echo "$service is disabled."
+else
+    echo "$service is already disable."
+fi
+
 # kill pid if get port 80
 port="80"
 if [ -n "$(fuser $port/tcp)" ]; then
