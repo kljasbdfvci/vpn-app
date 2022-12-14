@@ -98,25 +98,41 @@ exit_code=0
 
 if [ $dhcp_module == "dnsmasq" ]; then
 
-    ifconfig $interface $ip_address netmask $subnet_mask up
-    ip_res=$?
+    list_interface=(`echo $interface | sed 's/,/\n/g'`)
+    list_ip_address=(`echo $ip_address | sed 's/,/\n/g'`)
+    list_subnet_mask=(`echo $subnet_mask | sed 's/,/\n/g'`)
+    list_dhcp_ip_address_from=(`echo $dhcp_ip_address_from | sed 's/,/\n/g'`)
+    list_dhcp_ip_address_to=(`echo $dhcp_ip_address_to | sed 's/,/\n/g'`)
+
+    dhcp_range=""
+    for i in "${!list_interface[@]}"; do
+        temp_interface=${list_interface[$i]}
+        temp_ip_address=${list_ip_address[$i]}
+        temp_subnet_mask=${list_subnet_mask[$i]}
+        temp_dhcp_ip_address_from=${list_dhcp_ip_address_from[$i]}
+        temp_dhcp_ip_address_to=${list_dhcp_ip_address_to[$i]}
+
+        ifconfig $temp_interface $temp_ip_address netmask $temp_subnet_mask up
+
+        dhcp_range=$dhcp_range"--dhcp-range=interface:$temp_interface,$temp_dhcp_ip_address_from,$temp_dhcp_ip_address_to,$temp_subnet_mask,24h "
+    done  
 
     dnsmasq_res=1
     if [[ $log == "yes" ]]; then
         dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
         --bind-interfaces --except-interface=lo \
-        --interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,$subnet_mask,24h \
+        --interface=$interface --listen-address=$ip_address $dhcp_range \
         --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file
         dnsmasq_res=$?
     else
         dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
         --bind-interfaces --except-interface=lo \
-        --interface=$interface --listen-address=$ip_address --dhcp-range=interface:$interface,$dhcp_ip_address_from,$dhcp_ip_address_to,$subnet_mask,24h \
+        --interface=$interface --listen-address=$ip_address $dhcp_range \
         --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file &> /dev/null
         dnsmasq_res=$?
     fi
 
-    if [[ $ip_res == 0 ]] && [[ $dnsmasq_res == 0 ]]; then
+    if [[ $dnsmasq_res == 0 ]]; then
         exit_code=0
     else
         exit_code=1

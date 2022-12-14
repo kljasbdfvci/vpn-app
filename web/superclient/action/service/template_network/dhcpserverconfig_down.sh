@@ -67,13 +67,13 @@ if pgrep -f 'dnsmasq'; then
     sleep 1
 fi
 
-if [ -f $dnsmasq_pid_file ]; then
+if [ -f "$dnsmasq_pid_file" ]; then
     rm $dnsmasq_pid_file
 fi
-if [ -f $dnsmasq_log_file ]; then
+if [ -f "$dnsmasq_log_file" ]; then
     rm $dnsmasq_log_file
 fi
-if [ -f $dnsmasq_lease_file ]; then
+if [ -f "$dnsmasq_lease_file" ]; then
     rm $dnsmasq_lease_file
 fi
 

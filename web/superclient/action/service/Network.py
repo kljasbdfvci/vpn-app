@@ -32,9 +32,9 @@ class Network:
             "dhcpserverconfig": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/dhcpserverconfig_up.sh",
                 "down_file" : Path(__file__).resolve().parent / "template_network/dhcpserverconfig_down.sh",
-                "dnsmasq_pid_file" : "/tmp/dnsmasq_{}.pid",
-                "dnsmasq_log_file" : "/tmp/dnsmasq_{}.log",
-                "dnsmasq_lease_file" : "/tmp/dnsmasq_{}.leases",
+                "dnsmasq_pid_file" : "/tmp/dnsmasq.pid",
+                "dnsmasq_log_file" : "/tmp/dnsmasq.log",
+                "dnsmasq_lease_file" : "/tmp/dnsmasq.leases",
                 "dhcpd_config_file" : "/tmp/dhcpd.config",
                 "dhcpd_pid_file" : "/tmp/dhcpd.pid",
                 "dhcpd_log_file" : "/tmp/dhcpd.log",
@@ -264,6 +264,12 @@ class Network:
 
     def UpDhcpServerConfig(self):
         # dhcpServerConfig up
+        dnsmasq_flag = 0
+        dnsmasq_interface = ""
+        dnsmasq_ip_address = ""
+        dnsmasq_subnet_mask = ""
+        dnsmasq_dhcp_ip_address_from = ""
+        dnsmasq_dhcp_ip_address_to = ""
         dhcpd_flag = 0
         dhcpd_interface = ""
         dhcpd_ip_address = ""
@@ -272,26 +278,13 @@ class Network:
         dhcpd_dhcp_ip_address_to = ""
         for dhcpServer in self.dhcpServerConfig:
             if Network_Util().is_interface(dhcpServer.interface) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dnsmasq:
-                up_file = self.list["dhcpserverconfig"]["up_file"]
-                dhcp_module = "--dhcp_module '{}'".format(dhcpServer.dhcp_module)
-                interface = "--interface '{}'".format(dhcpServer.interface)
-                ip_address = "--ip_address '{}'".format(dhcpServer.ip_address)
-                subnet_mask = "--subnet_mask '{}'".format(dhcpServer.subnet_mask)
-                dhcp_ip_address_from = "--dhcp_ip_address_from '{}'".format(dhcpServer.dhcp_ip_address_from)
-                dhcp_ip_address_to = "--dhcp_ip_address_to '{}'".format(dhcpServer.dhcp_ip_address_to)
-                dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"].format(dhcpServer.interface))
-                dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"].format(dhcpServer.interface))
-                dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"].format(dhcpServer.interface))
-                log = "--log" if self.general.log else ""
+                dnsmasq_flag = 1
+                dnsmasq_interface = dnsmasq_interface + "," + dhcpServer.interface if dnsmasq_interface != "" else dhcpServer.interface
+                dnsmasq_ip_address = dnsmasq_ip_address + "," + dhcpServer.ip_address if dnsmasq_ip_address != "" else dhcpServer.ip_address
+                dnsmasq_subnet_mask = dnsmasq_subnet_mask + "," + dhcpServer.subnet_mask if dnsmasq_subnet_mask != "" else dhcpServer.subnet_mask
+                dnsmasq_dhcp_ip_address_from = dnsmasq_dhcp_ip_address_from + "," + dhcpServer.dhcp_ip_address_from if dnsmasq_dhcp_ip_address_from != "" else dhcpServer.dhcp_ip_address_from
+                dnsmasq_dhcp_ip_address_to = dnsmasq_dhcp_ip_address_to + "," + dhcpServer.dhcp_ip_address_to if dnsmasq_dhcp_ip_address_to != "" else dhcpServer.dhcp_ip_address_to
 
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
-                    up_file, dhcp_module, interface, ip_address, subnet_mask,\
-                    dhcp_ip_address_from, dhcp_ip_address_to,\
-                    dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file,\
-                    log)
-                )
-                c.do()
-                c.print()
             elif Network_Util().is_interface(dhcpServer.interface) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dhcpd:
                 dhcpd_flag = 1
                 dhcpd_interface = dhcpd_interface + "," + dhcpServer.interface if dhcpd_interface != "" else dhcpServer.interface
@@ -299,6 +292,28 @@ class Network:
                 dhcpd_subnet_mask = dhcpd_subnet_mask + "," + dhcpServer.subnet_mask if dhcpd_subnet_mask != "" else dhcpServer.subnet_mask
                 dhcpd_dhcp_ip_address_from = dhcpd_dhcp_ip_address_from + "," + dhcpServer.dhcp_ip_address_from if dhcpd_dhcp_ip_address_from != "" else dhcpServer.dhcp_ip_address_from
                 dhcpd_dhcp_ip_address_to = dhcpd_dhcp_ip_address_to + "," + dhcpServer.dhcp_ip_address_to if dhcpd_dhcp_ip_address_to != "" else dhcpServer.dhcp_ip_address_to
+        
+        if dnsmasq_flag == 1:
+            up_file = self.list["dhcpserverconfig"]["up_file"]
+            dhcp_module = "--dhcp_module '{}'".format(DhcpServerConfig.DhcpModule.dnsmasq)
+            dnsmasq_interface = "--interface '{}'".format(dnsmasq_interface)
+            dnsmasq_ip_address = "--ip_address '{}'".format(dnsmasq_ip_address)
+            dnsmasq_subnet_mask = "--subnet_mask '{}'".format(dnsmasq_subnet_mask)
+            dnsmasq_dhcp_ip_address_from = "--dhcp_ip_address_from '{}'".format(dnsmasq_dhcp_ip_address_from)
+            dnsmasq_dhcp_ip_address_to = "--dhcp_ip_address_to '{}'".format(dnsmasq_dhcp_ip_address_to)
+            dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"])
+            dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"])
+            dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"])
+            log = "--log" if self.general.log else ""
+
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
+                up_file, dhcp_module,\
+                dnsmasq_interface, dnsmasq_ip_address, dnsmasq_subnet_mask, dnsmasq_dhcp_ip_address_from, dnsmasq_dhcp_ip_address_to,\
+                dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file,\
+                log)
+            )
+            c.do()
+            c.print()
 
         if dhcpd_flag == 1:
             up_file = self.list["dhcpserverconfig"]["up_file"]
