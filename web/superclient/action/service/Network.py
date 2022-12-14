@@ -178,7 +178,7 @@ class Network:
                 subnet_mask_4 = "--subnet_mask_4 '{}'".format(wlan.subnet_mask_4) if wlan.subnet_mask_4 != "" else ""
                 log = "--log" if self.general.log else ""
 
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface,\
                     ssid1, wpa_passphrase1, ssid2, wpa_passphrase2, ssid3, wpa_passphrase3, ssid4, wpa_passphrase4,\
                     country_code, driver,\
