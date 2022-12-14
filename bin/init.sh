@@ -290,6 +290,14 @@ python3 -m pip install -r "$this_dir_path/../web/requirments.txt"
 rm /root/.bash_history
 rm /home/*/.bash_history
 
+# change hostname
+my_hostname="powerfreenet"
+sys_hostname=$(cat /etc/hostname | tr -d '\n')
+if [[ $my_hostname != $sys_hostname ]]; then
+    echo $my_hostname > /etc/hostname
+    sed -i "s/$sys_hostname/$my_hostname/g" /etc/hosts
+fi
+
 # if anychange in os reboot
 if [ $flag_reboot -eq 1 ]; then 
     echo "reboot successful."
