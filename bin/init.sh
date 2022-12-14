@@ -69,8 +69,33 @@ do
     fi
 done
 
+# uninstall list of apt packages
+packages=("redsocks")
+for package in ${packages[@]}
+do
+    if [ -n "$(dpkg -l | grep -w $package)" ]
+    then
+        n=0
+        until [ "$n" -ge 3 ]
+        do
+            apt purge -y $package
+            res_apt=$?
+            if [ $res_apt == 0 ]; then
+                echo "try($n) $package is uninstalled."
+                break
+            else
+                echo "try($n) $package is uninstalled failed."
+            fi
+            n=$((n+1)) 
+            sleep 1
+        done
+    else
+        echo "$package is not exist."
+    fi
+done
+
 # reboot
-flag_rebbot=0
+flag_reboot=0
 
 # copy tmp os files to os
 # get hardware info
@@ -120,6 +145,23 @@ do
         os_file=$os_file_parent"/"$os_file_filename
     fi
 
+    # check file for rm
+    reg=".*___rm"
+    if [[ $tmp_os_file_filename =~ $reg ]]; then # sshd___orangepizero___debian___bullseye___aarch64
+        tmp_os_file_name=$(echo -n $tmp_os_file_filename | sed 's/\(.*\)___rm/\1/')
+        os_file_parent=$(echo $tmp_os_file_parent | sed "s/^${tmp_os_file_path//\//\\\/}//")
+        os_file_filename=$tmp_os_file_name
+        os_file=$os_file_parent"/"$os_file_filename
+        if [[ -f "$os_file" ]]; then
+            rm $os_file
+            flag_reboot=1
+            echo "delete file $os_file successful."
+        else
+            echo "file $os_file is not exist."
+        fi
+        continue
+    fi
+
     # get md5sum
     tmp_os_file_md5sum=$(md5sum $tmp_os_file | cut -d ' ' -f 1 | tr -d '\n')
     os_file_md5sum=""
@@ -128,7 +170,7 @@ do
     fi
     
     if [ "$tmp_os_file_md5sum" != "$os_file_md5sum" ]; then
-        flag_rebbot=1
+        flag_reboot=1
         # do copy
         mkdir -p $os_file_parent && cp -f $tmp_os_file $os_file
         res_cp=$?
@@ -194,16 +236,6 @@ else
     echo "$service is already disable."
 fi
 
-# disable redsocks.service
-service="redsocks.service"
-if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
-    systemctl stop $service
-    systemctl disable $service
-    echo "$service is disabled."
-else
-    echo "$service is already disable."
-fi
-
 # disable serial-getty@ttyS0.service
 service="serial-getty@ttyS0.service"
 if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
@@ -249,7 +281,7 @@ fi
 python3 -m pip install -r "$this_dir_path/../web/requirments.txt"
 
 # if anychange in os reboot
-if [ $flag_rebbot -eq 1 ]; then 
+if [ $flag_reboot -eq 1 ]; then 
     echo "reboot successful."
     reboot
 else
