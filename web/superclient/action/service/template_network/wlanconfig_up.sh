@@ -244,7 +244,7 @@ fi
 # wpa_supplicant
 ifconfig $interface up
 if [[ $log == "yes" ]]; then
-    wpa_supplicant -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -i $interface -t -dd &> $wpa_supplicant_log_file &
+    wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -i $interface -f $wpa_supplicant_log_file -t -dd
 else
     wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -i $interface &> /dev/null
 fi
