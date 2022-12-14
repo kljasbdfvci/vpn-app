@@ -148,7 +148,7 @@ class DhcpServerConfig(models.Model):
     class DhcpModule(models.TextChoices):
         dnsmasq = "dnsmasq", "dnsmasq"
         dhcpd = "isc-dhcp-server", "isc-dhcp-server"
-    dhcp_module = models.CharField(max_length=32, choices=DhcpModule.choices, default=DhcpModule.dhcpd)
+    dhcp_module = models.CharField(max_length=32, choices=DhcpModule.choices, default=DhcpModule.dnsmasq)
     interface = models.CharField(max_length=16, unique=True, validators=[DhcpServerConfig_validate_interface])
     ip_address = models.CharField(max_length=16, default='192.168.10.1')
     subnet_mask = models.CharField(max_length=16, default='255.255.255.0')
