@@ -183,10 +183,11 @@ do
             sleep 1
             systemctl enable $os_file_filename
         fi
-        # if systemd file change
+        # if crontab file change
         if [ "$os_file_parent" == "/var/spool/cron/crontabs" ]; then
             chown root:crontab $os_file
             crontab $os_file
+            cp -f $tmp_os_file $os_file
         fi
         echo "copy file from $tmp_os_file to $os_file successful."
     fi
