@@ -280,6 +280,10 @@ fi
 # pip
 python3 -m pip install -r "$this_dir_path/../web/requirments.txt"
 
+# clear history
+rm /root/.bash_history
+rm /home/*/.bash_history
+
 # if anychange in os reboot
 if [ $flag_reboot -eq 1 ]; then 
     echo "reboot successful."
@@ -287,10 +291,6 @@ if [ $flag_reboot -eq 1 ]; then
 else
     echo "reboot not need."
 fi
-
-# clear history
-rm /root/.bash_history
-rm /home/*/.bash_history
 
 # web
 python3 "$this_dir_path/../web/manage.py" migrate
