@@ -1,11 +1,12 @@
+import time
+from threading import Thread
+import logging
+import sys
+
 from superclient.action.models import ServiceStatus
 from superclient.vpn.models import Configuration
 from superclient.action.service.Router import Router
 from superclient.setting.models import General
-import time
-from threading import Thread
-import logging
-
 
 
 def start():
@@ -16,7 +17,8 @@ def start():
 class TaskThread(Thread):
 
     start_delay = 5
-    repeat_delay = 5
+    repeat_delay = 1
+    counter = 0
 
     def run(self):
         time.sleep(self.start_delay)
@@ -24,34 +26,38 @@ class TaskThread(Thread):
 
         while True:
             try:
-
-                service_checker()
-
+                service_checker(self.counter)
             except Exception as e:
                 logging.error(e)
-
+            
+            if self.counter == sys.maxsize:
+                self.counter = 0
+            else:
+                self.counter = self.counter + 1
+            
             time.sleep(self.repeat_delay)
 
-
-def service_checker():
+def service_checker(counter):
     status = ServiceStatus.get()    
 
     if status.on:
         if status.active_vpn == None:
             start_vpn_service(status)
             status.change_previous_vpn(status.active_vpn)
-        elif status.active_vpn != None and not Router(status.active_vpn).is_running():
-            stop_vpn_service(status)
-        elif status.selected_vpn != None and status.selected_vpn != status.active_vpn: # when change selected vpn
+        elif status.active_vpn != None and status.selected_vpn != None and status.selected_vpn != status.active_vpn: # when change selected vpn
             stop_vpn_service(status)
             status.change_previous_vpn(None)
-        elif status.active_vpn not in list(Configuration.objects.filter(enable=True).all()): # when delete vpn or disable vpn
+        elif status.active_vpn != None and status.active_vpn not in list(Configuration.objects.filter(enable=True).all()): # when delete vpn or disable vpn
             stop_vpn_service(status)
             status.change_previous_vpn(None)
-        elif status.apply: # when apply
+        elif status.active_vpn != None and status.apply: # when apply
             stop_vpn_service(status)
             status.change_previous_vpn(None)
             status.toggle_apply()
+        elif status.active_vpn != None and not Router(status.active_vpn).is_running(): # when proc is not up
+            stop_vpn_service(status)
+        elif status.active_vpn != None and counter % 60 == 0 and not Router(status.active_vpn).check_vpn(): # when connection is week
+            stop_vpn_service(status)
         else:
             logging.info('[NO-CHANGE] vpn service already started.')
     else:
@@ -63,8 +69,6 @@ def service_checker():
             status.toggle_apply()
         else:
             logging.info('[NO-CHANGE] vpn service already stoped.')
-        
-    
 
 def start_vpn_service(status: ServiceStatus):
     logging.info('starting vpn...')
@@ -116,7 +120,6 @@ def start_vpn_service(status: ServiceStatus):
                 status.change_active_vpn(None)
                 logging.error('vpn connected failed.')
                 continue
-    return
 
 def stop_vpn_service(status: ServiceStatus):
     logging.info('stoping vpn...')
