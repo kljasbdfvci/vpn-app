@@ -3,37 +3,37 @@
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -m|--dhcp_module)
+        --dhcp_module)
             dhcp_module="$2"
             shift # past argument
             shift # past value
             ;;
-        -i|--interface)
+        --interface)
             interface="$2"
             shift # past argument
             shift # past value
             ;;
-        -ip|--ip_address)
+        --ip_address)
             ip_address="$2"
             shift # past argument
             shift # past value
             ;;
-        -mask|--subnet_mask)
+        --subnet_mask)
             subnet_mask="$2"
             shift # past argument
             shift # past value
             ;;
-        -from|--dhcp_ip_address_from)
+        --dhcp_ip_address_from)
             dhcp_ip_address_from="$2"
             shift # past argument
             shift # past value
             ;;
-        -to|--dhcp_ip_address_to)
+        --dhcp_ip_address_to)
             dhcp_ip_address_to="$2"
             shift # past argument
             shift # past value
             ;;
-        -d|--dns_server)
+        --dns_server)
             dns_server="$2"
             shift # past argument
             shift # past value

@@ -3,42 +3,42 @@
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -i|--interface)
+        --interface)
             interface="$2"
             shift # past argument
             shift # past value
             ;;
-        -s|--ssid)
+        --ssid)
             ssid="$2"
             shift # past argument
             shift # past value
             ;;
-        -p|--wpa_passphrase)
+        --wpa_passphrase)
             wpa_passphrase="$2"
             shift # past argument
             shift # past value
             ;;
-        -c|--channel)
+        --channel)
             channel="$2"
             shift # past argument
             shift # past value
             ;;
-        -cc|--country_code)
+        --country_code)
             country_code="$2"
             shift # past argument
             shift # past value
             ;;
-        -c|--hostapd_config_file)
+        --hostapd_config_file)
             hostapd_config_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -P|--hostapd_pid_file)
+        --hostapd_pid_file)
             hostapd_pid_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -l|--hostapd_log_file)
+        --hostapd_log_file)
             hostapd_log_file="$2"
             shift # past argument
             shift # past value

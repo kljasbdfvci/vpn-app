@@ -3,7 +3,7 @@
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -d|--dns_server)
+        --dns_server)
             dns_server="$2"
             shift # past argument
             shift # past value

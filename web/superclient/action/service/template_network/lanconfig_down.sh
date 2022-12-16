@@ -6,6 +6,21 @@ this_dir_path=$(eval "dirname $this_file_path")
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --dhclient_config_file)
+            dhclient_config_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhclient_pid_file)
+            dhclient_pid_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhclient_log_file)
+            dhclient_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --log)
             log="yes"
             shift # past argument
@@ -23,6 +38,21 @@ done
 set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=0
+
+if pgrep -f 'dhclient'; then
+    killall 'dhclient' &>/dev/null
+    sleep 1
+fi
+
+if [ -f $dhclient_config_file ]; then
+    rm $dhclient_config_file
+fi
+if [ -f $dhclient_pid_file ]; then
+    rm $dhclient_pid_file
+fi
+if [ -f $dhclient_log_file ]; then
+    rm $dhclient_log_file
+fi
 
 # lanConfig
 for dev in $($this_dir_path/interface_list.sh eth); do

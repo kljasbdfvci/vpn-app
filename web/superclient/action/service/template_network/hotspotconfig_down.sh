@@ -3,17 +3,17 @@
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -hc|--hostapd_config_file)
+        --hostapd_config_file)
             hostapd_config_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -hP|--hostapd_pid_file)
+        --hostapd_pid_file)
             hostapd_pid_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -hl|--hostapd_log_file)
+        --hostapd_log_file)
             hostapd_log_file="$2"
             shift # past argument
             shift # past value

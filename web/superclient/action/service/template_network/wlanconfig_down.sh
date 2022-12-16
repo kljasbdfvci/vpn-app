@@ -6,18 +6,33 @@ this_dir_path=$(eval "dirname $this_file_path")
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -wc|--wpa_supplicant_config_file)
+        --wpa_supplicant_config_file)
             wpa_supplicant_config_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -wP|--wpa_supplicant_pid_file)
+        --wpa_supplicant_pid_file)
             wpa_supplicant_pid_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -wl|--wpa_supplicant_log_file)
+        --wpa_supplicant_log_file)
             wpa_supplicant_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhclient_config_file)
+            dhclient_config_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhclient_pid_file)
+            dhclient_pid_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhclient_log_file)
+            dhclient_log_file="$2"
             shift # past argument
             shift # past value
             ;;
@@ -42,6 +57,21 @@ exit_code=0
 # wlanConfig
 nmcli radio wifi off
 rfkill unblock wlan
+
+if pgrep -f 'dhclient'; then
+    killall 'dhclient' &>/dev/null
+    sleep 1
+fi
+
+if [ -f $dhclient_config_file ]; then
+    rm $dhclient_config_file
+fi
+if [ -f $dhclient_pid_file ]; then
+    rm $dhclient_pid_file
+fi
+if [ -f $dhclient_log_file ]; then
+    rm $dhclient_log_file
+fi
 
 if pgrep -f 'wpa_supplicant'; then
     killall 'wpa_supplicant' &>/dev/null

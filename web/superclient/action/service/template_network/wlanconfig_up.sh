@@ -3,121 +3,131 @@
 POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -i|--interface)
+        --interface)
             interface="$2"
             shift # past argument
             shift # past value
             ;;
-        -s1|--ssid1)
+        --ssid1)
             ssid1="$2"
             shift # past argument
             shift # past value
             ;;
-        -p1|--wpa_passphrase1)
+        --wpa_passphrase1)
             wpa_passphrase1="$2"
             shift # past argument
             shift # past value
             ;;
-        -s2|--ssid2)
+        --ssid2)
             ssid2="$2"
             shift # past argument
             shift # past value
             ;;
-        -p2|--wpa_passphrase2)
+        --wpa_passphrase2)
             wpa_passphrase2="$2"
             shift # past argument
             shift # past value
             ;;
-        -s3|--ssid3)
+        --ssid3)
             ssid3="$2"
             shift # past argument
             shift # past value
             ;;
-        -p3|--wpa_passphrase3)
+        --wpa_passphrase3)
             wpa_passphrase3="$2"
             shift # past argument
             shift # past value
             ;;
-        -s4|--ssid4)
+        --ssid4)
             ssid4="$2"
             shift # past argument
             shift # past value
             ;;
-        -p4|--wpa_passphrase4)
+        --wpa_passphrase4)
             wpa_passphrase4="$2"
             shift # past argument
             shift # past value
             ;;
-        -cc|--country_code)
+        --country_code)
             country_code="$2"
             shift # past argument
             shift # past value
             ;;
-        -D|--driver)
+        --driver)
             driver="$2"
             shift # past argument
             shift # past value
             ;;
-        -c|--wpa_supplicant_config_file)
+        --wpa_supplicant_config_file)
             wpa_supplicant_config_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -P|--wpa_supplicant_pid_file)
+        --wpa_supplicant_pid_file)
             wpa_supplicant_pid_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -f|--wpa_supplicant_log_file)
+        --wpa_supplicant_log_file)
             wpa_supplicant_log_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -d|--dhcp)
-            dhcp="yes"
-            shift # past argument
-            ;;
-        -D|--dns_manage_up)
-            dns_manage_up="$2"
+        --dhclient_config_file)
+            dhclient_config_file="$2"
             shift # past argument
             shift # past value
             ;;
-        -ip1|--ip_address_1)
+        --dhclient_pid_file)
+            dhclient_pid_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhclient_log_file)
+            dhclient_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhcp)
+            dhcp="yes"
+            shift # past argument
+            ;;
+        --ip_address_1)
             ip_address_1="$2"
             shift # past argument
             shift # past value
             ;;
-        -mask1|--subnet_mask_1)
+        --subnet_mask_1)
             subnet_mask_1="$2"
             shift # past argument
             shift # past value
             ;;
-        -ip2|--ip_address_2)
+        --ip_address_2)
             ip_address_2="$2"
             shift # past argument
             shift # past value
             ;;
-        -mask2|--subnet_mask_2)
+        --subnet_mask_2)
             subnet_mask_2="$2"
             shift # past argument
             shift # past value
             ;;
-        -ip3|--ip_address_3)
+        --ip_address_3)
             ip_address_3="$2"
             shift # past argument
             shift # past value
             ;;
-        -mask3|--subnet_mask_3)
+        --subnet_mask_3)
             subnet_mask_1="$2"
             shift # past argument
             shift # past value
             ;;
-        -ip4|--ip_address_4)
+        --ip_address_4)
             ip_address_4="$2"
             shift # past argument
             shift # past value
             ;;
-        -mask4|--subnet_mask_4)
+        --subnet_mask_4)
             subnet_mask_1="$2"
             shift # past argument
             shift # past value
@@ -254,20 +264,21 @@ sleep 10
 dhcp_res=0
 if [[ $dhcp == "yes" ]]; then
     ifconfig $interface up
-    n=0
-    try=2
-    until [ "$n" -ge $try ]
-    do
-        echo "Try($n)"
-        timeout 30 dhclient -v $interface
-        dhcp_res=$?
-        if [ $dhcp_res == 0 ]; then
-            $dns_manage_up
-            break
-        fi
-        n=$((n+1)) 
-        sleep 1
-    done
+        cat >> $wpa_supplicant_config_file << EOF
+option rfc3442-classless-static-routes code 121 = array of unsigned integer 8;
+
+send host-name = gethostname();
+request subnet-mask, broadcast-address, time-offset, routers,
+	domain-name, domain-search, host-name,
+	dhcp6.domain-search, dhcp6.fqdn, dhcp6.sntp-servers,
+	netbios-name-servers, netbios-scope, interface-mtu,
+	rfc3442-classless-static-routes, ntp-servers;
+EOF
+    if [[ $log == "yes" ]]; then
+        dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -v $interface 2> $dhclient_log_file &
+    else
+        dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -v $interface 2> /dev/null &
+    fi
 fi
 
 # static 1
