@@ -20,6 +20,7 @@ class TaskThread(Thread):
 
     def run(self):
         time.sleep(self.start_delay)
+        ServiceStatus.get().change_previous_vpn(None)
 
         while True:
             try:
@@ -38,21 +39,27 @@ def service_checker():
     if status.on:
         if status.active_vpn == None:
             start_vpn_service(status)
+            status.change_previous_vpn(status.active_vpn)
         elif status.active_vpn != None and not Router(status.active_vpn).is_running():
             stop_vpn_service(status)
-        elif status.selected_vpn != None and status.selected_vpn != status.active_vpn:
+        elif status.selected_vpn != None and status.selected_vpn != status.active_vpn: # when change selected vpn
             stop_vpn_service(status)
-        elif status.active_vpn not in list(Configuration.objects.filter(enable=True).all()):
+            status.change_previous_vpn(None)
+        elif status.active_vpn not in list(Configuration.objects.filter(enable=True).all()): # when delete vpn or disable vpn
             stop_vpn_service(status)
-        elif status.apply:
+            status.change_previous_vpn(None)
+        elif status.apply: # when apply
             stop_vpn_service(status)
+            status.change_previous_vpn(None)
             status.toggle_apply()
         else:
             logging.info('[NO-CHANGE] vpn service already started.')
     else:
-        if status.active_vpn != None:
+        if status.active_vpn != None: # when stop vpn
             stop_vpn_service(status)
-        elif status.apply:
+            status.change_previous_vpn(None)
+        elif status.apply: # when apply
+            status.change_previous_vpn(None)
             status.toggle_apply()
         else:
             logging.info('[NO-CHANGE] vpn service already stoped.')

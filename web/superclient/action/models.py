@@ -38,10 +38,13 @@ class ServiceStatus(models.Model):
 
         return ServiceStatus.objects.first()
 
+    def change_previous_vpn(self, vpn):
+        self.previous_active_vpn = vpn
+        self.save(update_fields = ["previous_active_vpn"])
+
     def change_active_vpn(self, vpn):
-        self.previous_active_vpn = self.active_vpn
         self.active_vpn = vpn
-        self.save(update_fields = ["previous_active_vpn", "active_vpn"])
+        self.save(update_fields = ["active_vpn"])
 
     def change_selected_vpn(self, vpn):
         self.selected_vpn = vpn
