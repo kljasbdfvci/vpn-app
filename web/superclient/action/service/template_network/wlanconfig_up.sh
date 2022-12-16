@@ -264,7 +264,7 @@ sleep 10
 dhcp_res=0
 if [[ $dhcp == "yes" ]]; then
     ifconfig $interface up
-        cat >> $wpa_supplicant_config_file << EOF
+        cat >> $dhclient_config_file << EOF
 option rfc3442-classless-static-routes code 121 = array of unsigned integer 8;
 
 send host-name = gethostname();
