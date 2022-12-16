@@ -102,4 +102,12 @@ fi
 
 rm $named_config_file
 
+if [[ $(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n') != "0" ]]; then
+    for br_name in $(brctl show | tail -n +2 | awk '{print $1}')
+    do
+        ifconfig $br_name down
+        brctl delbr $br_name
+    done
+fi
+
 exit $exit_code

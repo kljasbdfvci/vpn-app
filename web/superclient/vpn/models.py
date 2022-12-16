@@ -43,15 +43,15 @@ class Configuration(models.Model):
 
     def increase_failed(self):
         self.failed = self.failed + 1
-        self.save()
+        self.save(update_fields = ["failed"])
 
     def increase_success(self):
         self.success = self.success + 1
-        self.save()
+        self.save(update_fields = ["success"])
     
     def add_log(self, log):
         self.last_log = log
-        self.save()
+        self.save(update_fields = ["log"])
 
 
 class L2tpConfig(Configuration):

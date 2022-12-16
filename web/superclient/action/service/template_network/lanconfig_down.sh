@@ -26,11 +26,11 @@ exit_code=0
 
 # lanConfig
 for dev in $($this_dir_path/interface_list.sh eth); do
-    ifconfig $dev down
-    ifconfig $dev:1 down
-    ifconfig $dev:2 down
-    ifconfig $dev:3 down
-    ifconfig $dev:4 down
+    ifconfig $dev 0.0.0.0 up
+    ifconfig $dev:1 0.0.0.0
+    ifconfig $dev:2 0.0.0.0
+    ifconfig $dev:3 0.0.0.0
+    ifconfig $dev:4 0.0.0.0
     sleep 1
 done
 

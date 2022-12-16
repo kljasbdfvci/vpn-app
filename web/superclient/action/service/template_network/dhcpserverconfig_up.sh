@@ -105,6 +105,7 @@ if [ $dhcp_module == "dnsmasq" ]; then
     list_dhcp_ip_address_to=(`echo $dhcp_ip_address_to | sed 's/,/\n/g'`)
 
     dhcp_range=""
+    bridge=""
     for i in "${!list_interface[@]}"; do
         temp_interface=${list_interface[$i]}
         temp_ip_address=${list_ip_address[$i]}
@@ -112,22 +113,31 @@ if [ $dhcp_module == "dnsmasq" ]; then
         temp_dhcp_ip_address_from=${list_dhcp_ip_address_from[$i]}
         temp_dhcp_ip_address_to=${list_dhcp_ip_address_to[$i]}
 
-        ifconfig $temp_interface $temp_ip_address netmask $temp_subnet_mask up
+        br_name="br_"$(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n')
+        brctl addbr $br_name
+        brctl addif $br_name $temp_interface
+        ifconfig $br_name $temp_ip_address netmask $temp_subnet_mask up
+        
+        if [[ "$bridge" == "" ]]; then
+            bridge=$br_name
+        else
+            bridge=$bridge","$br_name
+        fi
 
-        dhcp_range=$dhcp_range"--dhcp-range=interface:$temp_interface,$temp_dhcp_ip_address_from,$temp_dhcp_ip_address_to,$temp_subnet_mask,24h "
+        dhcp_range=$dhcp_range"--dhcp-range=interface:$br_name,$temp_dhcp_ip_address_from,$temp_dhcp_ip_address_to,$temp_subnet_mask,24h "
     done  
 
     dnsmasq_res=1
     if [[ $log == "yes" ]]; then
         dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
         --bind-interfaces --except-interface=lo \
-        --interface=$interface --listen-address=$ip_address $dhcp_range \
+        --interface=$bridge --listen-address=$ip_address $dhcp_range \
         --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file
         dnsmasq_res=$?
     else
         dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
         --bind-interfaces --except-interface=lo \
-        --interface=$interface --listen-address=$ip_address $dhcp_range \
+        --interface=$bridge --listen-address=$ip_address $dhcp_range \
         --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file &> /dev/null
         dnsmasq_res=$?
     fi
@@ -146,12 +156,11 @@ elif [ $dhcp_module == "isc-dhcp-server" ]; then
     list_dhcp_ip_address_from=(`echo $dhcp_ip_address_from | sed 's/,/\n/g'`)
     list_dhcp_ip_address_to=(`echo $dhcp_ip_address_to | sed 's/,/\n/g'`)
 
-    str_interface=""
-
     cat > $dhcpd_config_file << EOF
 authoritative;
 EOF
 
+    bridge=""
     for i in "${!list_interface[@]}"; do
         temp_interface=${list_interface[$i]}
         temp_ip_address=${list_ip_address[$i]}
@@ -159,7 +168,16 @@ EOF
         temp_dhcp_ip_address_from=${list_dhcp_ip_address_from[$i]}
         temp_dhcp_ip_address_to=${list_dhcp_ip_address_to[$i]}
 
-        ifconfig $temp_interface $temp_ip_address netmask $temp_subnet_mask up
+        br_name="br_"$(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n')
+        brctl addbr $br_name
+        brctl addif $br_name $temp_interface
+        ifconfig $br_name $temp_ip_address netmask $temp_subnet_mask up
+        
+        if [[ "$bridge" == "" ]]; then
+            bridge=$br_name
+        else
+            bridge=$bridge" "$br_name
+        fi
 
         network_range=$(echo -n $temp_ip_address | sed 's/\([[:digit:]]\{1,3\}\(\.[[:digit:]]\{1,3\}\)\{2\}\.\)\([[:digit:]]\{1,3\}\)/\1/g')"0"
     
@@ -172,17 +190,16 @@ subnet $network_range netmask $temp_subnet_mask {
   max-lease-time 86400;
 }
 EOF
-    str_interface=$str_interface" "$temp_interface
     done
 
     touch $dhcpd_lease_file
     
     dhcpd_res=1
     if [[ $log == "yes" ]]; then
-        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $str_interface
+        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $bridge
         dhcpd_res=$?
     else
-        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -lf $dhcpd_lease_file $str_interface &> /dev/null
+        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -lf $dhcpd_lease_file $bridge &> /dev/null
         dhcpd_res=$?
     fi
 
