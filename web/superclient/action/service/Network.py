@@ -65,8 +65,10 @@ class Network:
         self.general = General.objects.first()
 
     def Apply(self):
-        self.ApplyLanConfig()
-        self.ApplyWlanConfig()
+        self.DownLanConfig()
+        self.DownWlanConfig()
+        self.UpLanConfig()
+        self.UpWlanConfig()
         self.ApplyHotspotConfig()
         self.ApplyDhcpServerConfig()
         self.ApplyDns()
