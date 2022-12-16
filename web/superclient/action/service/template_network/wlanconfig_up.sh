@@ -258,13 +258,12 @@ if [[ $log == "yes" ]]; then
 else
     wpa_supplicant -B -D $driver -c $wpa_supplicant_config_file -P $wpa_supplicant_pid_file -i $interface &> /dev/null
 fi
-sleep 10
 
 # dhcp
 dhcp_res=0
 if [[ $dhcp == "yes" ]]; then
     ifconfig $interface up
-        cat >> $dhclient_config_file << EOF
+        cat > $dhclient_config_file << EOF
 option rfc3442-classless-static-routes code 121 = array of unsigned integer 8;
 
 send host-name = gethostname();
