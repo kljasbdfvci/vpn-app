@@ -16,6 +16,11 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --dhclient_lease_file)
+            dhclient_lease_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --dhclient_log_file)
             dhclient_log_file="$2"
             shift # past argument
@@ -49,6 +54,9 @@ if [ -f $dhclient_config_file ]; then
 fi
 if [ -f $dhclient_pid_file ]; then
     rm $dhclient_pid_file
+fi
+if [ -f $dhclient_lease_file ]; then
+    rm $dhclient_lease_file
 fi
 if [ -f $dhclient_log_file ]; then
     rm $dhclient_log_file

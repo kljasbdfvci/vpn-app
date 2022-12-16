@@ -18,6 +18,11 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --dhclient_lease_file)
+            dhclient_lease_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --dhclient_log_file)
             dhclient_log_file="$2"
             shift # past argument
@@ -100,9 +105,9 @@ request subnet-mask, broadcast-address, time-offset, routers,
 	rfc3442-classless-static-routes, ntp-servers;
 EOF
     if [[ $log == "yes" ]]; then
-        dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -v $interface 2> $dhclient_log_file &
+        dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -lf $dhclient_lease_file -v $interface 2> $dhclient_log_file &
     else
-        dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -v $interface 2> /dev/null &
+        dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -lf $dhclient_lease_file -v $interface 2> /dev/null &
     fi
 fi
 

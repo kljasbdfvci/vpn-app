@@ -14,6 +14,7 @@ class Network:
                 "down_file" : Path(__file__).resolve().parent / "template_network/lanconfig_down.sh",
                 "dhclient_config_file" : "/tmp/dhclient_{}.conf",
                 "dhclient_pid_file" : "/tmp/dhclient_{}.pid",
+                "dhclient_lease_file" : "/tmp/dhclient_{}.leases",
                 "dhclient_log_file" : "/tmp/dhclient_{}.log",
             },
             "wlanconfig": {
@@ -24,6 +25,7 @@ class Network:
                 "wpa_supplicant_log_file" : "/tmp/wpa_supplicant_{}.log",
                 "dhclient_config_file" : "/tmp/dhclient_{}.conf",
                 "dhclient_pid_file" : "/tmp/dhclient_{}.pid",
+                "dhclient_lease_file" : "/tmp/dhclient_{}.leases",
                 "dhclient_log_file" : "/tmp/dhclient_{}.log",
             },
             "hotspotconfig": {
@@ -99,12 +101,13 @@ class Network:
         down_file = self.list["lanconfig"]["down_file"]
         dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["lanconfig"]["dhclient_config_file"].format("*"))
         dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["lanconfig"]["dhclient_pid_file"].format("*"))
+        dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["lanconfig"]["dhclient_lease_file"].format("*"))
         dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["lanconfig"]["dhclient_log_file"].format("*"))
         log = "--log" if self.general.log else ""
 
-        c = Execte("{} {} {} {} {}".format(\
+        c = Execte("{} {} {} {} {} {}".format(\
             down_file,\
-            dhclient_config_file, dhclient_pid_file, dhclient_log_file,\
+            dhclient_config_file, dhclient_pid_file, dhclient_lease_file, dhclient_log_file,\
             log)
         )
         c.do()
@@ -118,6 +121,7 @@ class Network:
                 interface = "--interface '{}'".format(lan.interface) if lan.interface != "" else ""
                 dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["lanconfig"]["dhclient_config_file"].format(lan.interface))
                 dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["lanconfig"]["dhclient_pid_file"].format(lan.interface))
+                dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["lanconfig"]["dhclient_lease_file"].format(lan.interface))
                 dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["lanconfig"]["dhclient_log_file"].format(lan.interface))
                 dhcp = "--dhcp" if lan.dhcp else ""
                 ip_address_1 = "--ip_address_1 '{}'".format(lan.ip_address_1) if lan.ip_address_1 != "" else ""
@@ -130,9 +134,9 @@ class Network:
                 subnet_mask_4 = "--subnet_mask_4 '{}'".format(lan.subnet_mask_4) if lan.subnet_mask_4 != "" else ""
                 log = "--log" if self.general.log else ""
 
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface,\
-                    dhclient_config_file, dhclient_pid_file, dhclient_log_file,\
+                    dhclient_config_file, dhclient_pid_file, dhclient_lease_file, dhclient_log_file,\
                     dhcp,\
                     ip_address_1, subnet_mask_1,\
                     ip_address_2, subnet_mask_2,\
@@ -155,13 +159,14 @@ class Network:
         wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"].format("*"))
         dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["wlanconfig"]["dhclient_config_file"].format("*"))
         dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["wlanconfig"]["dhclient_pid_file"].format("*"))
+        dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["wlanconfig"]["dhclient_lease_file"].format("*"))
         dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["wlanconfig"]["dhclient_log_file"].format("*"))
         log = "--log" if self.general.log else ""
 
-        c = Execte("{} {} {} {} {} {} {} {}".format(\
+        c = Execte("{} {} {} {} {} {} {} {} {}".format(\
             down_file,\
             wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file,\
-            dhclient_config_file, dhclient_pid_file, dhclient_log_file,\
+            dhclient_config_file, dhclient_pid_file, dhclient_lease_file, dhclient_log_file,\
             log)
         )
         c.do()
@@ -188,6 +193,7 @@ class Network:
                 wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"].format(wlan.interface))
                 dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["wlanconfig"]["dhclient_config_file"].format(wlan.interface))
                 dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["wlanconfig"]["dhclient_pid_file"].format(wlan.interface))
+                dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["wlanconfig"]["dhclient_lease_file"].format(wlan.interface))
                 dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["wlanconfig"]["dhclient_log_file"].format(wlan.interface))
                 dhcp = "--dhcp" if wlan.dhcp else ""
                 ip_address_1 = "--ip_address_1 '{}'".format(wlan.ip_address_1) if wlan.ip_address_1 != "" else ""
@@ -200,12 +206,12 @@ class Network:
                 subnet_mask_4 = "--subnet_mask_4 '{}'".format(wlan.subnet_mask_4) if wlan.subnet_mask_4 != "" else ""
                 log = "--log" if self.general.log else ""
 
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface,\
                     ssid1, wpa_passphrase1, ssid2, wpa_passphrase2, ssid3, wpa_passphrase3, ssid4, wpa_passphrase4,\
                     country_code, driver,\
                     wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file,\
-                    dhclient_config_file, dhclient_pid_file, dhclient_log_file,\
+                    dhclient_config_file, dhclient_pid_file, dhclient_lease_file, dhclient_log_file,\
                     dhcp,\
                     ip_address_1, subnet_mask_1,\
                     ip_address_2, subnet_mask_2,\
