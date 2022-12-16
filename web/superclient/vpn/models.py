@@ -51,7 +51,7 @@ class Configuration(models.Model):
     
     def add_log(self, log):
         self.last_log = log
-        self.save(update_fields = ["log"])
+        self.save(update_fields = ["last_log"])
 
 
 class L2tpConfig(Configuration):
