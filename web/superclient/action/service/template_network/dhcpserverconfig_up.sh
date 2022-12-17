@@ -115,9 +115,17 @@ if [ $dhcp_module == "dnsmasq" ]; then
 
         br_name="br_"$(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n')
         brctl addbr $br_name
-        sleep 1
-        brctl addif $br_name $temp_interface
         ifconfig $br_name $temp_ip_address netmask $temp_subnet_mask up
+        n=0
+        until [ "$n" -ge 5 ]
+        do
+            brctl addif $br_name $temp_interface
+            if [[ -n $(brctl show | grep $br_name | grep $temp_interface) ]]; then
+                break
+            fi
+            n=$((n+1)) 
+            sleep 1
+        done
         
         if [[ "$bridge" == "" ]]; then
             bridge=$br_name
@@ -171,9 +179,17 @@ EOF
 
         br_name="br_"$(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n')
         brctl addbr $br_name
-        sleep 1
-        brctl addif $br_name $temp_interface
         ifconfig $br_name $temp_ip_address netmask $temp_subnet_mask up
+        n=0
+        until [ "$n" -ge 5 ]
+        do
+            brctl addif $br_name $temp_interface
+            if [[ -n $(brctl show | grep $br_name | grep $temp_interface) ]]; then
+                break
+            fi
+            n=$((n+1)) 
+            sleep 1
+        done
         
         if [[ "$bridge" == "" ]]; then
             bridge=$br_name
