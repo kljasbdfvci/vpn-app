@@ -115,6 +115,7 @@ if [ $dhcp_module == "dnsmasq" ]; then
 
         br_name="br_"$(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n')
         brctl addbr $br_name
+        sleep 1
         brctl addif $br_name $temp_interface
         ifconfig $br_name $temp_ip_address netmask $temp_subnet_mask up
         
@@ -170,6 +171,7 @@ EOF
 
         br_name="br_"$(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n')
         brctl addbr $br_name
+        sleep 1
         brctl addif $br_name $temp_interface
         ifconfig $br_name $temp_ip_address netmask $temp_subnet_mask up
         
