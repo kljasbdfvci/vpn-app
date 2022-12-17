@@ -162,8 +162,6 @@ class Router:
             res = c.returncode
             output = c.getSTD()
 
-        self.network.ApplyIptables()
-
         return res, output
 
     def read_pid_file(self):

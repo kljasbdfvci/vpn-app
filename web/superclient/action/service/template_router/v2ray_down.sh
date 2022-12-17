@@ -97,6 +97,13 @@ if pgrep -f 'DNS2SOCKS'; then
     killall 'DNS2SOCKS' &>/dev/null
 fi
 
+if [ -n "$(iptables -t nat -L OUTPUT | grep tcp | grep 5300)" ]; then
+    iptables -t nat -D OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 5300
+fi
+if [ -n "$(iptables -t nat -L OUTPUT | grep udp | grep 5300)" ]; then
+    iptables -t nat -D OUTPUT -p udp --dport 53 -j REDIRECT --to-port 5300
+fi
+
 if [ -f "$dns_log" ]; then
     rm $dns_log
 fi
