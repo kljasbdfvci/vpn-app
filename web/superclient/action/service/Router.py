@@ -6,6 +6,7 @@ import time
 
 # local
 from .Execte import *
+from .Network import *
 from ...vpn.models import *
 from ...setting.models import *
 
@@ -33,6 +34,7 @@ class Router:
         }
         self.vpn = vpn
         self.general = General.objects.first()
+        self.network = Network()
 
     def ConnectVPN(self, timeout_arg, try_count_arg):
         res = -1
@@ -159,6 +161,8 @@ class Router:
             c.print()
             res = c.returncode
             output = c.getSTD()
+
+        self.network.ApplyIptables()
 
         return res, output
 

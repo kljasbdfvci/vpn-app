@@ -207,6 +207,17 @@ if [ "$exit_code" == 0 ]; then
     iptables -P INPUT ACCEPT
     iptables -P FORWARD ACCEPT
     iptables -P OUTPUT ACCEPT
+
+    # input
+    iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+    iptables -A INPUT -p icmp -m state --state NEW -j ACCEPT
+
+    # forward
+    iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+    iptables -A FORWARD -p tcp --tcp-flags SYN,SYN SYN -j TCPMSS --clamp-mss-to-pmtu
+
+    # postrouting
+    iptables -t nat -A POSTROUTING -j MASQUERADE
 fi
 
 exit $exit_code

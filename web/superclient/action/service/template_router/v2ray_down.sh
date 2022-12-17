@@ -119,23 +119,4 @@ do
 	fi
 done
 
-# iptables reset
-iptables -F
-iptables -X
-iptables -t nat -F
-iptables -t nat -X
-iptables -t mangle -F
-iptables -t mangle -X
-
-# ip_forward 1
-sysctl -w net.ipv4.ip_forward=1
-
-# policy
-iptables -P INPUT ACCEPT
-iptables -P FORWARD ACCEPT
-iptables -P OUTPUT ACCEPT
-
-# router
-iptables -t nat -A POSTROUTING -j MASQUERADE
-
 exit $exit_code
