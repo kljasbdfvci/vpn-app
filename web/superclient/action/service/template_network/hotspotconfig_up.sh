@@ -146,16 +146,6 @@ wpa_ptk_rekey=0
 EOF
 fi
 
-serial=$(serial -s serial | tr -d '\n')
-cat >> $hostapd_config_file << EOF
-
-device_name=Power Freenet AP
-manufacturer=Power Freenet
-model_name=Model Name A
-model_number=Model Number 1
-serial_number=$serial
-EOF
-
 hostapd_res=1
 if [[ $log == "yes" ]]; then
     hostapd $hostapd_config_file -P $hostapd_pid_file -t -dd &> $hostapd_log_file &
