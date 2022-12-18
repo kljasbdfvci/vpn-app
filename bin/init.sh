@@ -202,6 +202,16 @@ else
     echo "copy os files failed."
 fi
 
+# disable NetworkManager
+service="NetworkManager.service"
+if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
+    systemctl stop $service
+    systemctl disable $service
+    echo "$service is disabled."
+else
+    echo "$service is already disable."
+fi
+
 # disable hostapd
 service="hostapd.service"
 if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
@@ -302,6 +312,7 @@ fi
 # if anychange in os reboot
 if [ $flag_reboot -eq 1 ]; then 
     echo "reboot successful."
+    sync
     reboot
 else
     echo "reboot not need."

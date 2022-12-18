@@ -96,12 +96,12 @@ if [ -f $wpa_supplicant_log_file ]; then
     rm $wpa_supplicant_log_file
 fi
 
-for dev in $($this_dir_path/interface_list.sh wlan); do
-    ifconfig $dev:1 0.0.0.0 down
-    ifconfig $dev:2 0.0.0.0 down
-    ifconfig $dev:3 0.0.0.0 down
-    ifconfig $dev:4 0.0.0.0 down
-    ifconfig $dev 0.0.0.0 down
+for dev in $($this_dir_path/interface_list.sh eth | awk '{ print length(), $0 | "sort -n" }' | awk '{ print $2 }'); do
+    ifconfig $dev:1 0.0.0.0 up
+    ifconfig $dev:2 0.0.0.0 up
+    ifconfig $dev:3 0.0.0.0 up
+    ifconfig $dev:4 0.0.0.0 up
+    ifconfig $dev 0.0.0.0 up
     sleep 1
 done
 

@@ -281,7 +281,7 @@ EOF
     if [[ $log == "yes" ]]; then
         dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -lf $dhclient_lease_file -v $interface 2> $dhclient_log_file &
     else
-        dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -lf $dhclient_lease_file -v $interface 2> /dev/null &
+        dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -lf $dhclient_lease_file $interface 2> /dev/null &
     fi
 fi
 
