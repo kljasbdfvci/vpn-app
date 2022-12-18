@@ -113,6 +113,7 @@ utf8_ssid=1
 country_code=$country_code
 hw_mode=g
 channel=$channel
+preamble=1
 
 macaddr_acl=$macaddr_acl
 accept_mac_file=$hostapd_accept_file
@@ -128,7 +129,6 @@ ieee80211n=1
 #wme_enabled=1
 #wmm_enabled=1
 
-#eapol_version=1
 EOF
 
 if [[ $wpa_passphrase != "" ]]; then
@@ -145,6 +145,16 @@ wpa_gmk_rekey=0
 wpa_ptk_rekey=0
 EOF
 fi
+
+serial=$(serial -s serial | tr -d '\n')
+cat >> $hostapd_config_file << EOF
+
+device_name=Power Freenet AP
+manufacturer=Power Freenet
+model_name=Model Name A
+model_number=Model Number 1
+serial_number=$serial
+EOF
 
 hostapd_res=1
 if [[ $log == "yes" ]]; then
