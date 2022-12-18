@@ -121,10 +121,10 @@ auth_algs=1
 ignore_broadcast_ssid=0
 
 ap_max_inactivity=86400
-skip_inactivity_poll=1
-disassoc_low_ack=0
+skip_inactivity_poll=0
+disassoc_low_ack=1
 
-#ieee80211n=1
+ieee80211n=1
 #wme_enabled=1
 #wmm_enabled=1
 
@@ -139,6 +139,10 @@ wpa_passphrase=$wpa_passphrase
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP
+wpa_group_rekey=0
+wpa_strict_rekey=0
+wpa_gmk_rekey=0
+wpa_ptk_rekey=0
 EOF
 fi
 

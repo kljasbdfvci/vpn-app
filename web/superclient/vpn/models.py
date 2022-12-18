@@ -35,7 +35,12 @@ class Configuration(models.Model):
 
     @property
     def title(self):
-        return f'{self.name} ({self.type})'
+        if isinstance(self.subclass, OpenconnectConfig):
+            return f'{self.name} ({self.type} / {self.subclass.protocol})'
+        elif isinstance(self.subclass, V2rayConfig):
+            return f'{self.name} ({self.type} / {self.subclass.protocol})'
+        else:
+            return f'{self.name} ({self.type})'
 
     @property
     def success_chance(self):
