@@ -121,7 +121,7 @@ if [ $dhcp_module == "dnsmasq" ]; then
         until [ "$n" -ge 5 ]
         do
             brctl addif $br_name $temp_interface
-            if [[ -n $(brctl show | grep $br_name | grep $temp_interface) ]]; then
+            if [[ -n $(brctl show $br_name | grep $temp_interface) ]]; then
                 break
             fi
             n=$((n+1)) 
@@ -186,7 +186,7 @@ EOF
         until [ "$n" -ge 5 ]
         do
             brctl addif $br_name $temp_interface
-            if [[ -n $(brctl show | grep $br_name | grep $temp_interface) ]]; then
+            if [[ -n $(brctl show $br_name | grep $temp_interface) ]]; then
                 break
             fi
             n=$((n+1)) 
