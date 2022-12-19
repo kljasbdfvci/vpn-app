@@ -148,7 +148,7 @@ class Network:
         default_gateway = "--default_gateway '{}'".format(self.general.default_gateway)
         log = "--log" if self.general.log else ""
 
-        c = Execte("{} {} {}".format(\
+        c = Execte("{} {} {} {}".format(\
             up_file,\
             default_gateway_mode, default_gateway,\
             log)
