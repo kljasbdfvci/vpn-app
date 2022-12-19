@@ -202,14 +202,14 @@ else
     echo "copy os files failed."
 fi
 
-etcresolveconf_path="/etc/resolve.conf"
-runresolveconf_path="/run/resolvconf/resolv.conf"
-if [[ ! -L $etcresolveconf_path ]]; then
-    rm /etc/resolve.conf
-    ln -sf $runresolveconf_path $etcresolveconf_path
-    echo "make symlink $etcresolveconf_path to $runresolveconf_path."
+etcresolvconf_path="/etc/resolv.conf"
+runresolvconf_path="/run/resolvconf/resolv.conf"
+if [[ ! -L $etcresolvconf_path ]]; then
+    rm $etcresolvconf_path
+    ln -sf $runresolvconf_path $etcresolvconf_path
+    echo "make symlink $etcresolvconf_path to $runresolvconf_path."
 else
-    echo "$etcresolveconf_path exist and symlink to $runresolveconf_path."
+    echo "$etcresolvconf_path exist and symlink to $runresolvconf_path."
 fi
 
 # disable NetworkManager
