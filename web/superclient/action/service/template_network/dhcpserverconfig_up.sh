@@ -301,8 +301,7 @@ EOF
             named -c $named_config_file -u bind &> /dev/null
             named_res=$?
         fi
-    fi
-
+        
     else
         named_res=0
     fi
