@@ -243,17 +243,16 @@ options {
     directory "/var/cache/bind";
 
     recursion yes;
+    
     listen-on {
 $str_listen
     };
 
+    allow-transfer { none; };
+
     forwarders {
 $str_dns
     };
-
-    dnssec-enable yes;
-    dnssec-validation auto;
-    dnssec-lookaside auto;
 };
 
 zone "." {
