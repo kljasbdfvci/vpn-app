@@ -22,8 +22,10 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 exit_code=0
 
 # dns
-if [ -n "$(cat /etc/resolv.conf | grep '#MYDNS_')" ]; then
-    sed -n -e '/#MYDNS_START/,/#MYDNS_END/!p' -i /etc/resolv.conf
+resolvconf_path="/etc/resolvconf/resolv.conf.d/tail"
+if [ -n "$(cat $resolvconf_path | grep '#MYDNS_')" ]; then
+    sed -n -e '/#MYDNS_START/,/#MYDNS_END/!p' -i $resolvconf_path
+    resolvconf -u
     sleep 1
 fi
 

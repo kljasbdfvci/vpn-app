@@ -45,7 +45,7 @@ else
 fi
 
 # install list of apt packages
-packages=("avahi-daemon" "avahi-utils" "net-tools" "jq" "openssl" "python3" "python3-dev" "python3-pip" "sqlite3" "hostapd" "dnsmasq" "isc-dhcp-server" "bind9" "openconnect")
+packages=("avahi-daemon" "avahi-utils" "net-tools" "jq" "openssl" "resolvconf" "python3" "python3-dev" "python3-pip" "sqlite3" "hostapd" "dnsmasq" "isc-dhcp-server" "bind9" "openconnect")
 for package in ${packages[@]}
 do
     if [ -z "$(dpkg -l | grep -w $package)" ]
@@ -202,6 +202,16 @@ else
     echo "copy os files failed."
 fi
 
+etcresolveconf_path="/etc/resolve.conf"
+runresolveconf_path="/run/resolvconf/resolv.conf"
+if [[ ! -L $etcresolveconf_path ]]; then
+    rm /etc/resolve.conf
+    ln -sf $runresolveconf_path $etcresolveconf_path
+    echo "make symlink $etcresolveconf_path to $runresolveconf_path."
+else
+    echo "$etcresolveconf_path exist and symlink to $runresolveconf_path."
+fi
+
 # disable NetworkManager
 service="NetworkManager.service"
 if [[ "$(systemctl is-enabled $service &>/dev/null ; echo $?)" == 0 ]]; then
@@ -282,20 +292,6 @@ else
     echo "$service is already disable."
 fi
 
-# kill pid if get port 80
-port="80"
-if [ -n "$(fuser $port/tcp)" ]; then
-    fuser -k $port/tcp
-    sleep 1
-fi
-if [ -n "$(fuser $port/udp)" ]; then
-    fuser -k $port/udp
-    sleep 1
-fi
-
-# pip
-python3 -m pip install -r "$this_dir_path/../web/requirments.txt"
-
 # clear history
 rm /root/.bash_history
 rm /home/*/.bash_history
@@ -309,6 +305,9 @@ if [[ $my_hostname != $sys_hostname ]]; then
     sysctl -w kernel.hostname=$my_hostname
 fi
 
+# pip
+python3 -m pip install -r "$this_dir_path/../web/requirments.txt"
+
 # if anychange in os reboot
 if [ $flag_reboot -eq 1 ]; then 
     echo "reboot successful."
@@ -316,6 +315,17 @@ if [ $flag_reboot -eq 1 ]; then
     reboot
 else
     echo "reboot not need."
+fi
+
+# kill pid if get port 80
+port="80"
+if [ -n "$(fuser $port/tcp)" ]; then
+    fuser -k $port/tcp
+    sleep 1
+fi
+if [ -n "$(fuser $port/udp)" ]; then
+    fuser -k $port/udp
+    sleep 1
 fi
 
 # web

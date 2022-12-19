@@ -232,9 +232,17 @@ EOF
 options {
     directory "/var/cache/bind";
 
+    recursion yes;
+
     forwarders {
 $str
     };
+    forward only;
+
+    dnssec-validation auto;
+
+    auth-nxdomain no;
+    listen-on-v6 { any; };
 
     allow-query { any; };
 };
