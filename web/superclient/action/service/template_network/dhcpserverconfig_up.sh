@@ -78,6 +78,11 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --named_log_file)
+            named_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --log)
             log="yes"
             shift # past argument
@@ -223,7 +228,12 @@ EOF
         dhcpd_res=$?
     fi
 
-    str=""
+    str_listen=""
+    for i in "${!list_ip_address[@]}"; do
+        str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
+    done
+
+    str_dns=""
     for item in ${dns_server//,/ } ; do
         str=$str"        $item;"$'\n'
     done
@@ -233,27 +243,54 @@ options {
     directory "/var/cache/bind";
 
     recursion yes;
+    listen-on {
+$str_listen
+    };
 
     forwarders {
-$str
+$str_dns
     };
-    forward only;
 
+    dnssec-enable yes;
     dnssec-validation auto;
+    dnssec-lookaside auto;
+};
 
-    auth-nxdomain no;
-    listen-on-v6 { any; };
+zone "." {
+        type hint;
+        file "/usr/share/dns/root.hints";
+};
 
-    allow-query { any; };
+// be authoritative for the localhost forward and reverse zones, and for
+// broadcast zones as per RFC 1912
+
+zone "localhost" {
+        type master;
+        file "/etc/bind/db.local";
+};
+
+zone "127.in-addr.arpa" {
+        type master;
+        file "/etc/bind/db.127";
+};
+
+zone "0.in-addr.arpa" {
+        type master;
+        file "/etc/bind/db.0";
+};
+
+zone "255.in-addr.arpa" {
+        type master;
+        file "/etc/bind/db.255";
 };
 EOF
 
     named_res=1
     if [[ $log == "yes" ]]; then
-        named -c $named_config_file
+        named -c $named_config_file -u bind -L $named_log_file
         named_res=$?
     else
-        named -c $named_config_file &> /dev/null
+        named -c $named_config_file -u bind &> /dev/null
         named_res=$?
     fi
 

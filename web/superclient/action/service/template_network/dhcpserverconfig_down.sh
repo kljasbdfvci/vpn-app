@@ -43,6 +43,11 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --named_log_file)
+            named_log_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --log)
             log="yes"
             shift # past argument
@@ -100,7 +105,12 @@ if pgrep -f 'named'; then
     sleep 1
 fi
 
-rm $named_config_file
+if [ -f "$named_config_file" ]; then
+    rm $named_config_file
+fi
+if [ -f "$named_log_file" ]; then
+    rm $named_log_file
+fi
 
 if [[ $(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n') != "0" ]]; then
     for br_name in $(brctl show | tail -n +2 | awk '{print $1}')

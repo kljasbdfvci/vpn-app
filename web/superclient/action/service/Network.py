@@ -47,7 +47,8 @@ class Network:
                 "dhcpd_pid_file" : "/tmp/dhcpd.pid",
                 "dhcpd_log_file" : "/tmp/dhcpd.log",
                 "dhcpd_lease_file" : "/tmp/dhcpd.lease",
-                "named_config_file" : "/tmp/named.conf"
+                "named_config_file" : "/tmp/named.conf",
+                "named_log_file" : "/tmp/named.log"
             },
             "dns": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/dns_up.sh",
@@ -288,13 +289,14 @@ class Network:
         dhcpd_log_file = "--dhcpd_log_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_log_file"])
         dhcpd_lease_file = "--dhcpd_lease_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_lease_file"])
         named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
+        named_log_file = "--named_log_file '{}'".format(self.list["dhcpserverconfig"]["named_log_file"])
         log = "--log" if self.general.log else ""
 
-        c = Execte("{} {} {} {} {} {} {} {} {} {}".format(\
+        c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
             down_file,
             dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file,\
             dhcpd_config_file, dhcpd_pid_file, dhcpd_log_file, dhcpd_lease_file,\
-            named_config_file,\
+            named_config_file, named_log_file,\
             log)
         )
         c.do()
@@ -366,14 +368,15 @@ class Network:
             dhcpd_log_file = "--dhcpd_log_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_log_file"])
             dhcpd_lease_file = "--dhcpd_lease_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_lease_file"])
             named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
+            named_log_file = "--named_log_file '{}'".format(self.list["dhcpserverconfig"]["named_log_file"])
             dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split())) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, dhcp_module,\
                 dhcpd_interface, dhcpd_ip_address, dhcpd_subnet_mask, dhcpd_dhcp_ip_address_from, dhcpd_dhcp_ip_address_to,\
                 dhcpd_config_file, dhcpd_pid_file, dhcpd_log_file, dhcpd_lease_file,\
-                named_config_file, dns_server,\
+                named_config_file, named_log_file, dns_server,\
                 log)
             )
             c.do()
