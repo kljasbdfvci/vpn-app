@@ -235,7 +235,7 @@ EOF
 
     str_dns=""
     for item in ${dns_server//,/ } ; do
-        str=$str"        $item;"$'\n'
+        str_dns=$str_dns"        $item;"$'\n'
     done
 
     cat > $named_config_file << EOF
