@@ -284,7 +284,7 @@ request subnet-mask, broadcast-address, time-offset, routers,
 	rfc3442-classless-static-routes, ntp-servers;
 EOF
 
-    if [[ $default_gateway_mode == "dhcp" ]]; then
+    if [[ $default_gateway_mode == "manual" ]]; then
         cat >> $dhclient_config_file << EOF
 
 supersede routers 1,1,1,1;
