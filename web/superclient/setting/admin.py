@@ -3,8 +3,10 @@ from django import forms
 from .models import *
 from ..action.service.Network_Util import *
 from .service.country_code import *
+from .service.timezone import *
 
 class GeneralAdminForm(forms.ModelForm):
+    timezone = forms.ChoiceField(choices=tuple((key ,key) for key in timezone()), initial="GMT")
 
     class Meta:
         model = General

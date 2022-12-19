@@ -9,6 +9,9 @@ from ...setting.models import *
 class Network:
     def __init__(self):
         self.list = {
+            "timezone": {
+                "up_file" : Path(__file__).resolve().parent / "template_network/timezone_up.sh",
+            },
             "lanconfig": {
                 "up_file" : Path(__file__).resolve().parent / "template_network/lanconfig_up.sh",
                 "down_file" : Path(__file__).resolve().parent / "template_network/lanconfig_down.sh",
@@ -68,6 +71,7 @@ class Network:
         self.general = General.objects.first()
 
     def Apply(self):
+        self.ApplyTimezoneConfig()
         self.DownLanConfig()
         self.DownWlanConfig()
         self.UpLanConfig()
@@ -92,6 +96,27 @@ class Network:
         self.UpDhcpServerConfig()
         self.UpDns()
         self.UpIptables()
+
+    def ApplyTimezoneConfig(self):
+        self.DownTimezoneConfig()
+        self.UpTimezoneConfig()
+
+    def DownTimezoneConfig(self):
+        pass
+    
+    def UpTimezoneConfig(self):
+        # timezoneConfig up
+        up_file = self.list["timezone"]["up_file"]
+        timezone = "--timezone '{}'".format(self.general.timezone)
+        log = "--log" if self.general.log else ""
+
+        c = Execte("{} {} {}".format(\
+            up_file,\
+            timezone,\
+            log)
+        )
+        c.do()
+        c.print()
 
     def ApplyLanConfig(self):
         self.DownLanConfig()

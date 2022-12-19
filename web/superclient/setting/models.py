@@ -10,10 +10,16 @@ class General(models.Model):
         priority = "priority", "Priority"
         circular = "circular", "Circular"        
     vpn_smart_mode = models.CharField(max_length=64, choices=VpnSmartMode.choices, default=VpnSmartMode.success_chance)
+    timezone = models.CharField(max_length=128, default='GMT')
+    class DefaultGatewayMode(models.TextChoices):
+        dhcp = "dhcp", "Dhcp"
+        manual = "manual", "Manual"
+    default_gateway_mode = models.CharField(max_length=16, choices=DefaultGatewayMode.choices, default=DefaultGatewayMode.dhcp)
+    default_gateway = models.CharField(max_length=16, blank=True)
     class DnsMode(models.TextChoices):
         _1 = "1", "Do Nothing"
         _2 = "2", "Handle in system"
-        _3 = "3", "Handle with socks (only for v2ray)"        
+        _3 = "3", "Handle with socks (only for v2ray)"
     dns_Mode = models.CharField(max_length=8, choices=DnsMode.choices, default=DnsMode._2)
     dns = models.CharField(max_length=128, default='1.1.1.1\n8.8.8.8\n208.67.222.222', blank=True)
     log = models.BooleanField(default=False)
@@ -74,7 +80,6 @@ def WlanConfig_validate_interface(value):
             _("Network interface '%s' already exists in 'Dhcp server configs'."),
             params=(value),
         )
-    
 
 class WlanConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[WlanConfig_validate_interface])
