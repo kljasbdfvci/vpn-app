@@ -134,7 +134,7 @@ class Network:
         down_file = self.list["defaultgateway"]["down_file"]
         log = "--log" if self.general.log else ""
 
-        c = Execte("{} {} {}".format(\
+        c = Execte("{} {}".format(\
             down_file,\
             log), True
         )
