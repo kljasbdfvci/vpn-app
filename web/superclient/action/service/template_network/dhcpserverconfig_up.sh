@@ -228,22 +228,23 @@ EOF
         dhcpd_res=$?
     fi
 
-    str_listen=""
-    for i in "${!list_ip_address[@]}"; do
-        str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
-    done
+    if [[ $dns_server != "" ]]
+        str_listen=""
+        for i in "${!list_ip_address[@]}"; do
+            str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
+        done
 
-    str_dns=""
-    for item in ${dns_server//,/ } ; do
-        str_dns=$str_dns"        $item;"$'\n'
-    done
+        str_dns=""
+        for item in ${dns_server//,/ } ; do
+            str_dns=$str_dns"        $item;"$'\n'
+        done
 
-    cat > $named_config_file << EOF
+        cat > $named_config_file << EOF
 options {
     directory "/var/cache/bind";
 
     recursion yes;
-    
+
     listen-on {
 $str_listen
     };
@@ -253,6 +254,14 @@ $str_listen
     forwarders {
 $str_dns
     };
+
+    forward only;
+    
+    resolver-query-timeout 20;
+
+    dnssec-enable yes;
+    dnssec-validation auto;
+    dnssec-lookaside auto;
 };
 
 zone "." {
@@ -284,19 +293,20 @@ zone "255.in-addr.arpa" {
 };
 EOF
 
-    named_res=1
-    if [[ $log == "yes" ]]; then
-        named -c $named_config_file -u bind -L $named_log_file
-        named_res=$?
-    else
-        named -c $named_config_file -u bind &> /dev/null
-        named_res=$?
-    fi
+        named_res=1
+        if [[ $log == "yes" ]]; then
+            named -c $named_config_file -u bind -L $named_log_file
+            named_res=$?
+        else
+            named -c $named_config_file -u bind &> /dev/null
+            named_res=$?
+        fi
 
-    if [[ $dhcpd_res == 0 ]] && [[ $named_res == 0 ]]; then
-        exit_code=0
-    else
-        exit_code=1
+        if [[ $dhcpd_res == 0 ]] && [[ $named_res == 0 ]]; then
+            exit_code=0
+        else
+            exit_code=1
+        fi
     fi
 
 fi
