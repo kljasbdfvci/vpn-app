@@ -228,7 +228,7 @@ EOF
         dhcpd_res=$?
     fi
 
-    if [[ $dns_server != "" ]]
+    if [[ $dns_server != "" ]]; then
         str_listen=""
         for i in "${!list_ip_address[@]}"; do
             str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
@@ -301,12 +301,16 @@ EOF
             named -c $named_config_file -u bind &> /dev/null
             named_res=$?
         fi
+    fi
 
-        if [[ $dhcpd_res == 0 ]] && [[ $named_res == 0 ]]; then
-            exit_code=0
-        else
-            exit_code=1
-        fi
+    else
+        named_res=0
+    fi
+
+    if [[ $dhcpd_res == 0 ]] && [[ $named_res == 0 ]]; then
+        exit_code=0
+    else
+        exit_code=1
     fi
 
 fi
