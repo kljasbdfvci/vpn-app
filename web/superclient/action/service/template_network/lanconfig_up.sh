@@ -32,6 +32,11 @@ while [[ $# -gt 0 ]]; do
             dhcp="yes"
             shift # past argument
             ;;
+        --default_gateway_mode)
+            default_gateway_mode="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --ip_address_1)
             ip_address_1="$2"
             shift # past argument
@@ -94,7 +99,7 @@ exit_code=0
 dhcp_res=0
 if [[ $dhcp == "yes" ]]; then
     ifconfig $interface up
-        cat > $dhclient_config_file << EOF
+    cat > $dhclient_config_file << EOF
 option rfc3442-classless-static-routes code 121 = array of unsigned integer 8;
 
 send host-name = gethostname();
@@ -104,6 +109,14 @@ request subnet-mask, broadcast-address, time-offset, routers,
 	netbios-name-servers, netbios-scope, interface-mtu,
 	rfc3442-classless-static-routes, ntp-servers;
 EOF
+
+    if [[ $default_gateway_mode == "dhcp" ]]; then
+        cat >> $dhclient_config_file << EOF
+
+supersede routers 1,1,1,1;
+EOF
+    fi
+
     if [[ $log == "yes" ]]; then
         dhclient -cf $dhclient_config_file -pf $dhclient_pid_file -lf $dhclient_lease_file -v $interface 2> $dhclient_log_file &
     else
