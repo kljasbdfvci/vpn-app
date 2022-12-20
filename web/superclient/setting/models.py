@@ -60,6 +60,7 @@ def LanConfig_validate_interface(value):
 class LanConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[LanConfig_validate_interface])
     dhcp = models.BooleanField(default=True)
+    dhcp_set_default_gateway = models.BooleanField(default=True)
     ip_address_1 = models.CharField(max_length=16, blank=True)
     subnet_mask_1 = models.CharField(max_length=16, blank=True)
     ip_address_2 = models.CharField(max_length=16, blank=True)
@@ -98,6 +99,7 @@ class WlanConfig(models.Model):
         all = "nl80211,wext", "nl80211,wext"
     driver = models.CharField(max_length=128, choices=Driver.choices, default=Driver.all)
     dhcp = models.BooleanField(default=True)
+    dhcp_set_default_gateway = models.BooleanField(default=True)
     ip_address_1 = models.CharField(max_length=16, blank=True)
     subnet_mask_1 = models.CharField(max_length=16, blank=True)
     ip_address_2 = models.CharField(max_length=16, blank=True)

@@ -102,6 +102,10 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --dhcp_set_default_gateway)
+            dhcp_set_default_gateway="yes"
+            shift # past argument
+            ;;
         --ip_address_1)
             ip_address_1="$2"
             shift # past argument
@@ -284,7 +288,7 @@ request subnet-mask, broadcast-address, time-offset, routers,
 	rfc3442-classless-static-routes, ntp-servers;
 EOF
 
-    if [[ $default_gateway_mode == "manual" ]]; then
+    if [[ $default_gateway_mode == "manual" ]] && [[ $dhcp_set_default_gateway == "yes" ]]; then
         cat >> $dhclient_config_file << EOF
 
 supersede routers 1,1,1,1;

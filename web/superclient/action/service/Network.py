@@ -189,6 +189,7 @@ class Network:
                 dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["lanconfig"]["dhclient_log_file"].format(lan.interface))
                 dhcp = "--dhcp" if lan.dhcp else ""
                 default_gateway_mode = "--default_gateway_mode '{}'".format(self.general.default_gateway_mode)
+                dhcp_set_default_gateway = "--dhcp_set_default_gateway" if lan.dhcp_set_default_gateway else ""
                 ip_address_1 = "--ip_address_1 '{}'".format(lan.ip_address_1) if lan.ip_address_1 != "" else ""
                 subnet_mask_1 = "--subnet_mask_1 '{}'".format(lan.subnet_mask_1) if lan.subnet_mask_1 != "" else ""
                 ip_address_2 = "--ip_address_2 '{}'".format(lan.ip_address_2) if lan.ip_address_2 != "" else ""
@@ -199,10 +200,10 @@ class Network:
                 subnet_mask_4 = "--subnet_mask_4 '{}'".format(lan.subnet_mask_4) if lan.subnet_mask_4 != "" else ""
                 log = "--log" if self.general.log else ""
 
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface,\
                     dhclient_config_file, dhclient_pid_file, dhclient_lease_file, dhclient_log_file,\
-                    dhcp, default_gateway_mode,\
+                    dhcp, default_gateway_mode, dhcp_set_default_gateway,\
                     ip_address_1, subnet_mask_1,\
                     ip_address_2, subnet_mask_2,\
                     ip_address_3, subnet_mask_3,\
@@ -262,6 +263,7 @@ class Network:
                 dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["wlanconfig"]["dhclient_log_file"].format(wlan.interface))
                 dhcp = "--dhcp" if wlan.dhcp else ""
                 default_gateway_mode = "--default_gateway_mode '{}'".format(self.general.default_gateway_mode)
+                dhcp_set_default_gateway = "--dhcp_set_default_gateway" if wlan.dhcp_set_default_gateway else ""
                 ip_address_1 = "--ip_address_1 '{}'".format(wlan.ip_address_1) if wlan.ip_address_1 != "" else ""
                 subnet_mask_1 = "--subnet_mask_1 '{}'".format(wlan.subnet_mask_1) if wlan.subnet_mask_1 != "" else ""
                 ip_address_2 = "--ip_address_2 '{}'".format(wlan.ip_address_2) if wlan.ip_address_2 != "" else ""
@@ -272,13 +274,13 @@ class Network:
                 subnet_mask_4 = "--subnet_mask_4 '{}'".format(wlan.subnet_mask_4) if wlan.subnet_mask_4 != "" else ""
                 log = "--log" if self.general.log else ""
 
-                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface,\
                     ssid1, wpa_passphrase1, ssid2, wpa_passphrase2, ssid3, wpa_passphrase3, ssid4, wpa_passphrase4,\
                     country_code, driver,\
                     wpa_supplicant_config_file, wpa_supplicant_pid_file, wpa_supplicant_log_file,\
                     dhclient_config_file, dhclient_pid_file, dhclient_lease_file, dhclient_log_file,\
-                    dhcp, default_gateway_mode,\
+                    dhcp, default_gateway_mode, dhcp_set_default_gateway,\
                     ip_address_1, subnet_mask_1,\
                     ip_address_2, subnet_mask_2,\
                     ip_address_3, subnet_mask_3,\
