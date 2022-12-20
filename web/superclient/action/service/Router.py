@@ -198,7 +198,7 @@ class Router:
         list_method = self.general.check_vpn_list_method if list_method == None else list_method
 
         res = False
-        if self.general.check_vpn_method == self.general.CheckVpnMethod.disable:
+        if method == self.general.CheckVpnMethod.disable:
             res = True
         else:
             list = ()
