@@ -23,7 +23,7 @@
 # m h  dom mon dow   command
 
 # release memory
-* * * * * /bin/bash -c "sync; echo 3 > /proc/sys/vm/drop_caches"
+#* * * * * /bin/bash -c "sync; echo 3 > /proc/sys/vm/drop_caches"
 
 # logrotate
-0 * * * * /bin/bash -c "logrotate --skip-state-lock /etc/logrotate.d/app"
+#0 * * * * /bin/bash -c "logrotate --skip-state-lock /etc/logrotate.d/app"
