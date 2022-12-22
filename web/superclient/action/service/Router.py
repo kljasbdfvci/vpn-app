@@ -53,12 +53,12 @@ class Router:
             username = "--username '{}'".format(openconnect.username)
             password = "--password '{}'".format(openconnect.password)
             interface = "--interface '{}'".format(self.VpnList["openconnect"]["interface"])
-            no_dtls = "--no_dtls" if openconnect.no_dtls else " "
-            passtos = "--passtos" if openconnect.passtos else " "
-            no_deflate = "--no_deflate" if openconnect.no_deflate else " "
-            deflate = "--deflate" if openconnect.deflate else " "
-            no_http_keepalive = "--no_http_keepalive" if openconnect.no_http_keepalive else " "
-            log = "--log" if self.general.log else " "
+            no_dtls = "--no_dtls" if openconnect.no_dtls else ""
+            passtos = "--passtos" if openconnect.passtos else ""
+            no_deflate = "--no_deflate" if openconnect.no_deflate else ""
+            deflate = "--deflate" if openconnect.deflate else ""
+            no_http_keepalive = "--no_http_keepalive" if openconnect.no_http_keepalive else ""
+            log = "--log" if self.general.log else ""
             
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, pid_file, log_file, timeout, try_count,\
@@ -95,9 +95,9 @@ class Router:
             v2ray_outbounds_address = "--v2ray_outbounds_address '{}'".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
             tun2socks = "--tun2socks '{}'".format(self.general.v2ray_mode)
             tun2socks_log_file = "--tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["tun2socks_log_file"])
-            dns_server = "--dns_server '{}'".format(self.general.dns.strip().split()[0]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else " "
-            dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else " "
-            log = "--log" if self.general.log else " "
+            dns_server = "--dns_server '{}'".format(self.general.dns.strip().split()[0]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
+            dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
+            log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, pid_file, log_file, timeout, try_count,\
@@ -133,7 +133,7 @@ class Router:
             down_file = self.VpnList["openconnect"]["down_file"]
             pid_file = "--pid_file '{}'".format(self.VpnList["openconnect"]["pid_file"])
             log_file = "--log_file '{}'".format(self.VpnList["openconnect"]["log_file"])
-            log = "--log" if self.general.log else " "
+            log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {} {}".format(down_file, pid_file, log_file, log))
             c.do()
@@ -153,8 +153,8 @@ class Router:
             v2ray_outbounds_address = "--v2ray_outbounds_address '{}'".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
             tun2socks = "--tun2socks '{}'".format(self.general.v2ray_mode)
             tun2socks_log_file = "--tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["tun2socks_log_file"])
-            dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else " "
-            log = "--log" if self.general.log else " "
+            dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
+            log = "--log" if self.general.log else ""
 
             c = Execte("{} {} {} {} {} {} {} {} {}".format(down_file, pid_file, log_file, vpn_interface, v2ray_outbounds_address, tun2socks, tun2socks_log_file, dns_log, log))
             c.do()
