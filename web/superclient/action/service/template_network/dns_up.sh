@@ -38,7 +38,7 @@ done
 str=$str"#MYDNS_END"
 
 # add new dns
-resolvconf_path="/etc/resolvconf/resolv.conf.d/tail"
+resolvconf_path="/etc/resolvconf/resolv.conf.d/head"
 echo -e "$str\n$(cat $resolvconf_path)" > $resolvconf_path
 resolvconf -u
 

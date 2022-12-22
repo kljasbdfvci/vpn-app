@@ -288,11 +288,13 @@ request subnet-mask, broadcast-address, time-offset, routers,
 	rfc3442-classless-static-routes, ntp-servers;
 EOF
 
-    if [[ $default_gateway_mode == "manual" ]] && [[ $dhcp_set_default_gateway == "yes" ]]; then
+    if [[ $default_gateway_mode == "manual" ]] && [[ $dhcp_set_default_gateway == "" ]]; then
         cat >> $dhclient_config_file << EOF
 
 supersede routers 1,1,1,1;
 EOF
+    elif [[ $default_gateway_mode == "dhcp" ]] && [[ $dhcp_set_default_gateway == "yes" ]]; then
+        ip route add 169.254.0.0/16 dev $interface metric 1000
     fi
 
     if [[ $log == "yes" ]]; then

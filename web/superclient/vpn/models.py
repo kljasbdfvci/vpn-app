@@ -112,6 +112,7 @@ class V2rayConfig(Configuration):
     class Protocol(models.TextChoices):
         vmess = "vmess", "VMESS"
         vless = "vless", "VLESS"  # we dont have alter_id in vless
+        trojan = "trojan", "TROJAN"
 
     class Network(models.TextChoices):
         vmess = "tcp", "TCP"
@@ -132,6 +133,7 @@ class V2rayConfig(Configuration):
     network = models.CharField(max_length=8, choices=Network.choices, blank=True)
     ws_path = models.CharField(max_length=512, null=True, blank=True)
     ws_host = models.CharField(max_length=256, null=True, blank=True)
+    #ws_sni = models.CharField(max_length=512, null=True, blank=True)
     config_url = models.CharField(max_length=2048, blank=True)
     config_json = models.CharField(max_length=4098, blank=True)
 
@@ -181,6 +183,25 @@ class V2rayConfig(Configuration):
                 #self.ws_host = do vless have ws_host?
                 self.tls = security
 
+            #elif protocol == "trojan":
+            #    parsed_url = urlparse(self.config_url)
+            #    netquery = parse_qs(parsed_url.query)
+            #    netloc = parsed_url.netloc.split('@')
+            #    addr = netloc[1].split(':')
+
+            #    name = parsed_url.fragment
+            #    host = addr[0]
+            #    port = addr[1]
+            #    uid = netloc[0]
+            #    sni = netquery['sni'][0]
+
+            #    self.name = name
+            #    self.host = host
+            #    self.port = port
+            #    self.protocol = protocol
+            #    self.uid = uid
+            #    self.ws_sni = sni
+
         elif self.config_type == 'property':
 
             if self.protocol == 'vmess':
@@ -203,6 +224,9 @@ class V2rayConfig(Configuration):
             
             elif self.protocol == 'vless':
                 self.config_url =  f'{self.protocol}://{self.uid}@{self.host}:{self.port}?type={self.network}&security={self.tls}&path={quote_plus(self.ws_path)}#{quote_plus(self.name)}'
+
+            #elif self.protocol == 'trojan':
+            #    self.config_url =  f'{self.protocol}://{self.uid}@{self.host}:{self.port}?sni={quote_plus(self.ws_sni)}#{quote_plus(self.name)}'
 
         self.config_json = vmess2json.generate(self.config_url)
         super(V2rayConfig, self).save(*args, **kwargs)
