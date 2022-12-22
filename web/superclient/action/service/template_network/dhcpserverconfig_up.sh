@@ -222,7 +222,7 @@ EOF
         if [[ "$use_interface_list" == "" ]]; then
             use_interface_list=$use_interface
         else
-            use_interface_list=$use_interface_list","$use_interface
+            use_interface_list=$use_interface_list" "$use_interface
         fi
 
         network_range=$(echo -n $temp_ip_address | sed 's/\([[:digit:]]\{1,3\}\(\.[[:digit:]]\{1,3\}\)\{2\}\.\)\([[:digit:]]\{1,3\}\)/\1/g')"0"
