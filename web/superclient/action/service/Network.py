@@ -115,7 +115,7 @@ class Network:
         # timezone up
         up_file = self.list["timezone"]["up_file"]
         timezone = "--timezone '{}'".format(self.general.timezone)
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {} {}".format(\
             up_file,\
@@ -132,7 +132,7 @@ class Network:
     def DownDefaultGatewayConfig(self):
         # DefaultGateway down
         down_file = self.list["defaultgateway"]["down_file"]
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {}".format(\
             down_file,\
@@ -146,7 +146,7 @@ class Network:
         up_file = self.list["defaultgateway"]["up_file"]
         default_gateway_mode = "--default_gateway_mode '{}'".format(self.general.default_gateway_mode)
         default_gateway = "--default_gateway '{}'".format(self.general.default_gateway)
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {} {} {}".format(\
             up_file,\
@@ -167,7 +167,7 @@ class Network:
         dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["lanconfig"]["dhclient_pid_file"].format("*"))
         dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["lanconfig"]["dhclient_lease_file"].format("*"))
         dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["lanconfig"]["dhclient_log_file"].format("*"))
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {} {} {} {} {}".format(\
             down_file,\
@@ -182,23 +182,23 @@ class Network:
         for lan in self.lanConfig:
             if Network_Util().is_lan_interface(lan.interface):
                 up_file = self.list["lanconfig"]["up_file"]
-                interface = "--interface '{}'".format(lan.interface) if lan.interface != "" else ""
+                interface = "--interface '{}'".format(lan.interface)
                 dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["lanconfig"]["dhclient_config_file"].format(lan.interface))
                 dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["lanconfig"]["dhclient_pid_file"].format(lan.interface))
                 dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["lanconfig"]["dhclient_lease_file"].format(lan.interface))
                 dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["lanconfig"]["dhclient_log_file"].format(lan.interface))
-                dhcp = "--dhcp" if lan.dhcp else ""
+                dhcp = "--dhcp" if lan.dhcp else " "
                 default_gateway_mode = "--default_gateway_mode '{}'".format(self.general.default_gateway_mode)
-                dhcp_set_default_gateway = "--dhcp_set_default_gateway" if lan.dhcp_set_default_gateway else ""
-                ip_address_1 = "--ip_address_1 '{}'".format(lan.ip_address_1) if lan.ip_address_1 != "" else ""
-                subnet_mask_1 = "--subnet_mask_1 '{}'".format(lan.subnet_mask_1) if lan.subnet_mask_1 != "" else ""
-                ip_address_2 = "--ip_address_2 '{}'".format(lan.ip_address_2) if lan.ip_address_2 != "" else ""
-                subnet_mask_2 = "--subnet_mask_2 '{}'".format(lan.subnet_mask_2) if lan.subnet_mask_2 != "" else ""
-                ip_address_3 = "--ip_address_3 '{}'".format(lan.ip_address_3) if lan.ip_address_3 != "" else ""
-                subnet_mask_3 = "--subnet_mask_3 '{}'".format(lan.subnet_mask_3) if lan.subnet_mask_3 != "" else ""
-                ip_address_4 = "--ip_address_4 '{}'".format(lan.ip_address_4) if lan.ip_address_4 != "" else ""
-                subnet_mask_4 = "--subnet_mask_4 '{}'".format(lan.subnet_mask_4) if lan.subnet_mask_4 != "" else ""
-                log = "--log" if self.general.log else ""
+                dhcp_set_default_gateway = "--dhcp_set_default_gateway" if lan.dhcp_set_default_gateway else " "
+                ip_address_1 = "--ip_address_1 '{}'".format(lan.ip_address_1) if lan.ip_address_1 != "" else " "
+                subnet_mask_1 = "--subnet_mask_1 '{}'".format(lan.subnet_mask_1) if lan.subnet_mask_1 != "" else " "
+                ip_address_2 = "--ip_address_2 '{}'".format(lan.ip_address_2) if lan.ip_address_2 != "" else " "
+                subnet_mask_2 = "--subnet_mask_2 '{}'".format(lan.subnet_mask_2) if lan.subnet_mask_2 != "" else " "
+                ip_address_3 = "--ip_address_3 '{}'".format(lan.ip_address_3) if lan.ip_address_3 != "" else " "
+                subnet_mask_3 = "--subnet_mask_3 '{}'".format(lan.subnet_mask_3) if lan.subnet_mask_3 != "" else " "
+                ip_address_4 = "--ip_address_4 '{}'".format(lan.ip_address_4) if lan.ip_address_4 != "" else " "
+                subnet_mask_4 = "--subnet_mask_4 '{}'".format(lan.subnet_mask_4) if lan.subnet_mask_4 != "" else " "
+                log = "--log" if self.general.log else " "
 
                 c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface,\
@@ -227,7 +227,7 @@ class Network:
         dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["wlanconfig"]["dhclient_pid_file"].format("*"))
         dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["wlanconfig"]["dhclient_lease_file"].format("*"))
         dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["wlanconfig"]["dhclient_log_file"].format("*"))
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {} {} {} {} {} {} {} {}".format(\
             down_file,\
@@ -243,7 +243,7 @@ class Network:
         for wlan in self.wlanConfig:
             if Network_Util().is_wlan_interface(wlan.interface):
                 up_file = self.list["wlanconfig"]["up_file"]
-                interface = "--interface '{}'".format(wlan.interface) if wlan.interface != "" else ""
+                interface = "--interface '{}'".format(wlan.interface)
                 ssid1 = "--ssid1 '{}'".format(wlan.ssid1)
                 wpa_passphrase1 = "--wpa_passphrase1 '{}'".format(wlan.wpa_passphrase1)
                 ssid2 = "--ssid2 '{}'".format(wlan.ssid2)
@@ -261,18 +261,18 @@ class Network:
                 dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["wlanconfig"]["dhclient_pid_file"].format(wlan.interface))
                 dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["wlanconfig"]["dhclient_lease_file"].format(wlan.interface))
                 dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["wlanconfig"]["dhclient_log_file"].format(wlan.interface))
-                dhcp = "--dhcp" if wlan.dhcp else ""
+                dhcp = "--dhcp" if wlan.dhcp else " "
                 default_gateway_mode = "--default_gateway_mode '{}'".format(self.general.default_gateway_mode)
-                dhcp_set_default_gateway = "--dhcp_set_default_gateway" if wlan.dhcp_set_default_gateway else ""
-                ip_address_1 = "--ip_address_1 '{}'".format(wlan.ip_address_1) if wlan.ip_address_1 != "" else ""
-                subnet_mask_1 = "--subnet_mask_1 '{}'".format(wlan.subnet_mask_1) if wlan.subnet_mask_1 != "" else ""
-                ip_address_2 = "--ip_address_2 '{}'".format(wlan.ip_address_2) if wlan.ip_address_2 != "" else ""
-                subnet_mask_2 = "--subnet_mask_2 '{}'".format(wlan.subnet_mask_2) if wlan.subnet_mask_2 != "" else ""
-                ip_address_3 = "--ip_address_3 '{}'".format(wlan.ip_address_3) if wlan.ip_address_3 != "" else ""
-                subnet_mask_3 = "--subnet_mask_3 '{}'".format(wlan.subnet_mask_3) if wlan.subnet_mask_3 != "" else ""
-                ip_address_4 = "--ip_address_4 '{}'".format(wlan.ip_address_4) if wlan.ip_address_4 != "" else ""
-                subnet_mask_4 = "--subnet_mask_4 '{}'".format(wlan.subnet_mask_4) if wlan.subnet_mask_4 != "" else ""
-                log = "--log" if self.general.log else ""
+                dhcp_set_default_gateway = "--dhcp_set_default_gateway" if wlan.dhcp_set_default_gateway else " "
+                ip_address_1 = "--ip_address_1 '{}'".format(wlan.ip_address_1) if wlan.ip_address_1 != "" else " "
+                subnet_mask_1 = "--subnet_mask_1 '{}'".format(wlan.subnet_mask_1) if wlan.subnet_mask_1 != "" else " "
+                ip_address_2 = "--ip_address_2 '{}'".format(wlan.ip_address_2) if wlan.ip_address_2 != "" else " "
+                subnet_mask_2 = "--subnet_mask_2 '{}'".format(wlan.subnet_mask_2) if wlan.subnet_mask_2 != "" else " "
+                ip_address_3 = "--ip_address_3 '{}'".format(wlan.ip_address_3) if wlan.ip_address_3 != "" else " "
+                subnet_mask_3 = "--subnet_mask_3 '{}'".format(wlan.subnet_mask_3) if wlan.subnet_mask_3 != "" else " "
+                ip_address_4 = "--ip_address_4 '{}'".format(wlan.ip_address_4) if wlan.ip_address_4 != "" else " "
+                subnet_mask_4 = "--subnet_mask_4 '{}'".format(wlan.subnet_mask_4) if wlan.subnet_mask_4 != "" else " "
+                log = "--log" if self.general.log else " "
 
                 c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                     up_file, interface,\
@@ -302,7 +302,7 @@ class Network:
         hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
         hostapd_accept_file = "--hostapd_accept_file '{}'".format(self.list["hotspotconfig"]["hostapd_accept_file"])
         hostapd_deny_file = "--hostapd_deny_file '{}'".format(self.list["hotspotconfig"]["hostapd_deny_file"])
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {} {} {} {} {} {}".format(\
             down_file,\
@@ -319,7 +319,7 @@ class Network:
         if hotspot != None and Network_Util().is_wlan_interface(hotspot.interface):
             up_file = self.list["hotspotconfig"]["up_file"]
             interface = "--interface '{}'".format(hotspot.interface)
-            ssid = "--ssid '{}'".format(hotspot.ssid) if hotspot.ssid != "" else ""
+            ssid = "--ssid '{}'".format(hotspot.ssid)
             wpa_passphrase = "--wpa_passphrase '{}'".format(hotspot.wpa_passphrase)
             channel = "--channel '{}'".format(hotspot.channel)
             country_code = "--country_code '{}'".format(hotspot.country_code)
@@ -330,7 +330,7 @@ class Network:
             mac_address_filter_list = "--mac_address_filter_list '{}'".format(",".join(hotspot.mac_address_filter_list.strip().split()))
             hostapd_accept_file = "--hostapd_accept_file '{}'".format(self.list["hotspotconfig"]["hostapd_accept_file"])
             hostapd_deny_file = "--hostapd_deny_file '{}'".format(self.list["hotspotconfig"]["hostapd_deny_file"])
-            log = "--log" if self.general.log else ""
+            log = "--log" if self.general.log else " "
 
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, interface, ssid, wpa_passphrase, channel, country_code,\
@@ -357,7 +357,7 @@ class Network:
         dhcpd_lease_file = "--dhcpd_lease_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_lease_file"])
         named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
         named_log_file = "--named_log_file '{}'".format(self.list["dhcpserverconfig"]["named_log_file"])
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
             down_file,
@@ -411,7 +411,7 @@ class Network:
             dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"])
             dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"])
             dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"])
-            log = "--log" if self.general.log else ""
+            log = "--log" if self.general.log else " "
 
             c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, dhcp_module,\
@@ -436,8 +436,8 @@ class Network:
             dhcpd_lease_file = "--dhcpd_lease_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_lease_file"])
             named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
             named_log_file = "--named_log_file '{}'".format(self.list["dhcpserverconfig"]["named_log_file"])
-            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split())) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
-            log = "--log" if self.general.log else ""
+            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split())) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else " "
+            log = "--log" if self.general.log else " "
 
             c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
                 up_file, dhcp_module,\
@@ -456,7 +456,7 @@ class Network:
     def DownDns(self):
         # dns down
         down_file = self.list["dns"]["down_file"]
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {}".format(\
             down_file,\
@@ -471,7 +471,7 @@ class Network:
         if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "":
             up_file = self.list["dns"]["up_file"]
             dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split()))
-            log = "--log" if self.general.log else ""
+            log = "--log" if self.general.log else " "
 
             c = Execte("{} {} {}".format(\
                 up_file, dns_server,\
@@ -487,7 +487,7 @@ class Network:
     def DownIptables(self):
         # iptables down
         down_file = self.list["iptables"]["down_file"]
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {}".format(\
             down_file,\
@@ -499,7 +499,7 @@ class Network:
     def UpIptables(self):
         # iptables up
         up_file = self.list["iptables"]["up_file"]
-        log = "--log" if self.general.log else ""
+        log = "--log" if self.general.log else " "
 
         c = Execte("{} {}".format(
             up_file,\
