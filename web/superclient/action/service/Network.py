@@ -372,12 +372,14 @@ class Network:
     def UpDhcpServerConfig(self):
         # dhcpServerConfig up
         dnsmasq_flag = 0
+        dnsmasq_bridge = ""
         dnsmasq_interface = ""
         dnsmasq_ip_address = ""
         dnsmasq_subnet_mask = ""
         dnsmasq_dhcp_ip_address_from = ""
         dnsmasq_dhcp_ip_address_to = ""
         dhcpd_flag = 0
+        dhcpd_bridge = ""
         dhcpd_interface = ""
         dhcpd_ip_address = ""
         dhcpd_subnet_mask = ""
@@ -386,6 +388,10 @@ class Network:
         for dhcpServer in self.dhcpServerConfig:
             if Network_Util().is_interface(dhcpServer.interface) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dnsmasq:
                 dnsmasq_flag = 1
+                if dhcpServer.bridge:
+                    dnsmasq_bridge = dnsmasq_bridge + "," + ("br_" + str(dhcpServer.id)) if dnsmasq_bridge != "" else ("br_" + str(dhcpServer.id))
+                else:
+                    dnsmasq_bridge = dnsmasq_bridge + ","
                 dnsmasq_interface = dnsmasq_interface + "," + dhcpServer.interface if dnsmasq_interface != "" else dhcpServer.interface
                 dnsmasq_ip_address = dnsmasq_ip_address + "," + dhcpServer.ip_address if dnsmasq_ip_address != "" else dhcpServer.ip_address
                 dnsmasq_subnet_mask = dnsmasq_subnet_mask + "," + dhcpServer.subnet_mask if dnsmasq_subnet_mask != "" else dhcpServer.subnet_mask
@@ -394,6 +400,10 @@ class Network:
 
             elif Network_Util().is_interface(dhcpServer.interface) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dhcpd:
                 dhcpd_flag = 1
+                if dhcpServer.bridge:
+                    dhcpd_bridge = dhcpd_bridge + "," + ("br_" + str(dhcpServer.id)) if dhcpd_bridge != "" else ("br_" + str(dhcpServer.id))
+                else:
+                    dhcpd_bridge = dhcpd_bridge + ","
                 dhcpd_interface = dhcpd_interface + "," + dhcpServer.interface if dhcpd_interface != "" else dhcpServer.interface
                 dhcpd_ip_address = dhcpd_ip_address + "," + dhcpServer.ip_address if dhcpd_ip_address != "" else dhcpServer.ip_address
                 dhcpd_subnet_mask = dhcpd_subnet_mask + "," + dhcpServer.subnet_mask if dhcpd_subnet_mask != "" else dhcpServer.subnet_mask
@@ -403,6 +413,7 @@ class Network:
         if dnsmasq_flag == 1:
             up_file = self.list["dhcpserverconfig"]["up_file"]
             dhcp_module = "--dhcp_module '{}'".format(DhcpServerConfig.DhcpModule.dnsmasq)
+            dnsmasq_bridge = "--bridge '{}'".format(dnsmasq_bridge)
             dnsmasq_interface = "--interface '{}'".format(dnsmasq_interface)
             dnsmasq_ip_address = "--ip_address '{}'".format(dnsmasq_ip_address)
             dnsmasq_subnet_mask = "--subnet_mask '{}'".format(dnsmasq_subnet_mask)
@@ -413,8 +424,8 @@ class Network:
             dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"])
             log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {}".format(\
-                up_file, dhcp_module,\
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                up_file, dhcp_module, dnsmasq_bridge,\
                 dnsmasq_interface, dnsmasq_ip_address, dnsmasq_subnet_mask, dnsmasq_dhcp_ip_address_from, dnsmasq_dhcp_ip_address_to,\
                 dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file,\
                 log)
@@ -425,6 +436,7 @@ class Network:
         if dhcpd_flag == 1:
             up_file = self.list["dhcpserverconfig"]["up_file"]
             dhcp_module = "--dhcp_module '{}'".format(DhcpServerConfig.DhcpModule.dhcpd)
+            dhcpd_bridge = "--bridge '{}'".format(dhcpd_bridge)
             dhcpd_interface = "--interface '{}'".format(dhcpd_interface)
             dhcpd_ip_address = "--ip_address '{}'".format(dhcpd_ip_address)
             dhcpd_subnet_mask = "--subnet_mask '{}'".format(dhcpd_subnet_mask)
@@ -439,8 +451,8 @@ class Network:
             dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split())) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
-                up_file, dhcp_module,\
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                up_file, dhcp_module, dhcpd_bridge,\
                 dhcpd_interface, dhcpd_ip_address, dhcpd_subnet_mask, dhcpd_dhcp_ip_address_from, dhcpd_dhcp_ip_address_to,\
                 dhcpd_config_file, dhcpd_pid_file, dhcpd_log_file, dhcpd_lease_file,\
                 named_config_file, named_log_file, dns_server,\

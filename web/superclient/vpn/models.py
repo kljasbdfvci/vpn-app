@@ -112,7 +112,7 @@ class V2rayConfig(Configuration):
     class Protocol(models.TextChoices):
         vmess = "vmess", "VMESS"
         vless = "vless", "VLESS"  # we dont have alter_id in vless
-        trojan = "trojan", "TROJAN"
+        #trojan = "trojan", "TROJAN"
 
     class Network(models.TextChoices):
         vmess = "tcp", "TCP"

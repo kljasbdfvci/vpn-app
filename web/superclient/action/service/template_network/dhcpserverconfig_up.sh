@@ -8,6 +8,11 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --bridge)
+            bridge="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --interface)
             interface="$2"
             shift # past argument
@@ -103,6 +108,7 @@ exit_code=0
 
 if [ $dhcp_module == "dnsmasq" ]; then
 
+    list_bridge=(`echo $bridge | sed 's/,/\n/g'`)
     list_interface=(`echo $interface | sed 's/,/\n/g'`)
     list_ip_address=(`echo $ip_address | sed 's/,/\n/g'`)
     list_subnet_mask=(`echo $subnet_mask | sed 's/,/\n/g'`)
@@ -110,49 +116,56 @@ if [ $dhcp_module == "dnsmasq" ]; then
     list_dhcp_ip_address_to=(`echo $dhcp_ip_address_to | sed 's/,/\n/g'`)
 
     dhcp_range=""
-    bridge=""
+    use_interface=""
+    use_interface_list=""
     for i in "${!list_interface[@]}"; do
+        temp_bridge=${list_bridge[$i]}
         temp_interface=${list_interface[$i]}
         temp_ip_address=${list_ip_address[$i]}
         temp_subnet_mask=${list_subnet_mask[$i]}
         temp_dhcp_ip_address_from=${list_dhcp_ip_address_from[$i]}
         temp_dhcp_ip_address_to=${list_dhcp_ip_address_to[$i]}
 
-        br_name="br_"$(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n')
-        brctl addbr $br_name
-        ifconfig $br_name $temp_ip_address netmask $temp_subnet_mask up
-        ifconfig $temp_interface up
-        n=0
-        until [ "$n" -ge 5 ]
-        do
-            brctl addif $br_name $temp_interface
-            if [[ -n $(brctl show $br_name | grep $temp_interface) ]]; then
-                break
-            fi
-            n=$((n+1)) 
-            sleep 1
-        done
-        
-        if [[ "$bridge" == "" ]]; then
-            bridge=$br_name
+        if [ -n "$temp_bridge" ]; then
+            brctl addbr $temp_bridge
+            ifconfig $temp_bridge $temp_ip_address netmask $temp_subnet_mask up
+            ifconfig $temp_interface up
+            n=0
+            until [ "$n" -ge 5 ]
+            do
+                brctl addif $temp_bridge $temp_interface
+                sleep 5
+                if [[ -n $(brctl show $temp_bridge | grep $temp_interface) ]]; then
+                    break
+                fi
+                n=$((n+1))
+            done
+            use_interface=$temp_bridge
         else
-            bridge=$bridge","$br_name
+            ifconfig $temp_interface $temp_ip_address netmask $temp_subnet_mask up
+            use_interface=$temp_interface
+        fi
+        
+        if [[ "$use_interface_list" == "" ]]; then
+            use_interface_list=$use_interface
+        else
+            use_interface_list=$use_interface_list","$use_interface
         fi
 
-        dhcp_range=$dhcp_range"--dhcp-range=interface:$br_name,$temp_dhcp_ip_address_from,$temp_dhcp_ip_address_to,$temp_subnet_mask,24h "
+        dhcp_range=$dhcp_range"--dhcp-range=interface:$use_interface,$temp_dhcp_ip_address_from,$temp_dhcp_ip_address_to,$temp_subnet_mask,24h "
     done  
 
     dnsmasq_res=1
     if [[ $log == "yes" ]]; then
         dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
         --bind-interfaces --except-interface=lo \
-        --interface=$bridge --listen-address=$ip_address $dhcp_range \
+        --interface=$use_interface_list --listen-address=$ip_address $dhcp_range \
         --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file
         dnsmasq_res=$?
     else
         dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
         --bind-interfaces --except-interface=lo \
-        --interface=$bridge --listen-address=$ip_address $dhcp_range \
+        --interface=$use_interface_list --listen-address=$ip_address $dhcp_range \
         --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file &> /dev/null
         dnsmasq_res=$?
     fi
@@ -165,6 +178,7 @@ if [ $dhcp_module == "dnsmasq" ]; then
     
 elif [ $dhcp_module == "isc-dhcp-server" ]; then
 
+    list_bridge=(`echo $bridge | sed 's/,/\n/g'`)
     list_interface=(`echo $interface | sed 's/,/\n/g'`)
     list_ip_address=(`echo $ip_address | sed 's/,/\n/g'`)
     list_subnet_mask=(`echo $subnet_mask | sed 's/,/\n/g'`)
@@ -175,33 +189,40 @@ elif [ $dhcp_module == "isc-dhcp-server" ]; then
 authoritative;
 EOF
 
-    bridge=""
+    use_interface=""
+    use_interface_list=""
     for i in "${!list_interface[@]}"; do
+        temp_bridge=${list_bridge[$i]}
         temp_interface=${list_interface[$i]}
         temp_ip_address=${list_ip_address[$i]}
         temp_subnet_mask=${list_subnet_mask[$i]}
         temp_dhcp_ip_address_from=${list_dhcp_ip_address_from[$i]}
         temp_dhcp_ip_address_to=${list_dhcp_ip_address_to[$i]}
 
-        br_name="br_"$(brctl show | tail -n +2 | awk '{print $1}' | wc -l | tr -d '\n')
-        brctl addbr $br_name
-        ifconfig $br_name $temp_ip_address netmask $temp_subnet_mask up
-        ifconfig $temp_interface up
-        n=0
-        until [ "$n" -ge 5 ]
-        do
-            brctl addif $br_name $temp_interface
-            if [[ -n $(brctl show $br_name | grep $temp_interface) ]]; then
-                break
-            fi
-            n=$((n+1)) 
-            sleep 1
-        done
-
-        if [[ "$bridge" == "" ]]; then
-            bridge=$br_name
+        if [ -n "$temp_bridge" ]; then
+            brctl addbr $temp_bridge
+            ifconfig $temp_bridge $temp_ip_address netmask $temp_subnet_mask up
+            ifconfig $temp_interface up
+            n=0
+            until [ "$n" -ge 5 ]
+            do
+                brctl addif $temp_bridge $temp_interface
+                sleep 5
+                if [[ -n $(brctl show $temp_bridge | grep $temp_interface) ]]; then
+                    break
+                fi
+                n=$((n+1))
+            done
+            use_interface=$temp_bridge
         else
-            bridge=$bridge" "$br_name
+            ifconfig $temp_interface $temp_ip_address netmask $temp_subnet_mask up
+            use_interface=$temp_interface
+        fi
+        
+        if [[ "$use_interface_list" == "" ]]; then
+            use_interface_list=$use_interface
+        else
+            use_interface_list=$use_interface_list","$use_interface
         fi
 
         network_range=$(echo -n $temp_ip_address | sed 's/\([[:digit:]]\{1,3\}\(\.[[:digit:]]\{1,3\}\)\{2\}\.\)\([[:digit:]]\{1,3\}\)/\1/g')"0"
@@ -221,10 +242,10 @@ EOF
     
     dhcpd_res=1
     if [[ $log == "yes" ]]; then
-        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $bridge
+        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $use_interface_list
         dhcpd_res=$?
     else
-        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -lf $dhcpd_lease_file $bridge &> /dev/null
+        dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -lf $dhcpd_lease_file $use_interface_list &> /dev/null
         dhcpd_res=$?
     fi
 
