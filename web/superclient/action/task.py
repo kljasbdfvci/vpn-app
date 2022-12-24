@@ -54,7 +54,7 @@ def service_checker(counter):
             stop_vpn_service(status)
             status.change_previous_vpn(None)
             status.toggle_apply()
-        elif status.active_vpn != None and not Router(status.active_vpn).is_running(): # when proc is not up
+        elif status.active_vpn != None and counter % 10 == 0 and not Router(status.active_vpn).is_running(): # when proc is not up
             stop_vpn_service(status)
         elif status.active_vpn != None and counter % 60 == 0 and not Router(status.active_vpn).check_vpn(): # when connection is week
             stop_vpn_service(status)

@@ -1,6 +1,6 @@
 import json
 
-# trojan://segment01@segment02:10000?sni=segment04#segment_name
+# trojan://segment01@segment02:10000?sni=segment03#segment_name
 
 template = """
 {
@@ -8,43 +8,15 @@ template = """
   "log": {
     "loglevel": "warning"
   },
-  "policy": {
-    "levels": {
-      "8": {
-        "handshake": 4,
-        "connIdle": 300,
-        "uplinkOnly": 1,
-        "downlinkOnly": 1
-      }
-    },
-    "system": {
-      "statsOutboundUplink": true,
-      "statsOutboundDownlink": true
-    }
-  },
   "inbounds": [
     {
       "tag": "socks",
-      "port": 10808,
+      "port": 1080,
+      "listen": "::",
       "protocol": "socks",
       "settings": {
         "auth": "noauth",
         "udp": true,
-        "userLevel": 8
-      },
-      "sniffing": {
-        "enabled": true,
-        "destOverride": [
-          "http",
-          "tls"
-        ]
-      }
-    },
-    {
-      "tag": "http",
-      "port": 10809,
-      "protocol": "http",
-      "settings": {
         "userLevel": 8
       }
     }
@@ -70,7 +42,7 @@ template = """
         "security": "tls",
         "tlsSettings": {
           "allowInsecure": true,
-          "serverName": "segment04",
+          "serverName": "segment03",
           "fingerprint": "randomized"
         }
       },
@@ -81,15 +53,8 @@ template = """
     {
       "tag": "direct",
       "protocol": "freedom",
-      "settings": {}
-    },
-    {
-      "tag": "block",
-      "protocol": "blackhole",
       "settings": {
-        "response": {
-          "type": "http"
-        }
+        "domainStrategy": "UseIP"
       }
     }
   ],
@@ -99,8 +64,24 @@ template = """
     ]
   },
   "routing": {
-    "domainStrategy": "Asls",
-    "rules": []
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "ip": [
+          "geoip:private",
+          "geoip:cn"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:cn"
+        ],
+        "outboundTag": "direct"
+      }
+    ]
   }
 }
 """
