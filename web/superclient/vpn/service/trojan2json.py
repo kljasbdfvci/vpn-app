@@ -1,22 +1,9 @@
-from ..models import *
+import json
 
-# vmess://eyJhZGQiOiAiNDUuODEuMTkuNzUiLCAiYWlkIjogMCwgImhvc3QiOiAiIiwgImlkIjogIjM0NzEzZjU1LTI0ODYtNGFkMy1iMWUyLTNlY2E0ZTZmZjgyMiIsICJuZXQiOiAidGNwIiwgInBhdGgiOiAiLyIsICJwb3J0IjogIjU0MzIiLCAicHMiOiAibW9rcmlBcm1pbkBicmRnMy5ndnBuIiwgInRscyI6ICJub25lIiwgInR5cGUiOiAibm9uZSIsICJ2IjogIjIifQ==
+# trojan://segment01@segment02:segment03?sni=segment04#segment_name
 
-#{
-#  "add": "45.81.19.75",
-#  "aid": 0,
-#  "host": "",
-#  "id": "34713f55-2486-4ad3-b1e2-3eca4e6ff822",
-#  "net": "tcp",
-#  "path": "/",
-#  "port": "5432",
-#  "ps": "mokriArmin@brdg3.gvpn",
-#  "tls": "none",
-#  "type": "none",
-#  "v": "2"
-#}
-
-vmess = {
+template = """
+{
   "stats": {},
   "log": {
     "loglevel": "warning"
@@ -31,8 +18,8 @@ vmess = {
       }
     },
     "system": {
-      "statsOutboundUplink": "true",
-      "statsOutboundDownlink": "true"
+      "statsOutboundUplink": true,
+      "statsOutboundDownlink": true
     }
   },
   "inbounds": [
@@ -42,11 +29,11 @@ vmess = {
       "protocol": "socks",
       "settings": {
         "auth": "noauth",
-        "udp": "true",
+        "udp": true,
         "userLevel": 8
       },
       "sniffing": {
-        "enabled": "true",
+        "enabled": true,
         "destOverride": [
           "http",
           "tls"
@@ -65,29 +52,30 @@ vmess = {
   "outbounds": [
     {
       "tag": "proxy",
-      "protocol": "vmess",
+      "protocol": "trojan",
       "settings": {
-        "vnext": [
+        "servers": [
           {
-            "address": "45.81.19.75",
-            "port": 5432,
-            "users": [
-              {
-                "id": "34713f55-2486-4ad3-b1e2-3eca4e6ff822",
-                "alterId": 0,
-                "security": "auto",
-                "level": 8
-              }
-            ]
+            "address": "segment02",
+            "method": "auto",
+            "ota": false,
+            "password": "segment01",
+            "port": segment03,
+            "level": 8
           }
         ]
       },
       "streamSettings": {
         "network": "tcp",
-        "security": "none"
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": true,
+          "serverName": "segment04",
+          "fingerprint": "randomized"
+        }
       },
       "mux": {
-        "enabled": "false"
+        "enabled": false
       }
     },
     {
@@ -115,6 +103,22 @@ vmess = {
     "rules": []
   }
 }
+"""
 
-def generate(model : V2rayConfig):
-  pass
+def generate(model):
+
+  # load json
+  _json = json.loads(template)
+  
+  # get childs
+  _outbounds = _json["outbounds"][0]
+  _servers = _outbounds["settings"]["servers"][0]
+  _tlsSettings = _outbounds["streamSettings"]["tlsSettings"]
+  
+  # set values
+  _servers["password"] = model.uid
+  _servers["address"] = model.host
+  _servers["port"] = model.port
+  _tlsSettings["serverName"] = model.sni
+
+  return _json

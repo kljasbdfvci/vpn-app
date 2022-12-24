@@ -1,22 +1,8 @@
 from ..models import *
 
-# vmess://eyJhZGQiOiAiNDUuODEuMTkuNzUiLCAiYWlkIjogMCwgImhvc3QiOiAiIiwgImlkIjogIjM0NzEzZjU1LTI0ODYtNGFkMy1iMWUyLTNlY2E0ZTZmZjgyMiIsICJuZXQiOiAidGNwIiwgInBhdGgiOiAiLyIsICJwb3J0IjogIjU0MzIiLCAicHMiOiAibW9rcmlBcm1pbkBicmRnMy5ndnBuIiwgInRscyI6ICJub25lIiwgInR5cGUiOiAibm9uZSIsICJ2IjogIjIifQ==
+# vless://34713f55-2486-4ad3-b1e2-3eca4e6ff822@45.81.19.75:54321?type=ws&security=none&path=%2F#mokriArmin@brdg3.gvpn
 
-#{
-#  "add": "45.81.19.75",
-#  "aid": 0,
-#  "host": "",
-#  "id": "34713f55-2486-4ad3-b1e2-3eca4e6ff822",
-#  "net": "tcp",
-#  "path": "/",
-#  "port": "5432",
-#  "ps": "mokriArmin@brdg3.gvpn",
-#  "tls": "none",
-#  "type": "none",
-#  "v": "2"
-#}
-
-vmess = {
+vless = {
   "stats": {},
   "log": {
     "loglevel": "warning"
@@ -31,8 +17,8 @@ vmess = {
       }
     },
     "system": {
-      "statsOutboundUplink": "true",
-      "statsOutboundDownlink": "true"
+      "statsOutboundUplink": true,
+      "statsOutboundDownlink": true
     }
   },
   "inbounds": [
@@ -42,11 +28,11 @@ vmess = {
       "protocol": "socks",
       "settings": {
         "auth": "noauth",
-        "udp": "true",
+        "udp": true,
         "userLevel": 8
       },
       "sniffing": {
-        "enabled": "true",
+        "enabled": true,
         "destOverride": [
           "http",
           "tls"
@@ -65,17 +51,17 @@ vmess = {
   "outbounds": [
     {
       "tag": "proxy",
-      "protocol": "vmess",
+      "protocol": "vless",
       "settings": {
         "vnext": [
           {
             "address": "45.81.19.75",
-            "port": 5432,
+            "port": 54321,
             "users": [
               {
+                "encryption": "none",
+                "flow": "",
                 "id": "34713f55-2486-4ad3-b1e2-3eca4e6ff822",
-                "alterId": 0,
-                "security": "auto",
                 "level": 8
               }
             ]
@@ -83,11 +69,17 @@ vmess = {
         ]
       },
       "streamSettings": {
-        "network": "tcp",
-        "security": "none"
+        "network": "ws",
+        "security": "none",
+        "wsSettings": {
+          "path": "/",
+          "headers": {
+            "Host": ""
+          }
+        }
       },
       "mux": {
-        "enabled": "false"
+        "enabled": false
       }
     },
     {
@@ -115,6 +107,7 @@ vmess = {
     "rules": []
   }
 }
+
 
 def generate(model : V2rayConfig):
   pass
