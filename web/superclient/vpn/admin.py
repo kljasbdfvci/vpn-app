@@ -19,7 +19,7 @@ class OpenconnectConfigAdmin(admin.ModelAdmin):
 
     def get_fields (self, request, obj=None, **kwargs):
         fields = super().get_fields(request, obj, **kwargs)
-        configuration_list = ['name', 'description', 'enable', 'priority', 'last_log']
+        configuration_list = ['name', 'description', 'enable', 'priority', 'success', 'failed', 'last_log']
         for i in range(len(configuration_list)): 
             fields.remove(configuration_list[i])
             fields.insert(i, configuration_list[i])

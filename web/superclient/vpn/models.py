@@ -14,8 +14,8 @@ class Configuration(models.Model):
     description = models.CharField(max_length=1028, blank=True)
     enable = models.BooleanField(default=True)
     priority = models.IntegerField(default=0)
-    success = models.IntegerField(default=0, editable=False)
-    failed = models.IntegerField(default=0, editable=False)
+    success = models.IntegerField(default=0)
+    failed = models.IntegerField(default=0)
     last_log = models.CharField(max_length=4098, blank=True)
 
     @property
@@ -143,7 +143,9 @@ class V2rayConfig(Configuration):
     @property
     def config_json(self):
         general = General.objects.first()
-        if self.protocol == self.Protocol.vmess or self.protocol == self.Protocol.vless:
+        if self.protocol == self.Protocol.vmess:
+            return vmess2json_amin.generate(self.config_url)
+        elif self.protocol == self.Protocol.vless:
             return vmess2json_amin.generate(self.config_url)
         elif self.protocol == self.Protocol.trojan:
             return trojan2json.generate(self, general)
