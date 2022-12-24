@@ -75,7 +75,7 @@ class V2rayUrlConfigAdminForm(forms.ModelForm):
 class V2rayUrlConfigAdmin(admin.ModelAdmin):
     form = V2rayUrlConfigAdminForm
     list_display = ['name', 'enable', 'priority', 'success', 'failed', 'config_url']
-    readonly_fields = ['last_log', 'name', 'host', 'port', 'config_json', 'v', 'protocol', 'uid', 'alter_id', 'tls', 'tls_allow_insecure', 'network', 'ws_path', 'ws_host']
+    readonly_fields = ['last_log', 'name', 'host', 'port', 'config_json', 'v', 'protocol', 'uid', 'alter_id', 'tls', 'tls_allow_insecure', 'network', 'ws_path', 'ws_host', 'ws_sni']
 
     def get_fields (self, request, obj=None, **kwargs):
         fields = super().get_fields(request, obj, **kwargs)

@@ -213,7 +213,7 @@ class V2rayConfig(Configuration):
 
         elif self.config_type == 'property':
 
-            if self.protocol == 'vmess':
+            if self.protocol == self.Protocol.vmess:
                 configjson = {
                     "v": self.v,
                     "ps": self.name,
@@ -231,10 +231,10 @@ class V2rayConfig(Configuration):
                 encoded_config = base64.b64encode(json.dumps(configjson, sort_keys=True).encode('utf-8')).decode()
                 self.config_url = f'{self.protocol}://{encoded_config}'
             
-            elif self.protocol == 'vless':
+            elif self.protocol == self.Protocol.vless:
                 self.config_url =  f'{self.protocol}://{self.uid}@{self.host}:{self.port}?type={self.network}&security={self.tls}&path={quote_plus(self.ws_path)}#{quote_plus(self.name)}'
 
-            elif self.protocol == 'trojan':
+            elif self.protocol == self.Protocol.trojan:
                 self.config_url =  f'{self.protocol}://{self.uid}@{self.host}:{self.port}?sni={quote_plus(self.ws_sni)}#{quote_plus(self.name)}'
 
         super(V2rayConfig, self).save(*args, **kwargs)

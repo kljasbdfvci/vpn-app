@@ -1,6 +1,6 @@
 import json
 
-# trojan://segment01@segment02:segment03?sni=segment04#segment_name
+# trojan://segment01@segment02:10000?sni=segment04#segment_name
 
 template = """
 {
@@ -60,7 +60,7 @@ template = """
             "method": "auto",
             "ota": false,
             "password": "segment01",
-            "port": segment03,
+            "port": 10000,
             "level": 8
           }
         ]
@@ -109,7 +109,7 @@ def generate(model):
 
   # load json
   _json = json.loads(template)
-  
+
   # get childs
   _outbounds = _json["outbounds"][0]
   _servers = _outbounds["settings"]["servers"][0]
@@ -119,6 +119,6 @@ def generate(model):
   _servers["password"] = model.uid
   _servers["address"] = model.host
   _servers["port"] = model.port
-  _tlsSettings["serverName"] = model.sni
+  _tlsSettings["serverName"] = model.ws_sni
 
-  return _json
+  return json.dumps(_json)
