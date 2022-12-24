@@ -87,11 +87,11 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 exit_code=1
 
 if [[ $log == "yes" ]]; then
-    v2ray -config $config &> $log_file &
+    v2ray run -config $config &> $log_file &
     pid=$!
     exit_code=$?
 else
-    v2ray -config $config &> /dev/null &
+    v2ray run -config $config &> /dev/null &
     pid=$!
     exit_code=$?
 fi

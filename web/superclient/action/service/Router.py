@@ -92,7 +92,7 @@ class Router:
             config_json = v2ray.config_json
             js = json.loads(config_json)
             v2ray_inbounds_port = "--v2ray_inbounds_port '{}'".format(js["inbounds"][0]["port"])
-            v2ray_outbounds_address = "--v2ray_outbounds_address '{}'".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
+            v2ray_outbounds_address = "--v2ray_outbounds_address '{}'".format(v2ray.host)
             tun2socks = "--tun2socks '{}'".format(self.general.v2ray_mode)
             tun2socks_log_file = "--tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["tun2socks_log_file"])
             dns_server = "--dns_server '{}'".format(self.general.dns.strip().split()[0]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
@@ -148,9 +148,7 @@ class Router:
             pid_file = "--pid_file '{}'".format(self.VpnList["v2ray"]["pid_file"])
             log_file = "--log_file '{}'".format(self.VpnList["v2ray"]["log_file"])
             vpn_interface = "--vpn_interface '{}'".format(self.VpnList["v2ray"]["interface"])
-            config_json = v2ray.config_json
-            js = json.loads(config_json)
-            v2ray_outbounds_address = "--v2ray_outbounds_address '{}'".format(js["outbounds"][0]["settings"]["vnext"][0]["address"])
+            v2ray_outbounds_address = "--v2ray_outbounds_address '{}'".format(v2ray.host)
             tun2socks = "--tun2socks '{}'".format(self.general.v2ray_mode)
             tun2socks_log_file = "--tun2socks_log_file '{}'".format(self.VpnList["v2ray"]["tun2socks_log_file"])
             dns_log = "--dns_log '{}'".format(self.VpnList["v2ray"]["dns2socks_log_file"]) if self.general.dns_Mode == self.general.DnsMode._3 and self.general.dns != "" else ""
