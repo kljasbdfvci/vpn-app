@@ -1,10 +1,11 @@
 from django.db import models
 import base64
 import json
-from superclient.vpn.service import vmess2json_amin
-from superclient.vpn.service import trojan2json
 from urllib.parse import urlparse, parse_qs, quote_plus
 
+from ..setting.models import General
+from superclient.vpn.service import vmess2json_amin
+from superclient.vpn.service import trojan2json
 
 
 class Configuration(models.Model):
@@ -141,10 +142,11 @@ class V2rayConfig(Configuration):
 
     @property
     def config_json(self):
+        general = General.objects.first()
         if self.protocol == self.Protocol.vmess or self.protocol == self.Protocol.vless:
             return vmess2json_amin.generate(self.config_url)
         elif self.protocol == self.Protocol.trojan:
-            return trojan2json.generate(self)
+            return trojan2json.generate(self, general)
         else:
             return None
 
