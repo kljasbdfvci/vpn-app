@@ -480,17 +480,16 @@ class Network:
 
     def UpDns(self):
         # dns up
-        if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "":
-            up_file = self.list["dns"]["up_file"]
-            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split()))
-            log = "--log" if self.general.log else ""
+        up_file = self.list["dns"]["up_file"]
+        dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split()))
+        log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {}".format(\
-                up_file, dns_server,\
-                log)
-            )
-            c.do()
-            c.print()
+        c = Execte("{} {} {}".format(\
+            up_file, dns_server,\
+            log)
+        )
+        c.do()
+        c.print()
 
     def ApplyIptables(self):
         self.DownIptables()

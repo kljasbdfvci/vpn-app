@@ -45,7 +45,7 @@ if [[ $method == "curl" ]]; then
     until [ "$n" -ge $retry ]
     do
         echo "Try($n)"
-        timeout $timeout curl $domain --connect-timeout $timeout --max-time $timeout
+        timeout $timeout curl $domain
         exit_code=$?
         if [ $exit_code == 0 ]; then
             break
