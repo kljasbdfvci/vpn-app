@@ -167,6 +167,7 @@ exit_code=0
 cat > $wpa_supplicant_config_file << EOF
 update_config=1
 country=$country_code
+autoscan=periodic:10
 EOF
 
 if [[ -n $ssid1 ]] && [[ -n $wpa_passphrase1 ]]; then
