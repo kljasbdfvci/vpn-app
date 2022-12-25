@@ -117,8 +117,8 @@ EOF
     if [[ $default_gateway_mode == "manual" ]] || [[ $dhcp_set_default_gateway == "" ]]; then
         cat >> $dhclient_config_file << EOF
 
-supersede routers None;
-supersede domain-name-servers None;
+supersede routers 1,1,1,1;
+supersede domain-name-servers 8.8.8.8;
 EOF
     elif [[ $default_gateway_mode == "dhcp" ]] && [[ $dhcp_set_default_gateway == "yes" ]]; then
         ip route add 169.254.0.0/16 dev $interface metric 1000
