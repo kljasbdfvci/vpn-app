@@ -244,14 +244,14 @@ class Network:
             if Network_Util().is_wlan_interface(wlan.interface):
                 up_file = self.list["wlanconfig"]["up_file"]
                 interface = "--interface '{}'".format(wlan.interface)
-                ssid1 = "--ssid1 '{}'".format(wlan.ssid1)
-                wpa_passphrase1 = "--wpa_passphrase1 '{}'".format(wlan.wpa_passphrase1)
-                ssid2 = "--ssid2 '{}'".format(wlan.ssid2)
-                wpa_passphrase2 = "--wpa_passphrase2 '{}'".format(wlan.wpa_passphrase2)
-                ssid3 = "--ssid3 '{}'".format(wlan.ssid3)
-                wpa_passphrase3 = "--wpa_passphrase3 '{}'".format(wlan.wpa_passphrase3)
-                ssid4 = "--ssid4 '{}'".format(wlan.ssid4)
-                wpa_passphrase4 = "--wpa_passphrase4 '{}'".format(wlan.wpa_passphrase4)
+                ssid1 = "--ssid1 '{}'".format(wlan.ssid1.replace("'", "'\\''"))
+                wpa_passphrase1 = "--wpa_passphrase1 '{}'".format(wlan.wpa_passphrase1.replace("'", "'\\''"))
+                ssid2 = "--ssid2 '{}'".format(wlan.ssid2.replace("'", "'\\''"))
+                wpa_passphrase2 = "--wpa_passphrase2 '{}'".format(wlan.wpa_passphrase2.replace("'", "'\\''"))
+                ssid3 = "--ssid3 '{}'".format(wlan.ssid3.replace("'", "'\\''"))
+                wpa_passphrase3 = "--wpa_passphrase3 '{}'".format(wlan.wpa_passphrase3.replace("'", "'\\''"))
+                ssid4 = "--ssid4 '{}'".format(wlan.ssid4.replace("'", "'\\''"))
+                wpa_passphrase4 = "--wpa_passphrase4 '{}'".format(wlan.wpa_passphrase4.replace("'", "'\\''"))
                 country_code = "--country_code '{}'".format(wlan.country_code)
                 driver = "--driver '{}'".format(wlan.driver)
                 wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"].format(wlan.interface))
@@ -319,8 +319,8 @@ class Network:
         if hotspot != None and Network_Util().is_wlan_interface(hotspot.interface):
             up_file = self.list["hotspotconfig"]["up_file"]
             interface = "--interface '{}'".format(hotspot.interface)
-            ssid = "--ssid '{}'".format(hotspot.ssid)
-            wpa_passphrase = "--wpa_passphrase '{}'".format(hotspot.wpa_passphrase)
+            ssid = "--ssid '{}'".format(hotspot.ssid.replace("'", "'\\''"))
+            wpa_passphrase = "--wpa_passphrase '{}'".format(hotspot.wpa_passphrase.replace("'", "'\\''"))
             channel = "--channel '{}'".format(hotspot.channel)
             country_code = "--country_code '{}'".format(hotspot.country_code)
             hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
