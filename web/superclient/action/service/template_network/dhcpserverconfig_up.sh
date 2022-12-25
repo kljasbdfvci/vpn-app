@@ -153,13 +153,14 @@ if [ $dhcp_module == "dnsmasq" ]; then
         fi
 
         dhcp_range=$dhcp_range"--dhcp-range=interface:$use_interface,$temp_dhcp_ip_address_from,$temp_dhcp_ip_address_to,$temp_subnet_mask,24h "
+        dhcp_option=$dhcp_option"--dhcp-option=$use_interface,3,$temp_ip_address --dhcp-option=$use_interface,6,$temp_ip_address "
     done  
 
     dnsmasq_res=1
     if [[ $log == "yes" ]]; then
         dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
         --bind-interfaces --except-interface=lo \
-        --interface=$use_interface_list --listen-address=$ip_address $dhcp_range \
+        --interface=$use_interface_list --listen-address=$ip_address $dhcp_range $dhcp_option \
         --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file
         dnsmasq_res=$?
     else
@@ -230,8 +231,8 @@ EOF
         cat >> $dhcpd_config_file << EOF
 subnet $network_range netmask $temp_subnet_mask {
   range $temp_dhcp_ip_address_from $temp_dhcp_ip_address_to;
-  option domain-name-servers $temp_ip_address;
   option routers $temp_ip_address;
+  option domain-name-servers $temp_ip_address;
   default-lease-time 86400;
   max-lease-time 86400;
 }
