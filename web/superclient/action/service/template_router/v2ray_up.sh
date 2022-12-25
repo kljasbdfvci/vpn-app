@@ -124,7 +124,7 @@ if [ "$exit_code" == 0 ]; then
     # start dns
     ########################################################################
 
-    if [ -n "$dns_server" ] && [ -n "$dns_log" ]; then
+    if [[ -n "$dns_server" ]] && [[ -n "$dns_log" ]]; then
 
         # DNS2SOCKS
         if [[ $log == "yes" ]]; then
