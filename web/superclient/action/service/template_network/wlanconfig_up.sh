@@ -173,7 +173,7 @@ if [[ -n $ssid1 ]] && [[ -n $wpa_passphrase1 ]]; then
     cat >> $wpa_supplicant_config_file << EOF
 network={
     scan_ssid=1
-    ssid="$ssid1"
+    ssid=P"$ssid1"
     proto=WPA2
     psk="$wpa_passphrase1"
     key_mgmt=WPA-PSK
@@ -186,7 +186,7 @@ elif [[ -n $ssid1 ]]; then
     cat >> $wpa_supplicant_config_file << EOF
 network={
     scan_ssid=1
-    ssid="$ssid1"
+    ssid=P"$ssid1"
     key_mgmt=NONE
     priority=4
 }
@@ -197,7 +197,7 @@ if [[ -n $ssid2 ]] && [[ -n $wpa_passphrase2 ]]; then
     cat >> $wpa_supplicant_config_file << EOF
 network={
     scan_ssid=1
-    ssid="$ssid2"
+    ssid=P"$ssid2"
     proto=WPA2
     psk="$wpa_passphrase2"
     key_mgmt=WPA-PSK
@@ -210,7 +210,7 @@ elif [[ -n $ssid2 ]]; then
     cat >> $wpa_supplicant_config_file << EOF
 network={
     scan_ssid=1
-    ssid="$ssid2"
+    ssid=P"$ssid2"
     key_mgmt=NONE
     priority=3
 }
@@ -221,7 +221,7 @@ if [[ -n $ssid3 ]] && [[ -n $wpa_passphrase3 ]]; then
     cat >> $wpa_supplicant_config_file << EOF
 network={
     scan_ssid=1
-    ssid="$ssid3"
+    ssid=P"$ssid3"
     proto=WPA2
     psk="$wpa_passphrase3"
     key_mgmt=WPA-PSK
@@ -234,7 +234,7 @@ elif [[ -n $ssid3 ]]; then
     cat >> $wpa_supplicant_config_file << EOF
 network={
     scan_ssid=1
-    ssid="$ssid3"
+    ssid=P"$ssid3"
     key_mgmt=NONE
     priority=2
 }
@@ -245,7 +245,7 @@ if [[ -n $ssid4 ]] && [[ -n $wpa_passphrase4 ]]; then
     cat >> $wpa_supplicant_config_file << EOF
 network={
     scan_ssid=1
-    ssid="$ssid4"
+    ssid=P"$ssid4"
     proto=WPA2
     psk="$wpa_passphrase4"
     key_mgmt=WPA-PSK
@@ -258,7 +258,7 @@ elif [[ -n $ssid4 ]]; then
     cat >> $wpa_supplicant_config_file << EOF
 network={
     scan_ssid=1
-    ssid="$ssid4"
+    ssid=P"$ssid4"
     key_mgmt=NONE
     priority=1
 }
