@@ -253,7 +253,7 @@ EOF
 
 fi
 
-if [[ $dns_server != "" ]]; then
+if ! pgrep -f 'named' && [[ $dns_server != "" ]]; then
     str_listen=""
     for i in "${!list_ip_address[@]}"; do
         str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
