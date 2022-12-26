@@ -356,4 +356,9 @@ if [[ ! -f $ensure_dhcpserver_path ]]; then
     echo "create $ensure_dhcpserver_path successful."
 fi
 python3 "$this_dir_path/../web/manage.py" network_apply
-python3 "$this_dir_path/../web/manage.py" runserver 0.0.0.0:80 --noreload &>/tmp/app-web.log &
+is_log_on=$(python3 "$this_dir_path/../web/manage.py" is_log_on | tr -d '\n')
+if [[ "$is_log_on" == "yes" ]]; then
+    python3 "$this_dir_path/../web/manage.py" runserver 0.0.0.0:80 --noreload &> /tmp/app-web.log &
+else
+    python3 "$this_dir_path/../web/manage.py" runserver 0.0.0.0:80 --noreload &> /dev/null &
+fi
