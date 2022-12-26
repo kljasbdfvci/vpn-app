@@ -289,8 +289,8 @@ $str_dns
     
     resolver-query-timeout 20;
 
-    dnssec-enable yes;
-    dnssec-validation auto;
+    dnssec-enable no;
+    dnssec-validation no;
     dnssec-lookaside auto;
 };
 
