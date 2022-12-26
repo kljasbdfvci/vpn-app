@@ -47,3 +47,20 @@ class Network_Util:
 
     def get_first_wlan_interface(self):
         return self.get_wlan_interfaces()[0]
+
+    def get_mac(self, interface):
+        if self.is_interface(interface):
+            self._get_mac(interface)
+        else:
+            return None
+
+    def _get_mac(self, interface):
+        f = open("/sys/class/net/" + interface + "/address", "r")
+        return f.read().strip()
+
+    def get_interface_by_mac(self, mac):
+        addrs = self.get_interfaces()
+        for addr in addrs:
+            if mac == self._get_mac(addr):
+                return addr
+        return None

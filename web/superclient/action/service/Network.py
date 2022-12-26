@@ -180,13 +180,14 @@ class Network:
     def UpLanConfig(self):
         # lanConfig up
         for lan in self.lanConfig:
-            if Network_Util().is_lan_interface(lan.interface):
+            interface_mac = lan.interface_mac
+            if interface_mac != None and Network_Util().is_lan_interface(interface_mac):
                 up_file = self.list["lanconfig"]["up_file"]
-                interface = "--interface '{}'".format(lan.interface)
-                dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["lanconfig"]["dhclient_config_file"].format(lan.interface))
-                dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["lanconfig"]["dhclient_pid_file"].format(lan.interface))
-                dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["lanconfig"]["dhclient_lease_file"].format(lan.interface))
-                dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["lanconfig"]["dhclient_log_file"].format(lan.interface))
+                interface = "--interface '{}'".format(interface_mac)
+                dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["lanconfig"]["dhclient_config_file"].format(interface_mac))
+                dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["lanconfig"]["dhclient_pid_file"].format(interface_mac))
+                dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["lanconfig"]["dhclient_lease_file"].format(interface_mac))
+                dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["lanconfig"]["dhclient_log_file"].format(interface_mac))
                 dhcp = "--dhcp" if lan.dhcp else ""
                 default_gateway_mode = "--default_gateway_mode '{}'".format(self.general.default_gateway_mode)
                 dhcp_set_default_gateway = "--dhcp_set_default_gateway" if lan.dhcp_set_default_gateway else ""
@@ -241,9 +242,10 @@ class Network:
     def UpWlanConfig(self):
         # wlanConfig up
         for wlan in self.wlanConfig:
-            if Network_Util().is_wlan_interface(wlan.interface):
+            interface_mac = wlan.interface_mac
+            if interface_mac != None and Network_Util().is_wlan_interface(interface_mac):
                 up_file = self.list["wlanconfig"]["up_file"]
-                interface = "--interface '{}'".format(wlan.interface)
+                interface = "--interface '{}'".format(interface_mac)
                 ssid1 = "--ssid1 '{}'".format(wlan.ssid1.replace("'", "'\\''"))
                 wpa_passphrase1 = "--wpa_passphrase1 '{}'".format(wlan.wpa_passphrase1.replace("'", "'\\''"))
                 ssid2 = "--ssid2 '{}'".format(wlan.ssid2.replace("'", "'\\''"))
@@ -254,13 +256,13 @@ class Network:
                 wpa_passphrase4 = "--wpa_passphrase4 '{}'".format(wlan.wpa_passphrase4.replace("'", "'\\''"))
                 country_code = "--country_code '{}'".format(wlan.country_code)
                 driver = "--driver '{}'".format(wlan.driver)
-                wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"].format(wlan.interface))
-                wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"].format(wlan.interface))
-                wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"].format(wlan.interface))
-                dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["wlanconfig"]["dhclient_config_file"].format(wlan.interface))
-                dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["wlanconfig"]["dhclient_pid_file"].format(wlan.interface))
-                dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["wlanconfig"]["dhclient_lease_file"].format(wlan.interface))
-                dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["wlanconfig"]["dhclient_log_file"].format(wlan.interface))
+                wpa_supplicant_config_file = "--wpa_supplicant_config_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_config_file"].format(interface_mac))
+                wpa_supplicant_pid_file = "--wpa_supplicant_pid_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_pid_file"].format(interface_mac))
+                wpa_supplicant_log_file = "--wpa_supplicant_log_file '{}'".format(self.list["wlanconfig"]["wpa_supplicant_log_file"].format(interface_mac))
+                dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["wlanconfig"]["dhclient_config_file"].format(interface_mac))
+                dhclient_pid_file = "--dhclient_pid_file '{}'".format(self.list["wlanconfig"]["dhclient_pid_file"].format(interface_mac))
+                dhclient_lease_file = "--dhclient_lease_file '{}'".format(self.list["wlanconfig"]["dhclient_lease_file"].format(interface_mac))
+                dhclient_log_file = "--dhclient_log_file '{}'".format(self.list["wlanconfig"]["dhclient_log_file"].format(interface_mac))
                 dhcp = "--dhcp" if wlan.dhcp else ""
                 default_gateway_mode = "--default_gateway_mode '{}'".format(self.general.default_gateway_mode)
                 dhcp_set_default_gateway = "--dhcp_set_default_gateway" if wlan.dhcp_set_default_gateway else ""
@@ -316,30 +318,32 @@ class Network:
     def UpHotspotConfig(self):
         # hotspotConfig up
         hotspot = self.hotspotConfig
-        if hotspot != None and Network_Util().is_wlan_interface(hotspot.interface):
-            up_file = self.list["hotspotconfig"]["up_file"]
-            interface = "--interface '{}'".format(hotspot.interface)
-            ssid = "--ssid '{}'".format(hotspot.ssid.replace("'", "'\\''"))
-            wpa_passphrase = "--wpa_passphrase '{}'".format(hotspot.wpa_passphrase.replace("'", "'\\''"))
-            channel = "--channel '{}'".format(hotspot.channel)
-            country_code = "--country_code '{}'".format(hotspot.country_code)
-            hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
-            hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
-            hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
-            mac_address_filter_mode = "--mac_address_filter_mode '{}'".format(hotspot.mac_address_filter_mode)
-            mac_address_filter_list = "--mac_address_filter_list '{}'".format(",".join(hotspot.mac_address_filter_list.strip().split()))
-            hostapd_accept_file = "--hostapd_accept_file '{}'".format(self.list["hotspotconfig"]["hostapd_accept_file"])
-            hostapd_deny_file = "--hostapd_deny_file '{}'".format(self.list["hotspotconfig"]["hostapd_deny_file"])
-            log = "--log" if self.general.log else ""
+        if hotspot != None:
+            interface_mac = hotspot.interface_mac
+            if interface_mac != None and Network_Util().is_wlan_interface(interface_mac):
+                up_file = self.list["hotspotconfig"]["up_file"]
+                interface = "--interface '{}'".format(interface_mac)
+                ssid = "--ssid '{}'".format(hotspot.ssid.replace("'", "'\\''"))
+                wpa_passphrase = "--wpa_passphrase '{}'".format(hotspot.wpa_passphrase.replace("'", "'\\''"))
+                channel = "--channel '{}'".format(hotspot.channel)
+                country_code = "--country_code '{}'".format(hotspot.country_code)
+                hostapd_config_file = "--hostapd_config_file '{}'".format(self.list["hotspotconfig"]["hostapd_config_file"])
+                hostapd_pid_file = "--hostapd_pid_file '{}'".format(self.list["hotspotconfig"]["hostapd_pid_file"])
+                hostapd_log_file = "--hostapd_log_file '{}'".format(self.list["hotspotconfig"]["hostapd_log_file"])
+                mac_address_filter_mode = "--mac_address_filter_mode '{}'".format(hotspot.mac_address_filter_mode)
+                mac_address_filter_list = "--mac_address_filter_list '{}'".format(",".join(hotspot.mac_address_filter_list.strip().split()))
+                hostapd_accept_file = "--hostapd_accept_file '{}'".format(self.list["hotspotconfig"]["hostapd_accept_file"])
+                hostapd_deny_file = "--hostapd_deny_file '{}'".format(self.list["hotspotconfig"]["hostapd_deny_file"])
+                log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
-                up_file, interface, ssid, wpa_passphrase, channel, country_code,\
-                hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
-                mac_address_filter_mode, mac_address_filter_list, hostapd_accept_file, hostapd_deny_file,\
-                log)
-            )
-            c.do()
-            c.print()
+                c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                    up_file, interface, ssid, wpa_passphrase, channel, country_code,\
+                    hostapd_config_file, hostapd_pid_file, hostapd_log_file,\
+                    mac_address_filter_mode, mac_address_filter_list, hostapd_accept_file, hostapd_deny_file,\
+                    log)
+                )
+                c.do()
+                c.print()
 
     def ApplyDhcpServerConfig(self):
         self.DownDhcpServerConfig()
@@ -386,25 +390,26 @@ class Network:
         dhcpd_dhcp_ip_address_from = ""
         dhcpd_dhcp_ip_address_to = ""
         for dhcpServer in self.dhcpServerConfig:
-            if Network_Util().is_interface(dhcpServer.interface) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dnsmasq:
+            interface_mac = dhcpServer.interface_mac
+            if interface_mac != None and Network_Util().is_interface(interface_mac) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dnsmasq:
                 dnsmasq_flag = 1
                 if dhcpServer.bridge:
                     dnsmasq_bridge = dnsmasq_bridge + "," + ("br_" + str(dhcpServer.id)) if dnsmasq_bridge != "" else ("br_" + str(dhcpServer.id))
                 else:
                     dnsmasq_bridge = dnsmasq_bridge + ","
-                dnsmasq_interface = dnsmasq_interface + "," + dhcpServer.interface if dnsmasq_interface != "" else dhcpServer.interface
+                dnsmasq_interface = dnsmasq_interface + "," + interface_mac if dnsmasq_interface != "" else interface_mac
                 dnsmasq_ip_address = dnsmasq_ip_address + "," + dhcpServer.ip_address if dnsmasq_ip_address != "" else dhcpServer.ip_address
                 dnsmasq_subnet_mask = dnsmasq_subnet_mask + "," + dhcpServer.subnet_mask if dnsmasq_subnet_mask != "" else dhcpServer.subnet_mask
                 dnsmasq_dhcp_ip_address_from = dnsmasq_dhcp_ip_address_from + "," + dhcpServer.dhcp_ip_address_from if dnsmasq_dhcp_ip_address_from != "" else dhcpServer.dhcp_ip_address_from
                 dnsmasq_dhcp_ip_address_to = dnsmasq_dhcp_ip_address_to + "," + dhcpServer.dhcp_ip_address_to if dnsmasq_dhcp_ip_address_to != "" else dhcpServer.dhcp_ip_address_to
 
-            elif Network_Util().is_interface(dhcpServer.interface) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dhcpd:
+            elif interface_mac != None and Network_Util().is_interface(interface_mac) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dhcpd:
                 dhcpd_flag = 1
                 if dhcpServer.bridge:
                     dhcpd_bridge = dhcpd_bridge + "," + ("br_" + str(dhcpServer.id)) if dhcpd_bridge != "" else ("br_" + str(dhcpServer.id))
                 else:
                     dhcpd_bridge = dhcpd_bridge + ","
-                dhcpd_interface = dhcpd_interface + "," + dhcpServer.interface if dhcpd_interface != "" else dhcpServer.interface
+                dhcpd_interface = dhcpd_interface + "," + interface_mac if dhcpd_interface != "" else interface_mac
                 dhcpd_ip_address = dhcpd_ip_address + "," + dhcpServer.ip_address if dhcpd_ip_address != "" else dhcpServer.ip_address
                 dhcpd_subnet_mask = dhcpd_subnet_mask + "," + dhcpServer.subnet_mask if dhcpd_subnet_mask != "" else dhcpServer.subnet_mask
                 dhcpd_dhcp_ip_address_from = dhcpd_dhcp_ip_address_from + "," + dhcpServer.dhcp_ip_address_from if dhcpd_dhcp_ip_address_from != "" else dhcpServer.dhcp_ip_address_from

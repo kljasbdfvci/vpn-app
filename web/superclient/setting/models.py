@@ -2,6 +2,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from ..action.service.Network_Util import Network_Util
+
 # Create your models here.
 class General(models.Model):
 
@@ -59,6 +61,7 @@ def LanConfig_validate_interface(value):
 
 class LanConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[LanConfig_validate_interface])
+    mac = models.CharField(max_length=64, default=None, editable=False)
     dhcp = models.BooleanField(default=True)
     dhcp_set_default_gateway = models.BooleanField(default=True)
     ip_address_1 = models.CharField(max_length=16, blank=True)
@@ -69,6 +72,19 @@ class LanConfig(models.Model):
     subnet_mask_3 = models.CharField(max_length=16, blank=True)
     ip_address_4 = models.CharField(max_length=16, blank=True)
     subnet_mask_4 = models.CharField(max_length=16, blank=True)
+
+    @property
+    def interface_mac(self):
+        if self.mac == None:
+            return self.interface
+        elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
+            return self.interface
+        else:
+            return Network_Util().get_interface_by_mac(self.mac)
+
+    def save(self, *args, **kwargs):
+        self.mac = Network_Util().get_mac(self.interface)
+        super(LanConfig, self).save(*args, **kwargs)
 
 def WlanConfig_validate_interface(value):
     if HotspotConfig.objects.filter(interface = value).count() != 0:
@@ -84,6 +100,7 @@ def WlanConfig_validate_interface(value):
 
 class WlanConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[WlanConfig_validate_interface])
+    mac = models.CharField(max_length=64, default=None, editable=False)
     ssid1 = models.CharField(max_length=128)
     wpa_passphrase1 = models.CharField(max_length=128, blank=True)
     ssid2 = models.CharField(max_length=128, blank=True)
@@ -109,6 +126,19 @@ class WlanConfig(models.Model):
     ip_address_4 = models.CharField(max_length=16, blank=True)
     subnet_mask_4 = models.CharField(max_length=16, blank=True)
 
+    @property
+    def interface_mac(self):
+        if self.mac == None:
+            return self.interface
+        elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
+            return self.interface
+        else:
+            return Network_Util().get_interface_by_mac(self.mac)
+
+    def save(self, *args, **kwargs):
+        self.mac = Network_Util().get_mac(self.interface)
+        super(WlanConfig, self).save(*args, **kwargs)
+
 def HotspotConfig_validate_interface(value):
     if WlanConfig.objects.filter(interface = value).count() != 0:
         raise ValidationError(
@@ -118,6 +148,7 @@ def HotspotConfig_validate_interface(value):
 
 class HotspotConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[HotspotConfig_validate_interface])
+    mac = models.CharField(max_length=64, default=None, editable=False)
     ssid = models.CharField(max_length=128)
     wpa_passphrase = models.CharField(max_length=128, blank=True)
     class Channel(models.TextChoices):
@@ -143,6 +174,19 @@ class HotspotConfig(models.Model):
         allow = "accept", "Allow"
     mac_address_filter_mode = models.CharField(max_length=32, choices=MAC_Address_Filter_Mode.choices, default=MAC_Address_Filter_Mode.disable)
     mac_address_filter_list = models.CharField(max_length=4098, blank=True)
+
+    @property
+    def interface_mac(self):
+        if self.mac == None:
+            return self.interface
+        elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
+            return self.interface
+        else:
+            return Network_Util().get_interface_by_mac(self.mac)
+
+    def save(self, *args, **kwargs):
+        self.mac = Network_Util().get_mac(self.interface)
+        super(HotspotConfig, self).save(*args, **kwargs)
     
 
 def DhcpServerConfig_validate_interface(value):
@@ -165,7 +209,21 @@ class DhcpServerConfig(models.Model):
     dhcp_module = models.CharField(max_length=32, choices=DhcpModule.choices, default=DhcpModule.dnsmasq)
     bridge = models.BooleanField(default=True)
     interface = models.CharField(max_length=16, unique=True, validators=[DhcpServerConfig_validate_interface])
+    mac = models.CharField(max_length=64, default=None, editable=False)
     ip_address = models.CharField(max_length=16, default='192.168.10.1')
     subnet_mask = models.CharField(max_length=16, default='255.255.255.0')
     dhcp_ip_address_from = models.CharField(max_length=16, default='192.168.10.10')
     dhcp_ip_address_to = models.CharField(max_length=16, default='192.168.10.30')
+
+    @property
+    def interface_mac(self):
+        if self.mac == None:
+            return self.interface
+        elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
+            return self.interface
+        else:
+            return Network_Util().get_interface_by_mac(self.mac)
+
+    def save(self, *args, **kwargs):
+        self.mac = Network_Util().get_mac(self.interface)
+        super(DhcpServerConfig, self).save(*args, **kwargs)
