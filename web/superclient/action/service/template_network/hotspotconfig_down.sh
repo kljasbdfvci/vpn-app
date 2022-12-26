@@ -47,7 +47,7 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 exit_code=0
 
 # hotspotConfig
-if pgrep -f 'hostapd'; then
+if pgrep -x 'hostapd'; then
     killall 'hostapd' &>/dev/null
     sleep 1
 fi

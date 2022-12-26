@@ -107,6 +107,8 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 exit_code=0
 
 dhcp_res=1
+named_res=1
+
 if [ $dhcp_module == "dnsmasq" ]; then
 
     list_bridge=(`echo $bridge | sed 's/,/\n/g'`)
@@ -253,7 +255,10 @@ EOF
 
 fi
 
-if ! pgrep -f 'named' && [[ $dns_server != "" ]]; then
+if ! pgrep -x 'named' && [[ $dns_server != "" ]]; then
+
+    list_ip_address=(`echo $ip_address | sed 's/,/\n/g'`)
+
     str_listen=""
     for i in "${!list_ip_address[@]}"; do
         str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
@@ -318,7 +323,6 @@ zone "255.in-addr.arpa" {
 };
 EOF
 
-    named_res=1
     if [[ $log == "yes" ]]; then
         named -c $named_config_file -u bind -L $named_log_file
         named_res=$?
