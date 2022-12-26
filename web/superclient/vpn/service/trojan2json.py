@@ -25,9 +25,9 @@ def generate(model, general):
   else:
     _log["loglevel"] = "None"
   
-  if general.dns != "":
-    for dns in general.dns.split():
-      _dns_servers.append(dns)
+  #if general.dns != "":
+  #  for dns in general.dns.split():
+  #    _dns_servers.append(dns)
   
   _outbounds_servers["password"] = model.uid
   _outbounds_servers["address"] = model.host

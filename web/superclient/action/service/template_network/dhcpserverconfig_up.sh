@@ -106,6 +106,7 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=0
 
+dhcp_res=1
 if [ $dhcp_module == "dnsmasq" ]; then
 
     list_bridge=(`echo $bridge | sed 's/,/\n/g'`)
@@ -158,24 +159,22 @@ if [ $dhcp_module == "dnsmasq" ]; then
 
     dnsmasq_res=1
     if [[ $log == "yes" ]]; then
-        dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
-        --bind-interfaces --except-interface=lo \
+        # --no-negcache --strict-order --clear-on-reload --log-queries
+        dnsmasq --port=0 \
+        --dhcp-authoritative --log-dhcp --bind-interfaces --except-interface=lo \
         --interface=$use_interface_list --listen-address=$ip_address $dhcp_range $dhcp_option \
         --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file
         dnsmasq_res=$?
     else
-        dnsmasq --dhcp-authoritative --no-negcache --strict-order --clear-on-reload --log-queries --log-dhcp \
-        --bind-interfaces --except-interface=lo \
+        # --no-negcache --strict-order --clear-on-reload --log-queries
+        dnsmasq --port=0 \
+        --dhcp-authoritative --log-dhcp --bind-interfaces --except-interface=lo \
         --interface=$use_interface_list --listen-address=$ip_address $dhcp_range \
         --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file &> /dev/null
         dnsmasq_res=$?
     fi
 
-    if [[ $dnsmasq_res == 0 ]]; then
-        exit_code=0
-    else
-        exit_code=1
-    fi
+    dhcp_res=$dnsmasq_res
     
 elif [ $dhcp_module == "isc-dhcp-server" ]; then
 
@@ -250,18 +249,22 @@ EOF
         dhcpd_res=$?
     fi
 
-    if [[ $dns_server != "" ]]; then
-        str_listen=""
-        for i in "${!list_ip_address[@]}"; do
-            str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
-        done
+    dhcp_res=$dhcpd_res
 
-        str_dns=""
-        for item in ${dns_server//,/ } ; do
-            str_dns=$str_dns"        $item;"$'\n'
-        done
+fi
 
-        cat > $named_config_file << EOF
+if [[ $dns_server != "" ]]; then
+    str_listen=""
+    for i in "${!list_ip_address[@]}"; do
+        str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
+    done
+
+    str_dns=""
+    for item in ${dns_server//,/ } ; do
+        str_dns=$str_dns"        $item;"$'\n'
+    done
+
+    cat > $named_config_file << EOF
 options {
     directory "/var/cache/bind";
 
@@ -315,25 +318,23 @@ zone "255.in-addr.arpa" {
 };
 EOF
 
-        named_res=1
-        if [[ $log == "yes" ]]; then
-            named -c $named_config_file -u bind -L $named_log_file
-            named_res=$?
-        else
-            named -c $named_config_file -u bind &> /dev/null
-            named_res=$?
-        fi
-        
+    named_res=1
+    if [[ $log == "yes" ]]; then
+        named -c $named_config_file -u bind -L $named_log_file
+        named_res=$?
     else
-        named_res=0
+        named -c $named_config_file -u bind &> /dev/null
+        named_res=$?
     fi
+    
+else
+    named_res=0
+fi
 
-    if [[ $dhcpd_res == 0 ]] && [[ $named_res == 0 ]]; then
-        exit_code=0
-    else
-        exit_code=1
-    fi
-
+if [[ $dhcp_res == 0 ]] && [[ $named_res == 0 ]]; then
+    exit_code=0
+else
+    exit_code=1
 fi
 
 exit $exit_code
