@@ -17,27 +17,39 @@ def start():
 class TaskThread(Thread):
 
     start_delay = 5
-    repeat_delay = 1
+    repeat_delay = 5
     counter = 0
 
     def run(self):
-        time.sleep(self.start_delay)
-        ServiceStatus.get().change_previous_vpn(None)
+
+        try:
+            time.sleep(self.start_delay)
+            ServiceStatus.get().change_previous_vpn(None)
+        except Exception as e:
+            try:
+                logging.error(e)
+            except Exception as e:
+                pass
 
         while True:
             try:
-                service_checker(self.counter)
-            except Exception as e:
-                logging.error(e)
-            
-            if self.counter == sys.maxsize:
-                self.counter = 0
-            else:
-                self.counter = self.counter + 1
-            
-            time.sleep(self.repeat_delay)
 
-def service_checker(counter):
+                time.sleep(self.repeat_delay)
+                
+                service_checker(self.counter, self.repeat_delay)
+
+                if self.counter == sys.maxsize:
+                    self.counter = 0
+                else:
+                    self.counter = self.counter + 1
+                
+            except Exception as e:
+                try:
+                    logging.error(e)
+                except Exception as e:
+                    pass
+
+def service_checker(counter, repeat_delay):
     status = ServiceStatus.get()    
 
     if status.on:
@@ -54,9 +66,9 @@ def service_checker(counter):
             stop_vpn_service(status)
             status.change_previous_vpn(None)
             status.toggle_apply()
-        elif status.active_vpn != None and counter % 10 == 0 and not Router(status.active_vpn).is_running(): # when proc is not up
+        elif status.active_vpn != None and (counter * repeat_delay) % 10 == 0 and not Router(status.active_vpn).is_running(): # when proc is not up
             stop_vpn_service(status)
-        elif status.active_vpn != None and counter % 60 == 0 and not Router(status.active_vpn).check_vpn(): # when connection is week
+        elif status.active_vpn != None and (counter * repeat_delay) % 60 == 0 and not Router(status.active_vpn).check_vpn(): # when connection is week
             stop_vpn_service(status)
         else:
             logging.info('[NO-CHANGE] vpn service already started.')
