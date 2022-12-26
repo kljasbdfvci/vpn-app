@@ -61,7 +61,7 @@ def LanConfig_validate_interface(value):
 
 class LanConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[LanConfig_validate_interface])
-    mac = models.CharField(max_length=64, default=None, editable=False)
+    mac = models.CharField(max_length=64, default="", editable=False)
     dhcp = models.BooleanField(default=True)
     dhcp_set_default_gateway = models.BooleanField(default=True)
     ip_address_1 = models.CharField(max_length=16, blank=True)
@@ -75,7 +75,7 @@ class LanConfig(models.Model):
 
     @property
     def interface_mac(self):
-        if self.mac == None:
+        if self.mac == "":
             return self.interface
         elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
             return self.interface
@@ -100,7 +100,7 @@ def WlanConfig_validate_interface(value):
 
 class WlanConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[WlanConfig_validate_interface])
-    mac = models.CharField(max_length=64, default=None, editable=False)
+    mac = models.CharField(max_length=64, default="", editable=False)
     ssid1 = models.CharField(max_length=128)
     wpa_passphrase1 = models.CharField(max_length=128, blank=True)
     ssid2 = models.CharField(max_length=128, blank=True)
@@ -128,7 +128,7 @@ class WlanConfig(models.Model):
 
     @property
     def interface_mac(self):
-        if self.mac == None:
+        if self.mac == "":
             return self.interface
         elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
             return self.interface
@@ -148,7 +148,7 @@ def HotspotConfig_validate_interface(value):
 
 class HotspotConfig(models.Model):
     interface = models.CharField(max_length=16, unique=True, validators=[HotspotConfig_validate_interface])
-    mac = models.CharField(max_length=64, default=None, editable=False)
+    mac = models.CharField(max_length=64, default="", editable=False)
     ssid = models.CharField(max_length=128)
     wpa_passphrase = models.CharField(max_length=128, blank=True)
     class Channel(models.TextChoices):
@@ -177,7 +177,7 @@ class HotspotConfig(models.Model):
 
     @property
     def interface_mac(self):
-        if self.mac == None:
+        if self.mac == "":
             return self.interface
         elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
             return self.interface
@@ -209,7 +209,7 @@ class DhcpServerConfig(models.Model):
     dhcp_module = models.CharField(max_length=32, choices=DhcpModule.choices, default=DhcpModule.dnsmasq)
     bridge = models.BooleanField(default=True)
     interface = models.CharField(max_length=16, unique=True, validators=[DhcpServerConfig_validate_interface])
-    mac = models.CharField(max_length=64, default=None, editable=False)
+    mac = models.CharField(max_length=64, default="", editable=False)
     ip_address = models.CharField(max_length=16, default='192.168.10.1')
     subnet_mask = models.CharField(max_length=16, default='255.255.255.0')
     dhcp_ip_address_from = models.CharField(max_length=16, default='192.168.10.10')
@@ -217,7 +217,7 @@ class DhcpServerConfig(models.Model):
 
     @property
     def interface_mac(self):
-        if self.mac == None:
+        if self.mac == "":
             return self.interface
         elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
             return self.interface
