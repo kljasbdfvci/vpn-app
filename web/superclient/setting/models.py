@@ -75,12 +75,24 @@ class LanConfig(models.Model):
 
     @property
     def interface_mac(self):
-        if self.mac == "":
+        
+        nu = Network_Util()
+        is_interface = nu.is_interface(self.interface)
+        mac = nu.get_mac(self.interface)
+        interface = nu.get_interface_by_mac(self.mac)
+
+        if is_interface and mac == self.mac: # name and mac are ok
             return self.interface
-        elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
+        elif not is_interface and interface != None: # name changed but mac is ok
+            return interface
+        elif is_interface and mac != self.mac: # name is ok but mac is changed - like wlan0 in orangepi zero change in evrey reboot
             return self.interface
-        else:
-            return Network_Util().get_interface_by_mac(self.mac)
+        else: # name and mac are changed - like orangepi zero wlan0 change to wlan1 when other usb wlan is pluged
+            if nu.is_lan_interface_kernel_native(self.interface) and self.interface not in nu.get_lan_interfaces_kernel_native():
+                index = nu.get_lan_interface_kernel_native_index(self.interface)
+                return nu.get_lan_interface_kernel_native_before_or_after(index)
+            else:
+                return None
 
     def save(self, *args, **kwargs):
         self.mac = Network_Util().get_mac(self.interface)
@@ -128,12 +140,24 @@ class WlanConfig(models.Model):
 
     @property
     def interface_mac(self):
-        if self.mac == "":
+        
+        nu = Network_Util()
+        is_interface = nu.is_interface(self.interface)
+        mac = nu.get_mac(self.interface)
+        interface = nu.get_interface_by_mac(self.mac)
+
+        if is_interface and mac == self.mac: # name and mac are ok
             return self.interface
-        elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
+        elif not is_interface and interface != None: # name changed but mac is ok
+            return interface
+        elif is_interface and mac != self.mac: # name is ok but mac is changed - like wlan0 in orangepi zero change in evrey reboot
             return self.interface
-        else:
-            return Network_Util().get_interface_by_mac(self.mac)
+        else: # name and mac are changed - like orangepi zero wlan0 change to wlan1 when other usb wlan is pluged
+            if nu.is_wlan_interface_kernel_native(self.interface) and self.interface not in nu.get_wlan_interfaces_kernel_native():
+                index = nu.get_wlan_interface_kernel_native_index(self.interface)
+                return nu.get_wlan_interface_kernel_native_before_or_after(index)
+            else:
+                return None
 
     def save(self, *args, **kwargs):
         self.mac = Network_Util().get_mac(self.interface)
@@ -177,12 +201,24 @@ class HotspotConfig(models.Model):
 
     @property
     def interface_mac(self):
-        if self.mac == "":
+        
+        nu = Network_Util()
+        is_interface = nu.is_interface(self.interface)
+        mac = nu.get_mac(self.interface)
+        interface = nu.get_interface_by_mac(self.mac)
+
+        if is_interface and mac == self.mac: # name and mac are ok
             return self.interface
-        elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
+        elif not is_interface and interface != None: # name changed but mac is ok
+            return interface
+        elif is_interface and mac != self.mac: # name is ok but mac is changed - like wlan0 in orangepi zero change in evrey reboot
             return self.interface
-        else:
-            return Network_Util().get_interface_by_mac(self.mac)
+        else: # name and mac are changed - like orangepi zero wlan0 change to wlan1 when other usb wlan is pluged
+            if nu.is_wlan_interface_kernel_native(self.interface) and self.interface not in nu.get_wlan_interfaces_kernel_native():
+                index = nu.get_wlan_interface_kernel_native_index(self.interface)
+                return nu.get_wlan_interface_kernel_native_before_or_after(index)
+            else:
+                return None
 
     def save(self, *args, **kwargs):
         self.mac = Network_Util().get_mac(self.interface)
@@ -217,12 +253,27 @@ class DhcpServerConfig(models.Model):
 
     @property
     def interface_mac(self):
-        if self.mac == "":
+        
+        nu = Network_Util()
+        is_interface = nu.is_interface(self.interface)
+        mac = nu.get_mac(self.interface)
+        interface = nu.get_interface_by_mac(self.mac)
+
+        if is_interface and mac == self.mac: # name and mac are ok
             return self.interface
-        elif Network_Util().get_mac(self.interface) != None and Network_Util().get_mac(self.interface) == self.mac:
+        elif not is_interface and interface != None: # name changed but mac is ok
+            return interface
+        elif is_interface and mac != self.mac: # name is ok but mac is changed - like wlan0 in orangepi zero change in evrey reboot
             return self.interface
-        else:
-            return Network_Util().get_interface_by_mac(self.mac)
+        else: # name and mac are changed - like orangepi zero wlan0 change to wlan1 when other usb wlan is pluged
+            if nu.is_lan_interface_kernel_native(self.interface) and self.interface not in nu.get_lan_interfaces_kernel_native():
+                index = nu.get_lan_interface_kernel_native_index(self.interface)
+                return nu.get_lan_interface_kernel_native_before_or_after(index)
+            elif nu.is_wlan_interface_kernel_native(self.interface) and self.interface not in nu.get_wlan_interfaces_kernel_native():
+                index = nu.get_wlan_interface_kernel_native_index(self.interface)
+                return nu.get_wlan_interface_kernel_native_before_or_after(index)
+            else:
+                return None
 
     def save(self, *args, **kwargs):
         self.mac = Network_Util().get_mac(self.interface)
