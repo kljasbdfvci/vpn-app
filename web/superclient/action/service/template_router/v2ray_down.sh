@@ -77,15 +77,15 @@ if [ -f "$log_file" ]; then
     rm $log_file
 fi
 
-if [ -n $(pgrep -f 'badvpn-tun2socks') ]; then
+if [ -n "$(pgrep -f 'badvpn-tun2socks')" ]; then
     killall 'badvpn-tun2socks' &>/dev/null
 fi
 
-if [ -n $(pgrep -f 'go-tun2socks') ]; then
+if [ -n "$(pgrep -f 'go-tun2socks')" ]; then
     killall 'go-tun2socks' &>/dev/null
 fi
 
-if [ -n $(pgrep -f 'tun2socks') ]; then
+if [ -n "$(pgrep -f 'tun2socks')" ]; then
     killall 'tun2socks' &>/dev/null
 fi
 
@@ -93,7 +93,7 @@ if [ -f $tun2socks_log_file ]; then
     rm $tun2socks_log_file
 fi
 
-if [ -n $(pgrep -f 'DNS2SOCKS') ]; then
+if [ -n "$(pgrep -f 'DNS2SOCKS')" ]; then
     killall 'DNS2SOCKS' &>/dev/null
 fi
 

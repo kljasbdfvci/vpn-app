@@ -67,7 +67,7 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 exit_code=0
 
 # dhcpServerConfig
-if [ -n $(pgrep -f 'dnsmasq') ]; then
+if [ -n "$(pgrep -f 'dnsmasq')" ]; then
     killall 'dnsmasq' &>/dev/null
     sleep 1
 fi
@@ -82,7 +82,7 @@ if [ -f "$dnsmasq_lease_file" ]; then
     rm $dnsmasq_lease_file
 fi
 
-if [ -n $(pgrep -f 'dhcpd') ]; then
+if [ -n "$(pgrep -f 'dhcpd')" ]; then
     killall 'dhcpd' &>/dev/null
     sleep 1
 fi
@@ -100,7 +100,7 @@ if [ -f "$dhcpd_lease_file" ]; then
     rm $dhcpd_lease_file
 fi
 
-if [ -n $(pgrep -f 'named') ]; then
+if [ -n "$(pgrep -f 'named')" ]; then
     killall 'named' &>/dev/null
     sleep 1
 fi
