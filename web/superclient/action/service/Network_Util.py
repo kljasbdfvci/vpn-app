@@ -50,7 +50,7 @@ class Network_Util:
 
     def get_mac(self, interface):
         if self.is_interface(interface):
-            self._get_mac(interface)
+            return self._get_mac(interface)
         else:
             return None
 
