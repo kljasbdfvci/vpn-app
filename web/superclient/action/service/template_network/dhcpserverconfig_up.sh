@@ -192,14 +192,14 @@ if [ -n "$dnsmasq_interface" ]; then
         # --no-negcache --strict-order --clear-on-reload --log-queries
         dnsmasq --port=0 \
         --dhcp-authoritative --log-dhcp --bind-interfaces --except-interface=lo \
-        --interface=$use_interface_list --listen-address=$ip_address $dhcp_range $dhcp_option \
+        --interface=$use_interface_list --listen-address=$dnsmasq_ip_address $dhcp_range $dhcp_option \
         --log-facility=$dnsmasq_log_file --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file
         dnsmasq_res=$?
     else
         # --no-negcache --strict-order --clear-on-reload --log-queries
         dnsmasq --port=0 \
         --dhcp-authoritative --log-dhcp --bind-interfaces --except-interface=lo \
-        --interface=$use_interface_list --listen-address=$ip_address $dhcp_range \
+        --interface=$use_interface_list --listen-address=$dnsmasq_ip_address $dhcp_range \
         --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file &> /dev/null
         dnsmasq_res=$?
     fi
@@ -287,9 +287,14 @@ fi
 named_res=1
 if [[ $dns_server != "" ]]; then
 
-    list_ip_address=(`echo $ip_address | sed 's/,/\n/g'`)
-
     str_listen=""
+
+    list_ip_address=(`echo $dnsmasq_ip_address | sed 's/,/\n/g'`)
+    for i in "${!list_ip_address[@]}"; do
+        str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
+    done
+
+    list_ip_address=(`echo $dhcpd_ip_address | sed 's/,/\n/g'`)
     for i in "${!list_ip_address[@]}"; do
         str_listen=$str_listen"        ${list_ip_address[$i]};"$'\n'
     done
