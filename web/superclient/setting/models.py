@@ -23,7 +23,7 @@ class General(models.Model):
         _2 = "2", "Handle in system"
         _3 = "3", "Handle with socks (only for v2ray)"
     dns_Mode = models.CharField(max_length=8, choices=DnsMode.choices, default=DnsMode._2)
-    dns = models.CharField(max_length=128, default='1.1.1.1\n8.8.8.8\n208.67.222.222', blank=True)
+    dns = models.CharField(max_length=128, default='8.8.8.8\n1.1.1.1\n208.67.222.222', blank=True)
     log = models.BooleanField(default=False)
     class CheckVpnMethod(models.TextChoices):
         disable = "disable", "Disable"
@@ -36,17 +36,17 @@ class General(models.Model):
         all = "all", "All from list successful"
         random = "random", "Once randomly successful from list"
     check_vpn_list_method = models.CharField(max_length=64, choices=CheckVpnListMethod.choices, default=CheckVpnListMethod.once)
-    check_vpn_curl_list = models.CharField(max_length=4098, default='https://api.ipify.org?format=json\nhttps://checkip.amazonaws.com\nhttps://icanhazip.com\nhttps://jsonip.com', blank=True)
-    check_vpn_curl_timeout = models.IntegerField(default=12)
+    check_vpn_curl_list = models.CharField(max_length=4098, default='https://api.ipify.org?format=json\nhttp://api.ipify.org?format=json\nhttps://checkip.amazonaws.com\nhttp://checkip.amazonaws.com\nhttps://icanhazip.com\nhttp://icanhazip.com\nhttps://jsonip.com', blank=True)
+    check_vpn_curl_timeout = models.IntegerField(default=15)
     check_vpn_curl_retry = models.IntegerField(default=1)
-    check_vpn_ping_list = models.CharField(max_length=4098, default='1.1.1.1\n8.8.8.8\n208.67.222.222', blank=True)
-    check_vpn_ping_timeout = models.IntegerField(default=4)
+    check_vpn_ping_list = models.CharField(max_length=4098, default='8.8.8.8\n1.1.1.1\n208.67.222.222', blank=True)
+    check_vpn_ping_timeout = models.IntegerField(default=5)
     check_vpn_ping_retry = models.IntegerField(default=3)
     class V2rayMode(models.TextChoices):
         badvpn_tun2socks = "badvpn-tun2socks", "badvpn-tun2socks"
         go_tun2socks = "go-tun2socks", "go-tun2socks"
         tun2socks = "tun2socks", "tun2socks"
-    v2ray_mode = models.CharField(max_length=64, choices=V2rayMode.choices, default=V2rayMode.tun2socks)
+    v2ray_mode = models.CharField(max_length=64, choices=V2rayMode.choices, default=V2rayMode.badvpn_tun2socks)
 
     def save(self, *args, **kwargs):
         #self.dns = "".join(self.dns.split())
@@ -60,6 +60,7 @@ def LanConfig_validate_interface(value):
         )
 
 class LanConfig(models.Model):
+    enable = models.BooleanField(default=True)
     interface = models.CharField(max_length=16, unique=True, validators=[LanConfig_validate_interface])
     mac = models.CharField(max_length=64, default="", editable=False)
     dhcp = models.BooleanField(default=True)
@@ -111,6 +112,7 @@ def WlanConfig_validate_interface(value):
         )
 
 class WlanConfig(models.Model):
+    enable = models.BooleanField(default=True)
     interface = models.CharField(max_length=16, unique=True, validators=[WlanConfig_validate_interface])
     mac = models.CharField(max_length=64, default="", editable=False)
     ssid1 = models.CharField(max_length=128)
@@ -171,6 +173,7 @@ def HotspotConfig_validate_interface(value):
         )
 
 class HotspotConfig(models.Model):
+    enable = models.BooleanField(default=True)
     interface = models.CharField(max_length=16, unique=True, validators=[HotspotConfig_validate_interface])
     mac = models.CharField(max_length=64, default="", editable=False)
     ssid = models.CharField(max_length=128)
@@ -239,6 +242,7 @@ def DhcpServerConfig_validate_interface(value):
     
 
 class DhcpServerConfig(models.Model):
+    enable = models.BooleanField(default=True)
     class DhcpModule(models.TextChoices):
         dnsmasq = "dnsmasq", "dnsmasq"
         dhcpd = "isc-dhcp-server", "isc-dhcp-server"

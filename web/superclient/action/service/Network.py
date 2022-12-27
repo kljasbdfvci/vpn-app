@@ -181,7 +181,7 @@ class Network:
         # lanConfig up
         for lan in self.lanConfig:
             interface_mac = lan.interface_mac
-            if interface_mac != None and Network_Util().is_lan_interface(interface_mac):
+            if lan.enable and interface_mac != None and Network_Util().is_lan_interface(interface_mac):
                 up_file = self.list["lanconfig"]["up_file"]
                 interface = "--interface '{}'".format(interface_mac)
                 dhclient_config_file = "--dhclient_config_file '{}'".format(self.list["lanconfig"]["dhclient_config_file"].format(interface_mac))
@@ -243,7 +243,7 @@ class Network:
         # wlanConfig up
         for wlan in self.wlanConfig:
             interface_mac = wlan.interface_mac
-            if interface_mac != None and Network_Util().is_wlan_interface(interface_mac):
+            if wlan.enable and interface_mac != None and Network_Util().is_wlan_interface(interface_mac):
                 up_file = self.list["wlanconfig"]["up_file"]
                 interface = "--interface '{}'".format(interface_mac)
                 ssid1 = "--ssid1 '{}'".format(wlan.ssid1.replace("'", "'\\''"))
@@ -320,7 +320,7 @@ class Network:
         hotspot = self.hotspotConfig
         if hotspot != None:
             interface_mac = hotspot.interface_mac
-            if interface_mac != None and Network_Util().is_wlan_interface(interface_mac):
+            if hotspot.enable and interface_mac != None and Network_Util().is_wlan_interface(interface_mac):
                 up_file = self.list["hotspotconfig"]["up_file"]
                 interface = "--interface '{}'".format(interface_mac)
                 ssid = "--ssid '{}'".format(hotspot.ssid.replace("'", "'\\''"))
@@ -391,7 +391,7 @@ class Network:
         dhcpd_dhcp_ip_address_to = ""
         for dhcpServer in self.dhcpServerConfig:
             interface_mac = dhcpServer.interface_mac
-            if interface_mac != None and Network_Util().is_interface(interface_mac) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dnsmasq:
+            if dhcpServer.enable and interface_mac != None and Network_Util().is_interface(interface_mac) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dnsmasq:
                 dnsmasq_flag = 1
                 if dhcpServer.bridge:
                     dnsmasq_bridge = dnsmasq_bridge + "," + ("br_" + str(dhcpServer.id)) if dnsmasq_bridge != "" else ("br_" + str(dhcpServer.id))
@@ -403,7 +403,7 @@ class Network:
                 dnsmasq_dhcp_ip_address_from = dnsmasq_dhcp_ip_address_from + "," + dhcpServer.dhcp_ip_address_from if dnsmasq_dhcp_ip_address_from != "" else dhcpServer.dhcp_ip_address_from
                 dnsmasq_dhcp_ip_address_to = dnsmasq_dhcp_ip_address_to + "," + dhcpServer.dhcp_ip_address_to if dnsmasq_dhcp_ip_address_to != "" else dhcpServer.dhcp_ip_address_to
 
-            elif interface_mac != None and Network_Util().is_interface(interface_mac) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dhcpd:
+            elif dhcpServer.enable and interface_mac != None and Network_Util().is_interface(interface_mac) and dhcpServer.dhcp_module == DhcpServerConfig.DhcpModule.dhcpd:
                 dhcpd_flag = 1
                 if dhcpServer.bridge:
                     dhcpd_bridge = dhcpd_bridge + "," + ("br_" + str(dhcpServer.id)) if dhcpd_bridge != "" else ("br_" + str(dhcpServer.id))
