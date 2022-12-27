@@ -8,38 +8,33 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        --bridge)
-            bridge="$2"
+        --dnsmasq_bridge)
+            dnsmasq_bridge="$2"
             shift # past argument
             shift # past value
             ;;
-        --interface)
-            interface="$2"
+        --dnsmasq_interface)
+            dnsmasq_interface="$2"
             shift # past argument
             shift # past value
             ;;
-        --ip_address)
-            ip_address="$2"
+        --dnsmasq_ip_address)
+            dnsmasq_ip_address="$2"
             shift # past argument
             shift # past value
             ;;
-        --subnet_mask)
-            subnet_mask="$2"
+        --dnsmasq_subnet_mask)
+            dnsmasq_subnet_mask="$2"
             shift # past argument
             shift # past value
             ;;
-        --dhcp_ip_address_from)
-            dhcp_ip_address_from="$2"
+        --dnsmasq_dhcp_ip_address_from)
+            dnsmasq_dhcp_ip_address_from="$2"
             shift # past argument
             shift # past value
             ;;
-        --dhcp_ip_address_to)
-            dhcp_ip_address_to="$2"
-            shift # past argument
-            shift # past value
-            ;;
-        --dns_server)
-            dns_server="$2"
+        --dnsmasq_dhcp_ip_address_to)
+            dnsmasq_dhcp_ip_address_to="$2"
             shift # past argument
             shift # past value
             ;;
@@ -55,6 +50,36 @@ while [[ $# -gt 0 ]]; do
             ;;
         --dnsmasq_lease_file)
             dnsmasq_lease_file="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhcpd_bridge)
+            dhcpd_bridge="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhcpd_interface)
+            dhcpd_interface="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhcpd_ip_address)
+            dhcpd_ip_address="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhcpd_subnet_mask)
+            dhcpd_subnet_mask="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhcpd_dhcp_ip_address_from)
+            dhcpd_dhcp_ip_address_from="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --dhcpd_dhcp_ip_address_to)
+            dhcpd_dhcp_ip_address_to="$2"
             shift # past argument
             shift # past value
             ;;
@@ -88,6 +113,11 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
+        --dns_server)
+            dns_server="$2"
+            shift # past argument
+            shift # past value
+            ;;
         --log)
             log="yes"
             shift # past argument
@@ -106,17 +136,16 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
 exit_code=0
 
-dhcp_res=1
-named_res=1
 
-if [ $dhcp_module == "dnsmasq" ]; then
+dnsmasq_res=1
+if [ -n "$dnsmasq_interface" ]; then
 
-    list_bridge=(`echo $bridge | sed 's/,/\n/g'`)
-    list_interface=(`echo $interface | sed 's/,/\n/g'`)
-    list_ip_address=(`echo $ip_address | sed 's/,/\n/g'`)
-    list_subnet_mask=(`echo $subnet_mask | sed 's/,/\n/g'`)
-    list_dhcp_ip_address_from=(`echo $dhcp_ip_address_from | sed 's/,/\n/g'`)
-    list_dhcp_ip_address_to=(`echo $dhcp_ip_address_to | sed 's/,/\n/g'`)
+    list_bridge=(`echo $dnsmasq_bridge | sed 's/,/\n/g'`)
+    list_interface=(`echo $dnsmasq_interface | sed 's/,/\n/g'`)
+    list_ip_address=(`echo $dnsmasq_ip_address | sed 's/,/\n/g'`)
+    list_subnet_mask=(`echo $dnsmasq_subnet_mask | sed 's/,/\n/g'`)
+    list_dhcp_ip_address_from=(`echo $dnsmasq_dhcp_ip_address_from | sed 's/,/\n/g'`)
+    list_dhcp_ip_address_to=(`echo $dnsmasq_dhcp_ip_address_to | sed 's/,/\n/g'`)
 
     dhcp_range=""
     use_interface=""
@@ -159,7 +188,6 @@ if [ $dhcp_module == "dnsmasq" ]; then
         dhcp_option=$dhcp_option"--dhcp-option=$use_interface,3,$temp_ip_address --dhcp-option=$use_interface,6,$temp_ip_address "
     done  
 
-    dnsmasq_res=1
     if [[ $log == "yes" ]]; then
         # --no-negcache --strict-order --clear-on-reload --log-queries
         dnsmasq --port=0 \
@@ -175,17 +203,19 @@ if [ $dhcp_module == "dnsmasq" ]; then
         --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file &> /dev/null
         dnsmasq_res=$?
     fi
+else
+    dnsmasq_res=0
+fi
 
-    dhcp_res=$dnsmasq_res
-    
-elif [ $dhcp_module == "isc-dhcp-server" ]; then
+dhcpd_res=1
+if [ -n "$dhcpd_interface" ]; then
 
-    list_bridge=(`echo $bridge | sed 's/,/\n/g'`)
-    list_interface=(`echo $interface | sed 's/,/\n/g'`)
-    list_ip_address=(`echo $ip_address | sed 's/,/\n/g'`)
-    list_subnet_mask=(`echo $subnet_mask | sed 's/,/\n/g'`)
-    list_dhcp_ip_address_from=(`echo $dhcp_ip_address_from | sed 's/,/\n/g'`)
-    list_dhcp_ip_address_to=(`echo $dhcp_ip_address_to | sed 's/,/\n/g'`)
+    list_bridge=(`echo $dhcpd_bridge | sed 's/,/\n/g'`)
+    list_interface=(`echo $dhcpd_interface | sed 's/,/\n/g'`)
+    list_ip_address=(`echo $dhcpd_ip_address | sed 's/,/\n/g'`)
+    list_subnet_mask=(`echo $dhcpd_subnet_mask | sed 's/,/\n/g'`)
+    list_dhcp_ip_address_from=(`echo $dhcpd_dhcp_ip_address_from | sed 's/,/\n/g'`)
+    list_dhcp_ip_address_to=(`echo $dhcpd_dhcp_ip_address_to | sed 's/,/\n/g'`)
 
     cat > $dhcpd_config_file << EOF
 authoritative;
@@ -242,7 +272,6 @@ EOF
 
     touch $dhcpd_lease_file
     
-    dhcpd_res=1
     if [[ $log == "yes" ]]; then
         dhcpd -cf $dhcpd_config_file -pf $dhcpd_pid_file -tf $dhcpd_log_file -lf $dhcpd_lease_file $use_interface_list
         dhcpd_res=$?
@@ -251,11 +280,12 @@ EOF
         dhcpd_res=$?
     fi
 
-    dhcp_res=$dhcpd_res
-
+else
+    dhcpd_res=0
 fi
 
-if ! pgrep -x 'named' && [[ $dns_server != "" ]]; then
+named_res=1
+if [[ $dns_server != "" ]]; then
 
     list_ip_address=(`echo $ip_address | sed 's/,/\n/g'`)
 
@@ -335,7 +365,7 @@ else
     named_res=0
 fi
 
-if [[ $dhcp_res == 0 ]] && [[ $named_res == 0 ]]; then
+if [[ $dnsmasq_res == 0 ]] && [[ $dhcpd_res == 0 ]] && [[ $named_res == 0 ]]; then
     exit_code=0
 else
     exit_code=1

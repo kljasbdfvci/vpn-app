@@ -415,53 +415,41 @@ class Network:
                 dhcpd_dhcp_ip_address_from = dhcpd_dhcp_ip_address_from + "," + dhcpServer.dhcp_ip_address_from if dhcpd_dhcp_ip_address_from != "" else dhcpServer.dhcp_ip_address_from
                 dhcpd_dhcp_ip_address_to = dhcpd_dhcp_ip_address_to + "," + dhcpServer.dhcp_ip_address_to if dhcpd_dhcp_ip_address_to != "" else dhcpServer.dhcp_ip_address_to
         
-        if dnsmasq_flag == 1:
+        if dnsmasq_flag == 1 or dhcpd_flag == 1:
             up_file = self.list["dhcpserverconfig"]["up_file"]
-            dhcp_module = "--dhcp_module '{}'".format(DhcpServerConfig.DhcpModule.dnsmasq)
-            dnsmasq_bridge = "--bridge '{}'".format(dnsmasq_bridge)
-            dnsmasq_interface = "--interface '{}'".format(dnsmasq_interface)
-            dnsmasq_ip_address = "--ip_address '{}'".format(dnsmasq_ip_address)
-            dnsmasq_subnet_mask = "--subnet_mask '{}'".format(dnsmasq_subnet_mask)
-            dnsmasq_dhcp_ip_address_from = "--dhcp_ip_address_from '{}'".format(dnsmasq_dhcp_ip_address_from)
-            dnsmasq_dhcp_ip_address_to = "--dhcp_ip_address_to '{}'".format(dnsmasq_dhcp_ip_address_to)
+            
+            dnsmasq_bridge = "--dnsmasq_bridge '{}'".format(dnsmasq_bridge)
+            dnsmasq_interface = "--dnsmasq_interface '{}'".format(dnsmasq_interface)
+            dnsmasq_ip_address = "--dnsmasq_ip_address '{}'".format(dnsmasq_ip_address)
+            dnsmasq_subnet_mask = "--dnsmasq_subnet_mask '{}'".format(dnsmasq_subnet_mask)
+            dnsmasq_dhcp_ip_address_from = "--dnsmasq_dhcp_ip_address_from '{}'".format(dnsmasq_dhcp_ip_address_from)
+            dnsmasq_dhcp_ip_address_to = "--dnsmasq_dhcp_ip_address_to '{}'".format(dnsmasq_dhcp_ip_address_to)
             dnsmasq_pid_file = "--dnsmasq_pid_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_pid_file"])
             dnsmasq_log_file = "--dnsmasq_log_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_log_file"])
             dnsmasq_lease_file = "--dnsmasq_lease_file '{}'".format(self.list["dhcpserverconfig"]["dnsmasq_lease_file"])
-            named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
-            named_log_file = "--named_log_file '{}'".format(self.list["dhcpserverconfig"]["named_log_file"])
-            dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split())) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
-            log = "--log" if self.general.log else ""
-
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
-                up_file, dhcp_module, dnsmasq_bridge,\
-                dnsmasq_interface, dnsmasq_ip_address, dnsmasq_subnet_mask, dnsmasq_dhcp_ip_address_from, dnsmasq_dhcp_ip_address_to,\
-                dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file,\
-                named_config_file, named_log_file, dns_server,\
-                log)
-            )
-            c.do()
-            c.print()
-
-        if dhcpd_flag == 1:
-            up_file = self.list["dhcpserverconfig"]["up_file"]
-            dhcp_module = "--dhcp_module '{}'".format(DhcpServerConfig.DhcpModule.dhcpd)
-            dhcpd_bridge = "--bridge '{}'".format(dhcpd_bridge)
-            dhcpd_interface = "--interface '{}'".format(dhcpd_interface)
-            dhcpd_ip_address = "--ip_address '{}'".format(dhcpd_ip_address)
-            dhcpd_subnet_mask = "--subnet_mask '{}'".format(dhcpd_subnet_mask)
-            dhcpd_dhcp_ip_address_from = "--dhcp_ip_address_from '{}'".format(dhcpd_dhcp_ip_address_from)
-            dhcpd_dhcp_ip_address_to = "--dhcp_ip_address_to '{}'".format(dhcpd_dhcp_ip_address_to)
+            
+            dhcpd_bridge = "--dhcpd_bridge '{}'".format(dhcpd_bridge)
+            dhcpd_interface = "--dhcpd_interface '{}'".format(dhcpd_interface)
+            dhcpd_ip_address = "--dhcpd_ip_address '{}'".format(dhcpd_ip_address)
+            dhcpd_subnet_mask = "--dhcpd_subnet_mask '{}'".format(dhcpd_subnet_mask)
+            dhcpd_dhcp_ip_address_from = "--dhcpd_dhcp_ip_address_from '{}'".format(dhcpd_dhcp_ip_address_from)
+            dhcpd_dhcp_ip_address_to = "--dhcpd_dhcp_ip_address_to '{}'".format(dhcpd_dhcp_ip_address_to)
             dhcpd_config_file = "--dhcpd_config_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_config_file"])
             dhcpd_pid_file = "--dhcpd_pid_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_pid_file"])
             dhcpd_log_file = "--dhcpd_log_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_log_file"])
             dhcpd_lease_file = "--dhcpd_lease_file '{}'".format(self.list["dhcpserverconfig"]["dhcpd_lease_file"])
+            
             named_config_file = "--named_config_file '{}'".format(self.list["dhcpserverconfig"]["named_config_file"])
             named_log_file = "--named_log_file '{}'".format(self.list["dhcpserverconfig"]["named_log_file"])
             dns_server = "--dns_server '{}'".format(",".join(self.general.dns.strip().split())) if self.general.dns_Mode == self.general.DnsMode._2 and self.general.dns != "" else ""
             log = "--log" if self.general.log else ""
 
-            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
-                up_file, dhcp_module, dhcpd_bridge,\
+            c = Execte("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(\
+                up_file, 
+                dnsmasq_bridge,\
+                dnsmasq_interface, dnsmasq_ip_address, dnsmasq_subnet_mask, dnsmasq_dhcp_ip_address_from, dnsmasq_dhcp_ip_address_to,\
+                dnsmasq_pid_file, dnsmasq_log_file, dnsmasq_lease_file,\
+                dhcpd_bridge,\
                 dhcpd_interface, dhcpd_ip_address, dhcpd_subnet_mask, dhcpd_dhcp_ip_address_from, dhcpd_dhcp_ip_address_to,\
                 dhcpd_config_file, dhcpd_pid_file, dhcpd_log_file, dhcpd_lease_file,\
                 named_config_file, named_log_file, dns_server,\
