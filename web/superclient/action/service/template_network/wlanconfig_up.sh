@@ -279,6 +279,8 @@ dhcp_res=0
 if [[ $dhcp == "yes" ]]; then
     ifconfig $interface up
     cat > $dhclient_config_file << EOF
+retry 10;
+
 option rfc3442-classless-static-routes code 121 = array of unsigned integer 8;
 
 send host-name = gethostname();
@@ -296,6 +298,10 @@ supersede routers 1,1,1,1;
 supersede domain-name-servers 8.8.8.8;
 EOF
     elif [[ $default_gateway_mode == "dhcp" ]] && [[ $dhcp_set_default_gateway == "yes" ]]; then
+            cat >> $dhclient_config_file << EOF
+
+require routers, domain-name-servers;
+EOF
         ip route add 169.254.0.0/16 dev $interface metric 1000
     fi
 
