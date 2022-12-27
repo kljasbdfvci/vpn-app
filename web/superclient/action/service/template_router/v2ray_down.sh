@@ -68,7 +68,7 @@ else
 fi
 
 if [ -f "$pid_file" ]; then
-    pid=$(cat $pid_file | xargs)
+    pid=$(cat $pid_file | tr -d '\n')
     kill -2 $pid || kill -9 $pid
     rm $pid_file
 fi
@@ -77,15 +77,15 @@ if [ -f "$log_file" ]; then
     rm $log_file
 fi
 
-if pgrep -x 'badvpn-tun2socks'; then
+if [ -n $(pgrep -f 'badvpn-tun2socks') ]; then
     killall 'badvpn-tun2socks' &>/dev/null
 fi
 
-if pgrep -x 'go-tun2socks'; then
+if [ -n $(pgrep -f 'go-tun2socks') ]; then
     killall 'go-tun2socks' &>/dev/null
 fi
 
-if pgrep -x 'tun2socks'; then
+if [ -n $(pgrep -f 'tun2socks') ]; then
     killall 'tun2socks' &>/dev/null
 fi
 
@@ -93,7 +93,7 @@ if [ -f $tun2socks_log_file ]; then
     rm $tun2socks_log_file
 fi
 
-if pgrep -x 'DNS2SOCKS'; then
+if [ -n $(pgrep -f 'DNS2SOCKS') ]; then
     killall 'DNS2SOCKS' &>/dev/null
 fi
 

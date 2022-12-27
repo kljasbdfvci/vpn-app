@@ -47,7 +47,7 @@ exit_code=0
 # lanConfig
 nmcli radio wwan off
 
-if pgrep -x 'dhclient'; then
+if [ -n $(pgrep -f 'dhclient') ]; then
     killall 'dhclient' &>/dev/null
     sleep 1
 fi

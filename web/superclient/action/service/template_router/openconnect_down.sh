@@ -32,7 +32,7 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 exit_code=0
 
 if [ -f "$pid_file" ]; then
-    pid=$(cat $pid_file | xargs)
+    pid=$(cat $pid_file | tr -d '\n')
     kill -2 $pid || kill -9 $pid
     rm $pid_file
 fi

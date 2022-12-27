@@ -63,7 +63,7 @@ exit_code=0
 nmcli radio wifi off
 rfkill unblock wlan
 
-if pgrep -x 'dhclient'; then
+if [ -n $(pgrep -f 'dhclient') ]; then
     killall 'dhclient' &>/dev/null
     sleep 1
 fi
@@ -81,7 +81,7 @@ if [ -f $dhclient_log_file ]; then
     rm $dhclient_log_file
 fi
 
-if pgrep -x 'wpa_supplicant'; then
+if [ -n $(pgrep -f 'wpa_supplicant') ]; then
     killall 'wpa_supplicant' &>/dev/null
     sleep 1
 fi
