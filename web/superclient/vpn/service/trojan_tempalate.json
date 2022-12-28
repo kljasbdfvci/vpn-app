@@ -4,42 +4,32 @@
     "loglevel": ""
   },
   "dns": {
-    "servers": [
-    ]
+    "servers": ["8.8.8.8"]
   },
   "routing": {
-    "domainStrategy": "Asls"
+    "domainStrategy": "UseIp",
+    "rules": [
+    ]
   },
   "inbounds": [
     {
+      "tag": "socks",
       "sniffing": {
         "enabled": false
       },
       "listen": "127.0.0.1",
+      "port": 1080,
       "protocol": "socks",
       "settings": {
         "udp": true,
         "auth": "noauth",
         "userLevel": 8
-      },
-      "tag": "socks",
-      "port": 1080
+      }
     }
   ],
   "outbounds": [
     {
-      "mux": {
-        "enabled": false
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "tlsSettings": {
-          "serverName": "segment02",
-          "allowInsecure": true,
-          "fingerprint": "chrome"
-        },
-        "security": "tls"
-      },
+      "tag": "proxy",
       "protocol": "trojan",
       "settings": {
         "servers": [
@@ -52,7 +42,32 @@
             "address": "segment03"
           }
         ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "segment02",
+          "allowInsecure": true,
+          "fingerprint": "randomized"
+        }
+      },
+      "mux": {
+        "concurrency": 8,
+        "enabled": false
       }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {
+        "domainStrategy": "UseIP"
+      }
+    },
+    {
+      "tag": "blackhole",
+      "protocol": "blackhole",
+      "settings": {}
     }
   ]
 }
