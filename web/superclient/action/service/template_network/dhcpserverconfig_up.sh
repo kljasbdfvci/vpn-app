@@ -199,7 +199,7 @@ if [ -n "$dnsmasq_interface" ]; then
         # --no-negcache --strict-order --clear-on-reload --log-queries
         dnsmasq --port=0 \
         --dhcp-authoritative --log-dhcp --bind-interfaces --except-interface=lo \
-        --interface=$use_interface_list --listen-address=$dnsmasq_ip_address $dhcp_range \
+        --interface=$use_interface_list --listen-address=$dnsmasq_ip_address $dhcp_range $dhcp_option \
         --pid-file=$dnsmasq_pid_file --dhcp-leasefile=$dnsmasq_lease_file &> /dev/null
         dnsmasq_res=$?
     fi
